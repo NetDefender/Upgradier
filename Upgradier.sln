@@ -1,0 +1,84 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.33920.267
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.Core", "src\Core\Upgradier.Core.csproj", "{74D0B356-C89A-4449-988E-0F147277C9F6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.DatabaseEngines.SqlServer", "src\DatabaseEngines.SqlServer\Upgradier.DatabaseEngines.SqlServer.csproj", "{D7FC778A-FE35-47D4-AAEB-74E2247E01E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EFC2F6F1-C459-4544-B711-919B0361BA2D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		.github\labeler.yml = .github\labeler.yml
+		.github\workflows\labeler.yml = .github\workflows\labeler.yml
+		LICENSE.md = LICENSE.md
+		.github\workflows\packages.yml = .github\workflows\packages.yml
+		.github\workflows\pr.yml = .github\workflows\pr.yml
+		README.md = README.md
+		Upgradier.png = Upgradier.png
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.Tests", "tests\Upgradier.Tests\Upgradier.Tests.csproj", "{37753308-3580-4C2E-98FE-0BD6F07EE84A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.BatchStrategies.Aws", "src\BatchStrategies.Aws\Upgradier.BatchStrategies.Aws.csproj", "{E65E2A7C-85E5-44EB-8EE0-EC23C87D06EA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.BatchStrategies.Azure", "src\BatchStrategies.Azure\Upgradier.BatchStrategies.Azure.csproj", "{533B479C-8327-4821-9C58-46A7DA8E1CFF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example", "src\Example\Example.csproj", "{C3B80FCF-E091-4B65-8197-9011A476A821}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.DatabaseEngines.MySql", "src\DatabaseEngines.MySql\Upgradier.DatabaseEngines.MySql.csproj", "{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.DatabaseEngines.PostgreSql", "src\DatabaseEngines.PostgreSql\Upgradier.DatabaseEngines.PostgreSql.csproj", "{46A281BE-95AE-445F-90A2-37BDDAF5FD77}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{74D0B356-C89A-4449-988E-0F147277C9F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74D0B356-C89A-4449-988E-0F147277C9F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74D0B356-C89A-4449-988E-0F147277C9F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74D0B356-C89A-4449-988E-0F147277C9F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7FC778A-FE35-47D4-AAEB-74E2247E01E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7FC778A-FE35-47D4-AAEB-74E2247E01E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7FC778A-FE35-47D4-AAEB-74E2247E01E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7FC778A-FE35-47D4-AAEB-74E2247E01E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37753308-3580-4C2E-98FE-0BD6F07EE84A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37753308-3580-4C2E-98FE-0BD6F07EE84A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37753308-3580-4C2E-98FE-0BD6F07EE84A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37753308-3580-4C2E-98FE-0BD6F07EE84A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E65E2A7C-85E5-44EB-8EE0-EC23C87D06EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E65E2A7C-85E5-44EB-8EE0-EC23C87D06EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E65E2A7C-85E5-44EB-8EE0-EC23C87D06EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E65E2A7C-85E5-44EB-8EE0-EC23C87D06EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{533B479C-8327-4821-9C58-46A7DA8E1CFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{533B479C-8327-4821-9C58-46A7DA8E1CFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{533B479C-8327-4821-9C58-46A7DA8E1CFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{533B479C-8327-4821-9C58-46A7DA8E1CFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3B80FCF-E091-4B65-8197-9011A476A821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3B80FCF-E091-4B65-8197-9011A476A821}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3B80FCF-E091-4B65-8197-9011A476A821}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3B80FCF-E091-4B65-8197-9011A476A821}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46A281BE-95AE-445F-90A2-37BDDAF5FD77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46A281BE-95AE-445F-90A2-37BDDAF5FD77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46A281BE-95AE-445F-90A2-37BDDAF5FD77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46A281BE-95AE-445F-90A2-37BDDAF5FD77}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3D84F8A4-FE6B-452E-A359-996C7EAAF436}
+	EndGlobalSection
+EndGlobal

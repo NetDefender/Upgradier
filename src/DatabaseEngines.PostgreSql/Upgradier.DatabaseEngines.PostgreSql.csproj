@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<DefineSwitches>EF</DefineSwitches>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Migrations\0.sql" />
+	  <None Remove="Migrations\1.sql" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Migrations\0.sql" />
+	  <EmbeddedResource Include="Migrations\1.sql" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Core\Upgradier.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Using Include="Upgradier.Core" />
+	</ItemGroup>
+
+</Project>

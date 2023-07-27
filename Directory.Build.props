@@ -1,0 +1,66 @@
+<Project>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>Preview</LangVersion>
+		<DefaultLanguage>en-US</DefaultLanguage>
+		<Nullable>enable</Nullable>
+		<Features>strict</Features>
+		<RepositoryUrl>https://github.com/NetDefender/Upgradier</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<ProjectUrl>https://github.com/NetDefender/Upgradier</ProjectUrl>
+		<Authors>Daniel Garcia Martin</Authors>
+		<Owners>Daniel Garcia Martin</Owners>
+		<Company>Daniel Garcia Martin</Company>
+		<Copyright>Copyright (c) 2023 Daniel Garcia Martin</Copyright>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<PackageId>$(AssemblyName)</PackageId>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+		<PackageOutputPath>$(MSBuildThisFileDirectory)artifacts/</PackageOutputPath>
+		<PackageIcon>Upgradier.png</PackageIcon>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MinVer" PrivateAssets="All"/>
+	</ItemGroup>
+
+	<ItemGroup Condition="$(DefineSwitches.Contains('EF'))">
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Update="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="../../Upgradier.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="../../README.md">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="../../LICENSE.md">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="System" />
+		<Using Include="System.IO" />
+		<Using Include="System.Collections.Generic"/>
+		<Using Include="System.Threading.Tasks"/>
+		<Using Include="System.Threading"/>
+		<Using Include="System.Linq"/>
+	</ItemGroup>
+
+</Project>
