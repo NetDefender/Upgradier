@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace Upgradier.Core;
 
@@ -37,5 +38,23 @@ public static class CoreExtensions
     {
         string[] parts = resource.Split('.');
         return int.Parse(parts[^2]);
+    }
+
+    public static StringBuilder TrimEnd(this StringBuilder builder, params char[] trims)
+    {
+        if (trims?.Length > 0)
+        {
+            while (builder.Length > 0 && Array.Exists(trims, trim => trim == builder[^1]))
+            {
+                builder.RemoveLast();
+            }
+        }
+        return builder;
+    }
+
+    public static StringBuilder RemoveLast(this StringBuilder builder)
+    {
+        builder.Remove(builder.Length - 1, 1);
+        return builder;
     }
 }

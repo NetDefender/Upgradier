@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 
 namespace Upgradier.Core;
 
@@ -17,7 +18,7 @@ public class WebScriptAdapter : ScriptAdapterBase
 
     public override async ValueTask<IEnumerable<Script>> GetAllScriptsAsync(CancellationToken cancellationToken)
     {
-        string scriptsFile = Path.Combine(_baseUri, Provider, string.IsNullOrEmpty(Environment) ? "Scripts.json" : $"Scripts.{Environment}.json");
+        string scriptsFile = Path.Combine(_baseUri, Provider, string.IsNullOrEmpty(Environment) ? "Index.json" : $"Index.{Environment}.json");
         List<Script>? scripts = await _client.GetFromJsonAsync<List<Script>>(scriptsFile, cancellationToken).ConfigureAwait(false);
         ArgumentNullException.ThrowIfNull(scripts);
         ArgumentOutOfRangeException.ThrowIfZero(scripts.Count);
@@ -27,16 +28,10 @@ public class WebScriptAdapter : ScriptAdapterBase
     public override async ValueTask<StreamReader> GetScriptContentsAsync(Script script, CancellationToken cancellationToken)
     {
         UriBuilder uriBuilder = new(_baseUri);
-        uriBuilder.Path ??= string.Empty;
-        if (Environment is not null)
-        {
-            uriBuilder.Path = uriBuilder.Path.TrimEnd('/') + $"/Scripts/{Environment}";
-        }
-        else
-        {
-            uriBuilder.Path = uriBuilder.Path.TrimEnd('/') + "/Scripts";
-        }
-        uriBuilder.Path = uriBuilder.Path.TrimEnd('/') + $"{script.VersionId}.sql";
+        StringBuilder uri = new StringBuilder(uriBuilder.Path, uriBuilder.Path.Length + 30).TrimEnd('/')
+            .Append('/').Append(Provider)
+            .Append('/').Append(script.VersionId).Append(".sql");
+        uriBuilder.Path = uri.ToString();
         Stream stream = await _client.GetStreamAsync(uriBuilder.Uri, cancellationToken).ConfigureAwait(false);
         return new StreamReader(stream, leaveOpen: false);
     }
