@@ -16,4 +16,17 @@ A minimalist approach for updating multiple databases to a version based in conv
 - Install the required providers
     - [Upgradier.SqlServer](https://www.nuget.org/packages/Upgradier.SqlServer)
 
-## Usage
+## Architecture
+
+
+```mermaid
+erDiagram
+    UpdateBuilder||--|| IUpdateManager: creates
+    UpdateBuilder||--|| Options: has
+    IUpdateManager ||--|| Environment:has
+    IUpdateManager ||--|{ Provider :has
+    Provider ||--|| Name :has
+    Provider ||--|| ILockStrategy :creates
+    Provider ||--|| IScriptAdapter :creates
+    Provider ||--|| SourceDatabase :creates
+```
