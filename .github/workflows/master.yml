@@ -3,6 +3,8 @@ name: master
 on:
   push:
     branches: [ "master" ]
+    tags:
+      - '*.*.*'
 
 jobs:
   build:
@@ -12,8 +14,6 @@ jobs:
     steps:
     - name: git checkout
       uses: actions/checkout@v3
-    - name: branch
-      run: echo "branch_name=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
     - name: setup dotnet
       uses: actions/setup-dotnet@v3
       with:
@@ -24,3 +24,5 @@ jobs:
       run: dotnet build -c Release --no-restore
     - name: tests
       run: dotnet test -c Release --no-restore --no-build
+    - name: package
+      run: dotnet nuget push --api-key ${{secrets.NUGET}} --skip-duplicate --source https://api.nuget.org/v3/index.json artifacts/*.nupkg
