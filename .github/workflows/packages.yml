@@ -1,15 +1,14 @@
-name: master
+name: packages
 
 on:
   push:
-    branches: [ "master" ]
-    tags:
-      - '*.*.*'
+    tags: ['\d+.\d+.\d']
 
 jobs:
   build:
-
+    
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
 
     steps:
     - name: git checkout
@@ -25,6 +24,6 @@ jobs:
     - name: build
       run: dotnet build -c Release --no-restore
     - name: tests
-      run: dotnet test -c Release --no-restore --no-build
+      run: dotnet test -c Release --no-restore --no-build 
     - name: package
       run: dotnet nuget push --api-key ${{secrets.NUGET}} --skip-duplicate --source https://api.nuget.org/v3/index.json artifacts/*.nupkg

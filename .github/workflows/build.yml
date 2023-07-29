@@ -1,0 +1,26 @@
+name: build
+
+on:
+  push:
+    branches: [ "*" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: git checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: setup dotnet
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+    - name: restore
+      run: dotnet restore
+    - name: build
+      run: dotnet build -c Release --no-restore
+    - name: tests
+      run: dotnet test -c Release --no-restore --no-build 
