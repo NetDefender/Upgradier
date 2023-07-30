@@ -28,5 +28,5 @@ jobs:
       run: dotnet build -c Release --no-restore
     - name: tests
       run: dotnet test -c Release --no-restore --no-build 
-    - name: package
-      run: dotnet nuget push --api-key ${{secrets.NUGET}} --skip-duplicate --source https://api.nuget.org/v3/index.json artifacts/*.nupkg
+    # - name: package
+    #   run: dotnet nuget push --api-key ${{secrets.NUGET}} --skip-duplicate --source https://api.nuget.org/v3/index.json artifacts/*.nupkg
