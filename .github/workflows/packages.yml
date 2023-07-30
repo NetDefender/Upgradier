@@ -2,6 +2,7 @@ name: packages
 
 on:
   push:
+    branches: [ "master" ]
     tags: ['\d+.\d+.\d']
 
 jobs:
@@ -15,8 +16,8 @@ jobs:
       with:
         fetch-depth: 0
     # error if tag not exists in main
-    - name: tag in main
-      run: git branch -a --contains "${{github.ref_name}}" | grep '.*/master$' 
+    # - name: tag in main
+    #   run: git branch -a --contains "${{github.ref_name}}" | grep '.*/master$' 
     - name: setup dotnet
       uses: actions/setup-dotnet@v3
       with:
