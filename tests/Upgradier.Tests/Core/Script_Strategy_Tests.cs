@@ -1,12 +1,12 @@
 using Upgradier.Core;
 
-namespace Upgradier.Tests;
+namespace Upgradier.Tests.Core;
 
-public class Script_Adapter_Tests
+public class Script_Strategy_Tests
 {
-    private sealed class ScriptAdapterMock : ScriptAdapterBase
+    private sealed class ScriptStrategyMock : ScriptStrategyBase
     {
-        public ScriptAdapterMock(string? environment, string provider, string name) : base(environment, provider, name)
+        public ScriptStrategyMock(string? environment, string provider, string name) : base(environment, provider, name)
         {
         }
 
@@ -19,25 +19,24 @@ public class Script_Adapter_Tests
     [Fact]
     public void Provider_and_Name_are_not_null()
     {
-        ScriptAdapterMock adapter = new (null, "SqlServer", "Test");
+        ScriptStrategyMock strategy = new(null, "SqlServer", "Test");
 
-        Assert.NotNull(adapter.Provider);
-        Assert.NotNull(adapter.Name);
+        Assert.NotNull(strategy.Provider);
+        Assert.NotNull(strategy.Name);
     }
 
     [Fact]
     public void Environment_can_be_null()
     {
-        string environment = null;
-        ScriptAdapterMock adapter = new(environment, "Oracle", "Test");
-        Assert.Null(adapter.DerivedEnvironment);
+        ScriptStrategyMock strategy = new(null, "Oracle", "Test");
+        Assert.Null(strategy.DerivedEnvironment);
     }
 
     [Fact]
     public void Environment_can_be_not_null()
     {
         string environment = "dev";
-        ScriptAdapterMock adapter = new(environment, "SqlServer", "Test");
-        Assert.NotNull(adapter.DerivedEnvironment);
+        ScriptStrategyMock strategy = new(environment, "SqlServer", "Test");
+        Assert.NotNull(strategy.DerivedEnvironment);
     }
 }

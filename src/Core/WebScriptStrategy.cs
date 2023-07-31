@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Upgradier.Core;
 
-public class WebScriptAdapter : ScriptAdapterBase
+public class WebScriptStrategy : ScriptStrategyBase
 {
     private readonly string _baseUri;
     private static readonly HttpClient _client = new ();
 
-    public WebScriptAdapter(string baseUri, string provider, string? environment) : base(environment, provider, nameof(FileScriptAdapter))
+    public WebScriptStrategy(string baseUri, string provider, string? environment) : base(environment, provider, nameof(FileScriptStrategy))
     {
         ArgumentNullException.ThrowIfNull(baseUri);
         CoreExtensions.ThrowIfDirectoryNotExists(baseUri);

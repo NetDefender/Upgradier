@@ -2,11 +2,11 @@ using System.Text.Json;
 
 namespace Upgradier.Core;
 
-public class FileScriptAdapter : ScriptAdapterBase
+public class FileScriptStrategy : ScriptStrategyBase
 {
     private readonly string _baseDirectory;
 
-    public FileScriptAdapter(string baseDirectory, string provider, string? environment) : base(environment, provider, nameof(FileScriptAdapter))
+    public FileScriptStrategy(string baseDirectory, string provider, string? environment) : base(environment, provider, nameof(FileScriptStrategy))
     {
         ArgumentNullException.ThrowIfNull(baseDirectory);
         CoreExtensions.ThrowIfDirectoryNotExists(baseDirectory);

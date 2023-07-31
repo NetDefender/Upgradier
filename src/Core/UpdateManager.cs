@@ -8,7 +8,7 @@ public sealed class UpdateManager : IUpdateManager
 {
     private readonly int _waitTimeout;
     private readonly ISourceAdapter _sourceAdapter;
-    private readonly IScriptAdapter? _scriptAdapter;
+    private readonly IScriptStragegy? _scriptAdapter;
     private readonly IDictionary<string, IProviderFactory> _providerFactories;
     private readonly SemaphoreSlim _globalLock;
     private bool _isDisposed;
@@ -69,7 +69,7 @@ public sealed class UpdateManager : IUpdateManager
     private async ValueTask<UpdateResult> UpdateSource(Source source, CancellationToken cancellationToken = default)
     {
         IProviderFactory factory = _providerFactories[source.Provider];
-        IScriptAdapter scriptAdapter = _scriptAdapter ?? factory.CreateScriptAdapter();
+        IScriptStragegy scriptAdapter = _scriptAdapter ?? factory.CreateScriptStrategy();
         IEnumerable<Script> scripts = await scriptAdapter.GetAllScriptsAsync(cancellationToken).ConfigureAwait(false);
 
         UpdateResult updateResult = new(source.Name, factory.Name, source.ConnectionString, -1, -1, null);

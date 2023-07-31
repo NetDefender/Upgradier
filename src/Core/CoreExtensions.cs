@@ -30,7 +30,7 @@ public static class CoreExtensions
 
     public static UpdateBuilder WithFileScriptAdapter(this UpdateBuilder builder, string baseDirectory, string provider, string? environment = null)
     {
-        builder.WithScriptAdapter(() => new FileScriptAdapter(baseDirectory, provider, environment));
+        builder.WithScriptAdapter(() => new FileScriptStrategy(baseDirectory, provider, environment));
         return builder;
     }
 

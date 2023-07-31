@@ -4,7 +4,7 @@ public sealed class UpdateBuilder
 {
     private int _waitTimeout;
     private Func<ISourceAdapter>? _sourceAdapter;
-    private Func<IScriptAdapter>? _scriptAdapter;
+    private Func<IScriptStragegy>? _scriptAdapter;
     private readonly List<Func<IProviderFactory>> _providerFactories;
 
     public UpdateBuilder()
@@ -26,7 +26,7 @@ public sealed class UpdateBuilder
         return this;
     }
 
-    public UpdateBuilder WithScriptAdapter(Func<IScriptAdapter> scriptAdapter)
+    public UpdateBuilder WithScriptAdapter(Func<IScriptStragegy> scriptAdapter)
     {
         _scriptAdapter = scriptAdapter;
         return this;

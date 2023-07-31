@@ -23,13 +23,13 @@ public class SqlFactory : IProviderFactory
         throw new InvalidCastException(nameof(sourceDatabase));
     }
 
-    public virtual IScriptAdapter CreateScriptAdapter()
+    public virtual IScriptStragegy CreateScriptStrategy()
     {
         if (_scriptsDirectoryOrBaseUrl.IsAbsoluteUri())
         {
-            return new WebScriptAdapter(_scriptsDirectoryOrBaseUrl, Name, _environment);
+            return new WebScriptStrategy(_scriptsDirectoryOrBaseUrl, Name, _environment);
         }
-        return new FileScriptAdapter(_scriptsDirectoryOrBaseUrl, Name, _environment);
+        return new FileScriptStrategy(_scriptsDirectoryOrBaseUrl, Name, _environment);
     }
 
     public virtual SourceDatabase CreateSourceDatabase(string connectionString)

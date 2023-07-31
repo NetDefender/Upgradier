@@ -1,8 +1,8 @@
 ﻿namespace Upgradier.Core;
 
-public abstract class ScriptAdapterBase : IScriptAdapter
+public abstract class ScriptStrategyBase : IScriptStragegy
 {
-    protected ScriptAdapterBase(string? environment, string provider, string name)
+    protected ScriptStrategyBase(string? environment, string provider, string name)
     {
         ArgumentNullException.ThrowIfNull(provider);
         ArgumentNullException.ThrowIfNull(name);
@@ -17,7 +17,7 @@ public abstract class ScriptAdapterBase : IScriptAdapter
     public abstract ValueTask<StreamReader> GetScriptContentsAsync(Script script, CancellationToken cancellationToken);
 }
 
-public interface IScriptAdapter
+public interface IScriptStragegy
 {
     string Name { get; }
     ValueTask<IEnumerable<Script>> GetAllScriptsAsync(CancellationToken cancellationToken);
