@@ -6,13 +6,14 @@ public class SqlFactory : IProviderFactory
 {
     private readonly string? _environment;
     private readonly string _scriptsDirectoryOrBaseUrl;
+    public const string NAME = "SqlServer";
 
     public SqlFactory(string? environment, string scriptsDirectoryOrBaseUrl)
     {
         _environment = environment;
         _scriptsDirectoryOrBaseUrl = scriptsDirectoryOrBaseUrl;
     }
-    public string Name => "SqlServer";
+    public string Name => NAME;
 
     public virtual ILockStrategy CreateLockStrategy(SourceDatabase sourceDatabase)
     {
@@ -25,7 +26,7 @@ public class SqlFactory : IProviderFactory
 
     public virtual IScriptStragegy CreateScriptStrategy()
     {
-        if (_scriptsDirectoryOrBaseUrl.IsAbsoluteUri())
+        if (_scriptsDirectoryOrBaseUrl.IsAbsoluteUriHttp())
         {
             return new WebScriptStrategy(_scriptsDirectoryOrBaseUrl, Name, _environment);
         }

@@ -16,13 +16,13 @@ public static class CoreExtensions
 
     public static void ThrowIfStringIsNotAbsoluteWebResource([StringSyntax(StringSyntaxAttribute.Uri)]string possibleUri, string? message = null)
     {
-        if (!IsAbsoluteUri(possibleUri))
+        if (!IsAbsoluteUriHttp(possibleUri))
         {
             throw new DirectoryNotFoundException($"The value {possibleUri} is not an absolute Uri. {message}");
         }
     }
 
-    public static bool IsAbsoluteUri([StringSyntax(StringSyntaxAttribute.Uri)] this string possibleUri)
+    public static bool IsAbsoluteUriHttp([StringSyntax(StringSyntaxAttribute.Uri)] this string possibleUri)
     {
         return Uri.TryCreate(possibleUri, UriKind.Absolute, out Uri? outUri)
             && outUri is not null && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps);
