@@ -12,7 +12,7 @@ public class WebScriptStrategy : ScriptStrategyBase
     public WebScriptStrategy(string baseUri, string provider, string? environment) : base(environment, provider, nameof(FileScriptStrategy))
     {
         ArgumentNullException.ThrowIfNull(baseUri);
-        CoreExtensions.ThrowIfDirectoryNotExists(baseUri);
+        CoreExtensions.ThrowIfStringIsNotAbsoluteWebResource(baseUri);
         _baseUri = baseUri;
     }
 

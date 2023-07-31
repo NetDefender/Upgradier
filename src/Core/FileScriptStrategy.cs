@@ -9,7 +9,6 @@ public class FileScriptStrategy : ScriptStrategyBase
     public FileScriptStrategy(string baseDirectory, string provider, string? environment) : base(environment, provider, nameof(FileScriptStrategy))
     {
         ArgumentNullException.ThrowIfNull(baseDirectory);
-        CoreExtensions.ThrowIfDirectoryNotExists(baseDirectory);
         _baseDirectory = baseDirectory;
     }
 
