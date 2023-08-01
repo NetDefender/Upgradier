@@ -8,11 +8,11 @@ public abstract class LockStrategyBase : ILockStrategy
         Context = context;
     }
     public string? Environment { get; }
-    protected SourceDatabase Context { get; }
+    protected internal SourceDatabase Context { get; }
     public bool IsLockAdquired { get; protected set; }
     public abstract Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default);
     public abstract Task FreeAsync(CancellationToken cancellationToken = default);
-    public abstract Task EnsureSchema(SourceDatabase sourceDatabase, CancellationToken cancellationToken = default);
+    public abstract Task EnsureSchema(CancellationToken cancellationToken = default);
     public void Dispose()
     {
         Dispose(disposing: true);
@@ -25,7 +25,7 @@ public interface ILockStrategy : IDisposable
 {
     Task FreeAsync(CancellationToken cancellationToken = default);
     Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default);
-    Task EnsureSchema(SourceDatabase sourceDatabase, CancellationToken cancellationToken = default);
+    Task EnsureSchema(CancellationToken cancellationToken = default);
     bool IsLockAdquired { get; }
     string? Environment { get; }
 }

@@ -14,12 +14,12 @@ public class SqlLockStrategy : LockStrategyBase
     public sealed override async Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default)
     {
         _transaction = await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken).ConfigureAwait(false);
-        SqlLockResult lockResult = await Context.Database.SqlQuery<SqlLockResult>($"""
+        SqlLockResult lockResult = Context.Database.SqlQueryRaw<SqlLockResult>("""
             DECLARE @LockResult INT;
             EXEC @LockResult = sp_getapplock @Resource = N'sqlserver-lock-strategy', @LockMode = 'Exclusive', @LockOwner = 'Transaction';
             SELECT @LockResult;
-            """).FirstAsync(cancellationToken).ConfigureAwait(false);
-        await EnsureSchema(Context, cancellationToken).ConfigureAwait(false);
+            """).AsEnumerable().First();
+        await EnsureSchema(cancellationToken).ConfigureAwait(false);
         return lockResult == SqlLockResult.Granted;
     }
     public sealed override async Task FreeAsync(CancellationToken cancellationToken = default)
@@ -30,16 +30,16 @@ public class SqlLockStrategy : LockStrategyBase
         }
     }
 
-    public override async Task EnsureSchema(SourceDatabase sourceDatabase, CancellationToken cancellationToken = default)
+    public override async Task EnsureSchema(CancellationToken cancellationToken = default)
     {
-        Assembly resourceAssembly = sourceDatabase.GetType().Assembly;
+        Assembly resourceAssembly = Context.GetType().Assembly;
         Dictionary<int, string> migrationScripts = resourceAssembly.GetManifestResourceNames().Where(resource => resource.EndsWith(".sql"))
             .ToDictionary(resource => resource.ResourceId());
         Stream? startupResource = resourceAssembly.GetManifestResourceStream(migrationScripts[0]);
         ArgumentNullException.ThrowIfNull(startupResource);
         using StreamReader startupScript = new(startupResource, leaveOpen: false);
-        await sourceDatabase.Database.ExecuteSqlRawAsync(await startupScript.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
-        MigrationHistory? currentMigration = await sourceDatabase.MigrationHistory.FirstOrDefaultAsync(cancellationToken);
+        await Context.Database.ExecuteSqlRawAsync(await startupScript.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+        MigrationHistory? currentMigration = await Context.MigrationHistory.FirstOrDefaultAsync(cancellationToken);
         int currentMigrationValue = currentMigration?.MigrationId ?? 0;
 
         foreach (int migrationNeeded in migrationScripts.Keys.Where(scriptKey => scriptKey > currentMigrationValue).Order())
@@ -47,7 +47,7 @@ public class SqlLockStrategy : LockStrategyBase
             Stream? migrationResource = resourceAssembly.GetManifestResourceStream(migrationScripts[migrationNeeded]);
             ArgumentNullException.ThrowIfNull(migrationResource);
             using StreamReader migrationScript = new(migrationResource, leaveOpen: false);
-            await sourceDatabase.Database.ExecuteSqlRawAsync(await migrationScript.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+            await Context.Database.ExecuteSqlRawAsync(await migrationScript.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
         }
     }
 

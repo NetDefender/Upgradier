@@ -56,7 +56,7 @@ public sealed class SqlFactory_Tests : IClassFixture<SqlServerDatabaseFixture>
     }
 
     [Theory]
-    //[InlineData(@"c:\path\scripts")]
+    [InlineData(@"c:\path\scripts")]
     [InlineData(@"\\path.place.com\scripts")]
     public async Task CreateScriptStrategy_Is_FileScriptStrategy(string directory)
     {
