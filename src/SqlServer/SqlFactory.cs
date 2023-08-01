@@ -26,8 +26,16 @@ public class SqlFactory : IProviderFactory
 
     public virtual IScriptStragegy CreateScriptStrategy()
     {
-        if (_scriptsDirectoryOrBaseUrl.IsAbsoluteUriHttp())
+        if (_scriptsDirectoryOrBaseUrl.IsNullOrEmptyOrWhiteSpace())
         {
+            throw new InvalidOperationException($"There is not a {nameof(IScriptStragegy)} for null scheme. {nameof(_scriptsDirectoryOrBaseUrl)} is null.");
+        }
+        if (_scriptsDirectoryOrBaseUrl.TryCreateUri(out Uri? uri))
+        {
+            if (!uri.IsHttpScheme())
+            {
+                throw new InvalidOperationException($"There is not a {nameof(IScriptStragegy)} for {uri?.Scheme ?? "unknown"} scheme");
+            }
             return new WebScriptStrategy(_scriptsDirectoryOrBaseUrl, Name, _environment);
         }
         return new FileScriptStrategy(_scriptsDirectoryOrBaseUrl, Name, _environment);

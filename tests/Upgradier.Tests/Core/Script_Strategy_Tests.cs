@@ -2,7 +2,7 @@ using Upgradier.Core;
 
 namespace Upgradier.Tests.Core;
 
-public class Script_Strategy_Tests
+public sealed class Script_Strategy_Tests
 {
     private sealed class ScriptStrategyMock : ScriptStrategyBase
     {

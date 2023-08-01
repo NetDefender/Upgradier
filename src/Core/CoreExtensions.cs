@@ -16,16 +16,25 @@ public static class CoreExtensions
 
     public static void ThrowIfStringIsNotAbsoluteWebResource([StringSyntax(StringSyntaxAttribute.Uri)]string possibleUri, string? message = null)
     {
-        if (!IsAbsoluteUriHttp(possibleUri))
+        if (!TryCreateUri(possibleUri, out Uri? uri) || !IsHttpScheme(uri))
         {
             throw new DirectoryNotFoundException($"The value {possibleUri} is not an absolute Uri. {message}");
         }
     }
 
-    public static bool IsAbsoluteUriHttp([StringSyntax(StringSyntaxAttribute.Uri)] this string possibleUri)
+    public static bool TryCreateUri([StringSyntax(StringSyntaxAttribute.Uri)] this string possibleUri, out Uri? uri)
     {
-        return Uri.TryCreate(possibleUri, UriKind.Absolute, out Uri? outUri)
-            && outUri is not null && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps);
+        if (!Uri.IsWellFormedUriString(possibleUri, UriKind.Absolute))
+        {
+            uri = null;
+            return false;
+        }
+        return Uri.TryCreate(possibleUri, UriKind.Absolute, out uri);
+    }
+
+    public static bool IsHttpScheme(this Uri? uri)
+    {
+        return uri != null && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
     }
 
     public static UpdateBuilder WithFileScriptAdapter(this UpdateBuilder builder, string baseDirectory, string provider, string? environment = null)
@@ -56,5 +65,23 @@ public static class CoreExtensions
     {
         builder.Remove(builder.Length - 1, 1);
         return builder;
+    }
+
+    public static bool IsNullOrEmptyOrWhiteSpace(this string value)
+    {
+        return string.IsNullOrEmpty(value) || value.IsWhiteSpace();
+    }
+
+    public static bool IsWhiteSpace(this string value)
+    {
+        for (int i = 0; i < value.Length; i++)
+        {
+            if (!char.IsWhiteSpace(value[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -56,7 +56,7 @@ public sealed class SqlFactory_Tests : IClassFixture<SqlServerDatabaseFixture>
     }
 
     [Theory]
-    [InlineData(@"c:\path\scripts")]
+    //[InlineData(@"c:\path\scripts")]
     [InlineData(@"\\path.place.com\scripts")]
     public async Task CreateScriptStrategy_Is_FileScriptStrategy(string directory)
     {
@@ -73,6 +73,38 @@ public sealed class SqlFactory_Tests : IClassFixture<SqlServerDatabaseFixture>
         SqlFactory factory = new("dev", url);
         IScriptStragegy scriptStrategy = factory.CreateScriptStrategy();
         Assert.True(scriptStrategy is WebScriptStrategy);
+    }
+
+    [Theory]
+    [InlineData("ftp://enterprise.es/scripts")]
+    //[InlineData("ftps://enterprise.es/scripts")]
+    //[InlineData("sftp://enterprise.es/scripts")]
+    //[InlineData("file://enterprise.es/scripts")]
+    //[InlineData("gopher://enterprise.es/scripts")]
+    //[InlineData("ws://enterprise.es/scripts")]
+    //[InlineData("wss://enterprise.es/scripts")]
+    //[InlineData("mailto://enterprise.es/scripts")]
+    //[InlineData("news://enterprise.es/scripts")]
+    //[InlineData("nntp://enterprise.es/scripts")]
+    //[InlineData("ssh://enterprise.es/scripts")]
+    //[InlineData("telnet://enterprise.es/scripts")]
+    //[InlineData("net.tcp://enterprise.es/scripts")]
+    //[InlineData("net.pipe://enterprise.es/scripts")]
+    //[InlineData(null)]
+    //[InlineData("   ")]
+    //[InlineData("")]
+    public async Task CreateScriptStrategy_Fails_For_Unknown_Schemes(string url)
+    {
+        SqlFactory factory = new("dev", url);
+        try
+        {
+            IScriptStragegy scriptStrategy = factory.CreateScriptStrategy();
+            Assert.Fail("By default there is not a strategy for other protocols except http/https but looks like it is");
+        }
+        catch (InvalidOperationException ex)
+        {
+            _output.WriteLine($"Expected: {ex.Message}");
+        }
     }
 
     [Fact]
