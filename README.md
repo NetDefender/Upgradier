@@ -1,6 +1,8 @@
-# Upgradier
+# Upgradier - minimalist multiple database updater
 
 A minimalist approach for updating multiple databases to a version based in convention SQL scripts
+
+[![packages](https://github.com/NetDefender/Ugradier/actions/workflows/packages.yml/badge.svg)](https://github.com/NetDefender/Ugradier/actions/workflows/packages.yml)
 
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
