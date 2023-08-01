@@ -4,6 +4,13 @@ on:
   push:
     branches: [ "master" ]
     tags: ['\d+.\d+.\d']
+    paths-ignore:
+      - 'README.md'
+      - 'Upgradier.png'
+      - 'xunit.runner'
+      - 'Directory.Build.*'
+      - 'LICENSE.txt'
+      - '.editorconfig'
 
 jobs:
   build:

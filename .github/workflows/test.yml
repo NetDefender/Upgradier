@@ -3,6 +3,13 @@ name: build
 on:
   push:
     branches: [ "!master" ]
+    paths-ignore:
+      - 'README.md'
+      - 'Upgradier.png'
+      - 'xunit.runner'
+      - 'Directory.Build.*'
+      - 'LICENSE.txt'
+      - '.editorconfig'
 
 jobs:
   build:

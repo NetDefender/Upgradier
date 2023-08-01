@@ -18,7 +18,6 @@ A minimalist approach for updating multiple databases to a version based in conv
 
 ## Architecture
 
-
 ```mermaid
 erDiagram
     UpdateBuilder||--|| IUpdateManager: creates
@@ -27,6 +26,6 @@ erDiagram
     IUpdateManager ||--|{ Provider :has
     Provider ||--|| Name :has
     Provider ||--|| ILockStrategy :creates
-    Provider ||--|| IScriptAdapter :creates
+    Provider ||--|| IScriptStrategy :creates
     Provider ||--|| SourceDatabase :creates
 ```
