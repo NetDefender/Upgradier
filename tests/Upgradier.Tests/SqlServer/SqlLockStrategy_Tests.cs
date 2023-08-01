@@ -36,7 +36,7 @@ public sealed class SqlLockStrategy_Tests : IClassFixture<SqlServerDatabaseFixtu
         using SqlLockStrategy strategy = CreateLockStrategy("dev");
         using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         bool adquired = await strategy.TryAdquireAsync(cancellationTokenSource.Token);
-        Assert.True(adquired, "Lock shoudl be adquired");
+        Assert.True(adquired, "Lock should be adquired");
         MigrationHistory migrationHistory = await strategy.Context.MigrationHistory.FirstAsync(cancellationTokenSource.Token);
         Assert.Equal(1, migrationHistory.MigrationId);
     }
@@ -47,6 +47,9 @@ public sealed class SqlLockStrategy_Tests : IClassFixture<SqlServerDatabaseFixtu
     {
         using SqlLockStrategy strategy = CreateLockStrategy("dev");
         using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        await strategy.EnsureSchema(cancellationTokenSource.Token);
+        await strategy.EnsureSchema(cancellationTokenSource.Token);
+        await strategy.EnsureSchema(cancellationTokenSource.Token);
         await strategy.EnsureSchema(cancellationTokenSource.Token);
         await strategy.EnsureSchema(cancellationTokenSource.Token);
         await strategy.EnsureSchema(cancellationTokenSource.Token);

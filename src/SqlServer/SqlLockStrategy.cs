@@ -20,7 +20,7 @@ public class SqlLockStrategy : LockStrategyBase
             SELECT @LockResult;
             """).AsEnumerable().First();
         await EnsureSchema(cancellationToken).ConfigureAwait(false);
-        return lockResult == SqlLockResult.Granted;
+        return lockResult is SqlLockResult.Granted or SqlLockResult.Success;
     }
     public sealed override async Task FreeAsync(CancellationToken cancellationToken = default)
     {
