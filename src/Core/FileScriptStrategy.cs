@@ -8,14 +8,15 @@ public class FileScriptStrategy : ScriptStrategyBase
 
     public FileScriptStrategy(string baseDirectory, string provider, string? environment) : base(environment, provider, nameof(FileScriptStrategy))
     {
-        ArgumentNullException.ThrowIfNull(baseDirectory);
-        _baseDirectory = baseDirectory;
+        ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
+        _baseDirectory = !Path.EndsInDirectorySeparator(path: baseDirectory) ? baseDirectory + Path.DirectorySeparatorChar : baseDirectory;
     }
 
     public override ValueTask<IEnumerable<Script>> GetAllScriptsAsync(CancellationToken cancellationToken)
     {
-        string scriptsFile = Path.Combine(_baseDirectory, Provider, string.IsNullOrEmpty(Environment) ? "Index.json" : $"Index.{Environment}.json");
-        List<Script>? scripts = JsonSerializer.Deserialize<List<Script>>(scriptsFile);
+        string scriptsFile = Path.Combine(_baseDirectory, string.IsNullOrEmpty(Environment) ? "Index.json" : $"Index.{Environment}.json");
+        using FileStream scriptsStream = new (scriptsFile, FileMode.Open);
+        List<Script>? scripts = JsonSerializer.Deserialize<List<Script>>(scriptsStream);
         ArgumentNullException.ThrowIfNull(scripts);
         ArgumentOutOfRangeException.ThrowIfZero(scripts.Count);
         return ValueTask.FromResult(scripts.AsReadOnly().AsEnumerable());

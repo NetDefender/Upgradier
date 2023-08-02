@@ -46,7 +46,7 @@ public sealed class SqlLockStrategy_Tests : IClassFixture<SqlServerDatabaseFixtu
     public async Task EnsureSchema_Called_Multiple_Times_Doesnt_Change_MigrationId()
     {
         using SqlLockStrategy strategy = CreateLockStrategy("dev");
-        using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        using CancellationTokenSource cancellationTokenSource = new ();
         await strategy.EnsureSchema(cancellationTokenSource.Token);
         await strategy.EnsureSchema(cancellationTokenSource.Token);
         await strategy.EnsureSchema(cancellationTokenSource.Token);

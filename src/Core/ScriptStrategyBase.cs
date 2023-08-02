@@ -4,8 +4,8 @@ public abstract class ScriptStrategyBase : IScriptStragegy
 {
     protected ScriptStrategyBase(string? environment, string provider, string name)
     {
-        ArgumentNullException.ThrowIfNull(provider);
-        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNullOrEmpty(provider);
+        ArgumentNullException.ThrowIfNullOrEmpty(name);
         Name = name;
         Provider = provider;
         Environment = environment;
