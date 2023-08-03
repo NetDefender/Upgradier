@@ -9,7 +9,7 @@ public sealed class FileScriptStrategy_Tests
     {
         using CancellationTokenSource cancellationTokenSource = new();
         FileScriptStrategy strategy = new("Core/Scripts", "SqlServer", null);
-        IEnumerable<Script> scripts = await strategy.GetAllScriptsAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+        IEnumerable<Script> scripts = await strategy.GetScriptsAsync(cancellationTokenSource.Token).ConfigureAwait(false);
         Assert.NotNull(scripts.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(scripts.FirstOrDefault(s => s.VersionId == 2));
         Assert.Equal(2, scripts.Count());
@@ -20,7 +20,7 @@ public sealed class FileScriptStrategy_Tests
     {
         using CancellationTokenSource cancellationTokenSource = new();
         FileScriptStrategy strategy = new("Core/Scripts/", "SqlServer", null);
-        IEnumerable<Script> scripts = await strategy.GetAllScriptsAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+        IEnumerable<Script> scripts = await strategy.GetScriptsAsync(cancellationTokenSource.Token).ConfigureAwait(false);
         Assert.NotNull(scripts.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(scripts.FirstOrDefault(s => s.VersionId == 2));
         Assert.Equal(2, scripts.Count());
@@ -31,7 +31,7 @@ public sealed class FileScriptStrategy_Tests
     {
         using CancellationTokenSource cancellationTokenSource = new();
         FileScriptStrategy strategy = new("Core/Scripts", "SqlServer", null);
-        IEnumerable<Script> scripts = await strategy.GetAllScriptsAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+        IEnumerable<Script> scripts = await strategy.GetScriptsAsync(cancellationTokenSource.Token).ConfigureAwait(false);
         Assert.NotNull(scripts.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(scripts.FirstOrDefault(s => s.VersionId == 2));
         Assert.Equal(2, scripts.Count());
@@ -42,7 +42,7 @@ public sealed class FileScriptStrategy_Tests
     {
         using CancellationTokenSource cancellationTokenSource = new();
         FileScriptStrategy strategy = new("Core/Scripts", "SqlServer", "Dev");
-        IEnumerable<Script> scripts = await strategy.GetAllScriptsAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+        IEnumerable<Script> scripts = await strategy.GetScriptsAsync(cancellationTokenSource.Token).ConfigureAwait(false);
         Assert.NotNull(scripts.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(scripts.FirstOrDefault(s => s.VersionId == 2));
         Assert.NotNull(scripts.FirstOrDefault(s => s.VersionId == 3));
@@ -68,7 +68,7 @@ public sealed class FileScriptStrategy_Tests
         await Assert.ThrowsAsync<DirectoryNotFoundException>(async () =>
         {
             FileScriptStrategy strategy = new("NonExistentDirectory/Scripts", "SqlServer", "Dev");
-            IEnumerable<Script> scripts = await strategy.GetAllScriptsAsync(CancellationToken.None).ConfigureAwait(false);
+            IEnumerable<Script> scripts = await strategy.GetScriptsAsync(CancellationToken.None).ConfigureAwait(false);
         });
     }
 }

@@ -12,13 +12,12 @@ public class FileScriptStrategy : ScriptStrategyBase
         _baseDirectory = !Path.EndsInDirectorySeparator(path: baseDirectory) ? baseDirectory + Path.DirectorySeparatorChar : baseDirectory;
     }
 
-    public override ValueTask<IEnumerable<Script>> GetAllScriptsAsync(CancellationToken cancellationToken)
+    public override ValueTask<IEnumerable<Script>> GetScriptsAsync(CancellationToken cancellationToken)
     {
         string scriptsFile = Path.Combine(_baseDirectory, string.IsNullOrEmpty(Environment) ? "Index.json" : $"Index.{Environment}.json");
         using FileStream scriptsStream = new (scriptsFile, FileMode.Open);
         List<Script>? scripts = JsonSerializer.Deserialize<List<Script>>(scriptsStream);
         ArgumentNullException.ThrowIfNull(scripts);
-        ArgumentOutOfRangeException.ThrowIfZero(scripts.Count);
         return ValueTask.FromResult(scripts.AsReadOnly().AsEnumerable());
     }
 

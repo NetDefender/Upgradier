@@ -1,14 +1,12 @@
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Upgradier.Core;
 
 public sealed class UpdateManager : IUpdateManager
 {
     private readonly int _waitTimeout;
-    private readonly ISourceAdapter _sourceAdapter;
-    private readonly IScriptStragegy? _scriptAdapter;
+    private readonly ISourceProvider _sourceAdapter;
+    private readonly IScriptStrategy? _scriptAdapter;
     private readonly IDictionary<string, IProviderFactory> _providerFactories;
     private readonly SemaphoreSlim _globalLock;
     private bool _isDisposed;
@@ -39,7 +37,7 @@ public sealed class UpdateManager : IUpdateManager
             if (await _globalLock.WaitAsync(_waitTimeout, cancellationToken).ConfigureAwait(false))
             {
                 isGlobalLockAdquired = true;
-                IEnumerable<Source> sources = await _sourceAdapter.GetAllSourcesAsync(cancellationToken).ConfigureAwait(false);
+                IEnumerable<Source> sources = await _sourceAdapter.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
 
                 foreach (Source source in sources)
                 {
@@ -60,7 +58,7 @@ public sealed class UpdateManager : IUpdateManager
 
     public async ValueTask<UpdateResult> UpdateSource(string sourceName, CancellationToken cancellationToken = default)
     {
-        IEnumerable<Source> sources = await _sourceAdapter.GetAllSourcesAsync(cancellationToken).ConfigureAwait(false);
+        IEnumerable<Source> sources = await _sourceAdapter.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
         Source? source = sources.FirstOrDefault(s => s.Name == sourceName);
         ArgumentNullException.ThrowIfNull(source);
         return await UpdateSource(source, cancellationToken).ConfigureAwait(false);
@@ -69,8 +67,8 @@ public sealed class UpdateManager : IUpdateManager
     private async ValueTask<UpdateResult> UpdateSource(Source source, CancellationToken cancellationToken = default)
     {
         IProviderFactory factory = _providerFactories[source.Provider];
-        IScriptStragegy scriptAdapter = _scriptAdapter ?? factory.CreateScriptStrategy();
-        IEnumerable<Script> scripts = await scriptAdapter.GetAllScriptsAsync(cancellationToken).ConfigureAwait(false);
+        IScriptStrategy scriptStrategy = _scriptAdapter ?? factory.CreateScriptStrategy();
+        IEnumerable<Script> scripts = await scriptStrategy.GetScriptsAsync(cancellationToken).ConfigureAwait(false);
 
         UpdateResult updateResult = new(source.Name, factory.Name, source.ConnectionString, -1, -1, null);
         try
@@ -84,7 +82,7 @@ public sealed class UpdateManager : IUpdateManager
                 updateResult = updateResult with { OriginalVersion = currentVersion.VersionId };
                 foreach (Script script in scripts.Where(s => s.VersionId > currentVersion.VersionId))
                 {
-                    using StreamReader sqlContentStream = await scriptAdapter.GetScriptContentsAsync(script, cancellationToken).ConfigureAwait(false);
+                    using StreamReader sqlContentStream = await scriptStrategy.GetScriptContentsAsync(script, cancellationToken).ConfigureAwait(false);
                     string sqlContent = await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
                     await sourceDatabase.Database.ExecuteSqlRawAsync(sqlContent, cancellationToken).ConfigureAwait(false);
                     currentVersion.VersionId = script.VersionId;

@@ -4,6 +4,6 @@ public interface IProviderFactory
 {
     string Name { get; }
     ILockStrategy CreateLockStrategy(SourceDatabase sourceDatabase);
-    IScriptStragegy CreateScriptStrategy();
+    IScriptStrategy CreateScriptStrategy();
     SourceDatabase CreateSourceDatabase(string connectionString);
 }

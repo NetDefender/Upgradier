@@ -10,7 +10,7 @@ public sealed class ScriptStrategy_Tests
         {
         }
         public string DerivedEnvironment => Environment;
-        public override ValueTask<IEnumerable<Script>> GetAllScriptsAsync(CancellationToken cancellationToken) => throw new NotImplementedException();
+        public override ValueTask<IEnumerable<Script>> GetScriptsAsync(CancellationToken cancellationToken) => throw new NotImplementedException();
         public override ValueTask<StreamReader> GetScriptContentsAsync(Script script, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 

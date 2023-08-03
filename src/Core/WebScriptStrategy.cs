@@ -6,22 +6,28 @@ namespace Upgradier.Core;
 
 public class WebScriptStrategy : ScriptStrategyBase
 {
-    private readonly string _baseUri;
+    private readonly Uri _baseUri;
     private static readonly HttpClient _client = new ();
+    private Func<HttpRequestMessage, Task> _configureRequest = _ => Task.CompletedTask;
 
-    public WebScriptStrategy(string baseUri, string provider, string? environment) : base(environment, provider, nameof(FileScriptStrategy))
+    public WebScriptStrategy(Uri baseUri, string provider, string? environment) : base(environment, provider, nameof(FileScriptStrategy))
     {
         ArgumentNullException.ThrowIfNull(baseUri);
-        CoreExtensions.ThrowIfStringIsNotAbsoluteWebResource(baseUri);
+        CoreExtensions.ThrowIfIsNotAbsoluteUri(baseUri);
         _baseUri = baseUri;
     }
 
-    public override async ValueTask<IEnumerable<Script>> GetAllScriptsAsync(CancellationToken cancellationToken)
+    public override async ValueTask<IEnumerable<Script>> GetScriptsAsync(CancellationToken cancellationToken)
     {
-        string scriptsFile = Path.Combine(_baseUri, Provider, string.IsNullOrEmpty(Environment) ? "Index.json" : $"Index.{Environment}.json");
-        List<Script>? scripts = await _client.GetFromJsonAsync<List<Script>>(scriptsFile, cancellationToken).ConfigureAwait(false);
+        UriBuilder builder = new (_baseUri);
+        string scriptsUri = builder
+            .CombinePath(string.IsNullOrEmpty(Environment) ? "Index.json" : $"Index.{Environment}.json")
+            .Uri.AbsoluteUri;
+        using HttpRequestMessage request = new (HttpMethod.Get, scriptsUri);
+        await _configureRequest(request).ConfigureAwait(false);
+        using HttpResponseMessage response = await _client.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        List<Script>? scripts = await response.Content.ReadFromJsonAsync<List<Script>>(cancellationToken).ConfigureAwait(false);
         ArgumentNullException.ThrowIfNull(scripts);
-        ArgumentOutOfRangeException.ThrowIfZero(scripts.Count);
         return scripts.AsReadOnly().AsEnumerable();
     }
 
@@ -32,7 +38,16 @@ public class WebScriptStrategy : ScriptStrategyBase
             .Append('/').Append(Provider)
             .Append('/').Append(script.VersionId).Append(".sql");
         uriBuilder.Path = uri.ToString();
-        Stream stream = await _client.GetStreamAsync(uriBuilder.Uri, cancellationToken).ConfigureAwait(false);
+        using HttpRequestMessage request = new(HttpMethod.Get, uriBuilder.Uri);
+        await _configureRequest(request).ConfigureAwait(false);
+        using HttpResponseMessage response = await _client.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        Stream stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
         return new StreamReader(stream, leaveOpen: false);
+    }
+
+    public void ConfigureRequestMessage(Func<HttpRequestMessage, Task> configureRequest)
+    {
+        ArgumentNullException.ThrowIfNull(configureRequest);
+        _configureRequest = configureRequest;
     }
 }

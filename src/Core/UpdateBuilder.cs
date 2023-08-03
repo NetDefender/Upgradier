@@ -1,10 +1,12 @@
-﻿namespace Upgradier.Core;
+﻿using System.Net.Http;
+
+namespace Upgradier.Core;
 
 public sealed class UpdateBuilder
 {
     private int _waitTimeout;
-    private Func<ISourceAdapter>? _sourceAdapter;
-    private Func<IScriptStragegy>? _scriptAdapter;
+    private Func<ISourceProvider>? _sourceStrategy;
+    private Func<IScriptStrategy>? _scriptStrategy;
     private readonly List<Func<IProviderFactory>> _providerFactories;
 
     public UpdateBuilder()
@@ -20,15 +22,28 @@ public sealed class UpdateBuilder
         return this;
     }
 
-    public UpdateBuilder WithSourceAdapter(Func<ISourceAdapter> sourceAdapter)
+    public UpdateBuilder WithSourceProvider(Func<ISourceProvider> sourceAdapter)
     {
-        _sourceAdapter = sourceAdapter;
+        _sourceStrategy = sourceAdapter;
         return this;
     }
 
-    public UpdateBuilder WithScriptAdapter(Func<IScriptStragegy> scriptAdapter)
+    public UpdateBuilder WithScriptStrategy(Func<IScriptStrategy> scriptStrategy)
     {
-        _scriptAdapter = scriptAdapter;
+        _scriptStrategy = scriptStrategy;
+        return this;
+    }
+
+    public UpdateBuilder WithWebScriptStrategy(Func<WebScriptStrategy> scriptStrategy, Func<HttpRequestMessage, Task> configureRequest)
+    {
+        ArgumentNullException.ThrowIfNull(scriptStrategy);
+        ArgumentNullException.ThrowIfNull(configureRequest);
+        _scriptStrategy = () =>
+        {
+            WebScriptStrategy webStrategy = scriptStrategy();
+            webStrategy.ConfigureRequestMessage(configureRequest);
+            return webStrategy;
+        };
         return this;
     }
 
@@ -40,14 +55,14 @@ public sealed class UpdateBuilder
 
     public UpdateManager Build()
     {
-        ArgumentNullException.ThrowIfNull(_sourceAdapter);
-        ArgumentNullException.ThrowIfNull(_scriptAdapter);
+        ArgumentNullException.ThrowIfNull(_sourceStrategy);
+        ArgumentNullException.ThrowIfNull(_scriptStrategy);
         return new(new UpdateOptions
         {
             WaitTimeout = _waitTimeout,
             Providers = _providerFactories,
-            SourceAdapter = _sourceAdapter,
-            ScriptAdapter = _scriptAdapter
+            SourceAdapter = _sourceStrategy,
+            ScriptAdapter = _scriptStrategy
         });
     }
 }

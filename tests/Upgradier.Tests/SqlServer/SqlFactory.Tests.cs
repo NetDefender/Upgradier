@@ -61,7 +61,7 @@ public sealed class SqlFactory_Tests : IClassFixture<SqlServerDatabaseFixture>
     public async Task CreateScriptStrategy_Is_FileScriptStrategy(string directory)
     {
         SqlFactory factory = new("dev", directory);
-        IScriptStragegy scriptStrategy = factory.CreateScriptStrategy();
+        IScriptStrategy scriptStrategy = factory.CreateScriptStrategy();
         Assert.True(scriptStrategy is FileScriptStrategy);
     }
 
@@ -71,7 +71,7 @@ public sealed class SqlFactory_Tests : IClassFixture<SqlServerDatabaseFixture>
     public async Task CreateScriptStrategy_Is_WebScriptStrategy(string url)
     {
         SqlFactory factory = new("dev", url);
-        IScriptStragegy scriptStrategy = factory.CreateScriptStrategy();
+        IScriptStrategy scriptStrategy = factory.CreateScriptStrategy();
         Assert.True(scriptStrategy is WebScriptStrategy);
     }
 
@@ -98,7 +98,7 @@ public sealed class SqlFactory_Tests : IClassFixture<SqlServerDatabaseFixture>
         SqlFactory factory = new("dev", url);
         try
         {
-            IScriptStragegy scriptStrategy = factory.CreateScriptStrategy();
+            IScriptStrategy scriptStrategy = factory.CreateScriptStrategy();
             Assert.Fail("By default there is not a strategy for other protocols except http/https but looks like it is");
         }
         catch (InvalidOperationException ex)

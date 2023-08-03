@@ -14,6 +14,14 @@ public static class CoreExtensions
         }
     }
 
+    public static void ThrowIfIsNotAbsoluteUri(Uri uri, string? message = null)
+    {
+        if (uri is null || !uri.IsAbsoluteUri || !IsHttpScheme(uri))
+        {
+            throw new DirectoryNotFoundException($"The value {uri} is not an absolute Uri. {message}");
+        }
+    }
+
     public static void ThrowIfStringIsNotAbsoluteWebResource([StringSyntax(StringSyntaxAttribute.Uri)]string possibleUri, string? message = null)
     {
         if (!TryCreateUri(possibleUri, out Uri? uri) || !IsHttpScheme(uri))
@@ -39,7 +47,7 @@ public static class CoreExtensions
 
     public static UpdateBuilder WithFileScriptAdapter(this UpdateBuilder builder, string baseDirectory, string provider, string? environment = null)
     {
-        builder.WithScriptAdapter(() => new FileScriptStrategy(baseDirectory, provider, environment));
+        builder.WithScriptStrategy(() => new FileScriptStrategy(baseDirectory, provider, environment));
         return builder;
     }
 
@@ -83,5 +91,11 @@ public static class CoreExtensions
         }
 
         return true;
+    }
+
+    public static UriBuilder CombinePath(this UriBuilder builder, string path)
+    {
+        builder.Path = builder.Path.TrimEnd('/') + $"/{path}";
+        return builder;
     }
 }
