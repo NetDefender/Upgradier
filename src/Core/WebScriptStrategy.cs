@@ -36,6 +36,7 @@ public class WebScriptStrategy : ScriptStrategyBase
         UriBuilder uriBuilder = new(_baseUri);
         StringBuilder uri = new StringBuilder(uriBuilder.Path, uriBuilder.Path.Length + 30).TrimEnd('/')
             .Append('/').Append(Provider)
+            .AppendWhen(() => !string.IsNullOrEmpty(Environment), "/", Environment!)
             .Append('/').Append(script.VersionId).Append(".sql");
         uriBuilder.Path = uri.ToString();
         using HttpRequestMessage request = new(HttpMethod.Get, uriBuilder.Uri);

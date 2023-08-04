@@ -98,4 +98,16 @@ public static class CoreExtensions
         builder.Path = builder.Path.TrimEnd('/') + $"/{path}";
         return builder;
     }
+
+    public static StringBuilder AppendWhen(this StringBuilder builder, Func<bool> condition, params string[] values)
+    {
+        if (condition())
+        {
+            foreach (string value in values)
+            {
+                builder.Append(value);
+            }
+        }
+        return builder;
+    }
 }
