@@ -40,7 +40,7 @@ public class WebScriptStrategy : ScriptStrategyBase
         uriBuilder.Path = uri.ToString();
         using HttpRequestMessage request = new(HttpMethod.Get, uriBuilder.Uri);
         await _configureRequest(request).ConfigureAwait(false);
-        using HttpResponseMessage response = await _client.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        HttpResponseMessage response = await _client.SendAsync(request, cancellationToken).ConfigureAwait(false);
         Stream stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
         return new StreamReader(stream, leaveOpen: false);
     }
