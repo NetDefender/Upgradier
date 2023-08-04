@@ -14,7 +14,7 @@ public sealed class ScriptServerFixture : IAsyncLifetime
           .WithName(Guid.NewGuid().ToString("D"))
           .WithImage("nginx")
           .WithPortBinding(CONTAINER_PORT, true)
-          .WithResourceMapping(new DirectoryInfo(@"Core\Scripts"), "/usr/share/nginx/html/")
+          .WithResourceMapping(new DirectoryInfo($"Core{Path.DirectorySeparatorChar}Scripts"), "/usr/share/nginx/html/")
           .Build();
     }
 
