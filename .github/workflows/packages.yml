@@ -34,6 +34,18 @@ jobs:
     - name: build
       run: dotnet build -c Release --no-restore
     - name: tests
-      run: dotnet test -c Release --no-restore --no-build 
+      run: dotnet test -c Release -p:CollectCoverage=true -p:CoverletOutput=coverage-results/ -p:CoverletOutputFormat=opencover --no-build --verbosity normal
+    - name: Create Test Coverage Badge
+      uses: simon-k/dotnet-code-coverage-badge@v1.0.0
+      id: create_coverage_badge
+      with:
+        label: Test Coverage
+        color: brightgreen
+        path: tests/Upgradier.Tests/coverage-results/coverage.opencover.xml
+        gist-filename: code-coverage-upgradier.json
+        gist-id: d51c51b9b1e64ce740782fe8db02a889
+        gist-auth-token: ${{ secrets.GIST }}
+    - name: Print code coverage
+      run: echo "Code coverage percentage ${{steps.create_coverage_badge.outputs.percentage}}%"
     # - name: package
     #   run: dotnet nuget push --api-key ${{secrets.NUGET}} --skip-duplicate --source https://api.nuget.org/v3/index.json artifacts/*.nupkg

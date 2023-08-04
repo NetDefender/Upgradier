@@ -59,8 +59,7 @@ public sealed class UpdateManager : IUpdateManager
     public async ValueTask<UpdateResult> UpdateSource(string sourceName, CancellationToken cancellationToken = default)
     {
         IEnumerable<Source> sources = await _sourceAdapter.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
-        Source? source = sources.FirstOrDefault(s => s.Name == sourceName);
-        ArgumentNullException.ThrowIfNull(source);
+        Source source = sources.First(s => s.Name == sourceName);
         return await UpdateSource(source, cancellationToken).ConfigureAwait(false);
     }
 

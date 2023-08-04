@@ -3,6 +3,7 @@
 A minimalist approach for updating multiple databases to a version based in convention SQL scripts
 
 [![packages](https://github.com/NetDefender/Ugradier/actions/workflows/packages.yml/badge.svg)](https://github.com/NetDefender/Ugradier/actions/workflows/packages.yml)
+![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/NetDefender/d51c51b9b1e64ce740782fe8db02a889/raw/code-coverage-upgradier.json)
 
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
