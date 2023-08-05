@@ -5,8 +5,8 @@ namespace Upgradier.Core;
 public sealed class UpdateManager : IUpdateManager
 {
     private readonly int _waitTimeout;
-    private readonly ISourceProvider _sourceAdapter;
-    private readonly IScriptStrategy? _scriptAdapter;
+    private readonly ISourceProvider _sourceProvider;
+    private readonly IScriptStrategy? _scriptStrategy;
     private readonly IDictionary<string, IProviderFactory> _providerFactories;
     private readonly SemaphoreSlim _globalLock;
     private bool _isDisposed;
@@ -17,14 +17,14 @@ public sealed class UpdateManager : IUpdateManager
         ArgumentNullException.ThrowIfNull(options.Providers);
         ArgumentOutOfRangeException.ThrowIfNegative(options.WaitTimeout);
         ArgumentOutOfRangeException.ThrowIfZero(options.Providers.Count());
-        ArgumentNullException.ThrowIfNull(options.SourceAdapter);
+        ArgumentNullException.ThrowIfNull(options.SourceProvider);
 
         _waitTimeout = options.WaitTimeout;
         _providerFactories = options.Providers
             .Select(providerFactory => providerFactory()!)
             .ToDictionary(factory => factory.Name);
-        _sourceAdapter = options.SourceAdapter();
-        _scriptAdapter = options.ScriptAdapter?.Invoke();
+        _sourceProvider = options.SourceProvider();
+        _scriptStrategy = options.ScriptStrategy?.Invoke();
         _globalLock = new SemaphoreSlim(1, 1);
     }
 
@@ -37,7 +37,7 @@ public sealed class UpdateManager : IUpdateManager
             if (await _globalLock.WaitAsync(_waitTimeout, cancellationToken).ConfigureAwait(false))
             {
                 isGlobalLockAdquired = true;
-                IEnumerable<Source> sources = await _sourceAdapter.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
+                IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
 
                 foreach (Source source in sources)
                 {
@@ -58,7 +58,7 @@ public sealed class UpdateManager : IUpdateManager
 
     public async ValueTask<UpdateResult> UpdateSource(string sourceName, CancellationToken cancellationToken = default)
     {
-        IEnumerable<Source> sources = await _sourceAdapter.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
+        IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
         Source source = sources.First(s => s.Name == sourceName);
         return await UpdateSource(source, cancellationToken).ConfigureAwait(false);
     }
@@ -66,7 +66,7 @@ public sealed class UpdateManager : IUpdateManager
     private async ValueTask<UpdateResult> UpdateSource(Source source, CancellationToken cancellationToken = default)
     {
         IProviderFactory factory = _providerFactories[source.Provider];
-        IScriptStrategy scriptStrategy = _scriptAdapter ?? factory.CreateScriptStrategy();
+        IScriptStrategy scriptStrategy = _scriptStrategy ?? factory.CreateScriptStrategy();
         IEnumerable<Script> scripts = await scriptStrategy.GetScriptsAsync(cancellationToken).ConfigureAwait(false);
 
         UpdateResult updateResult = new(source.Name, factory.Name, source.ConnectionString, -1, -1, null);

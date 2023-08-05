@@ -1,4 +1,6 @@
-﻿using NSubstitute;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using NSubstitute;
 using Upgradier.Core;
 
 namespace Upgradier.Tests.Core;
@@ -86,6 +88,17 @@ public sealed class UpdateBuilder_Tests
         Assert.Throws<ArgumentOutOfRangeException>(() => builder.WithWaitTimeout(-1));
     }
 
+    [Theory]
+    [InlineData(1)]
+    [InlineData(0)]
+    [InlineData(1000)]
+    public void WithWaitTimeout_SetsTimeout(int timeout)
+    {
+        UpdateBuilder builder = new();
+        builder.WithWaitTimeout(timeout);
+        Assert.Equal(timeout, builder.GetWaitTimeout());
+    }
+
     [Fact]
     public void Build_Throws_ArgumentNullException_If_SourceProvider_Is_Not_Set()
     {
@@ -119,5 +132,35 @@ public sealed class UpdateBuilder_Tests
         builder.WithSourceProvider(Substitute.For<Func<ISourceProvider>>());
         builder.WithScriptStrategy(Substitute.For<Func<IScriptStrategy>>());
         Assert.Throws<ArgumentOutOfRangeException>(() => builder.Build());
+    }
+
+    [Theory]
+    [InlineData("https://wwww.page.es", "SqlServer", "Dev")]
+    public void WithWebScriptStrategy_Sets_ScriptStrategy([StringSyntax(StringSyntaxAttribute.Uri)]string uri, string provider, string? environment)
+    {
+        WebScriptStrategy webStrategy = Substitute.For<WebScriptStrategy>(new Uri(uri), provider, environment);
+        Func<WebScriptStrategy> webStrategyBuilder = () => webStrategy;
+        UpdateBuilder builder = new();
+        Func<HttpRequestMessage, Task> httpMessageOptions = (message) => Task.CompletedTask;
+        builder.WithWebScriptStrategy(webStrategyBuilder, httpMessageOptions);
+        Assert.Same(webStrategy, builder.GetScriptStrategy()?.Invoke());
+    }
+
+    [Fact]
+    public void Build_Returns_UpdateManager()
+    {
+        UpdateBuilder builder = new();
+        IProviderFactory factory = Substitute.For<IProviderFactory>();
+        factory.Name.Returns("ProviderA");
+        Func<IProviderFactory>[] factories = new Func<IProviderFactory>[] { () => factory };
+        builder.AddProviderFactories(factories);
+        WebScriptStrategy webStrategy = Substitute.For<WebScriptStrategy>(new Uri("http://invent.com"), "SqlServer", "Dev");
+        Func<WebScriptStrategy> webStrategyFactory = () => webStrategy;
+        Func<HttpRequestMessage, Task> httpMessageOptions = (message) => Task.CompletedTask;
+        builder.WithWebScriptStrategy(webStrategyFactory, httpMessageOptions);
+        builder.WithSourceProvider(() => Substitute.For<ISourceProvider>());
+        builder.WithWaitTimeout(100);
+        UpdateManager updateManager = builder.Build();
+        Assert.NotNull(updateManager);
     }
 }

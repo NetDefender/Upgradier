@@ -37,4 +37,15 @@ public sealed class Source_Tests
     {
         Assert.Throws<ArgumentException>(() => new Source(name, provider, connectionString));
     }
+
+    [Theory]
+    [InlineData("Name1", "SqlServer", "Server=.;Initial Catalog=master;Integrated Security=SSPI")]
+    public void Properties_Are_Setted(string name, string provider, string connectionString)
+    {
+        Source source = new (name, provider, connectionString);
+        Assert.Equal(name, source.Name);
+        Assert.Equal(provider, source.Provider);
+        Assert.Equal(connectionString, source.ConnectionString);
+    }
+
 }

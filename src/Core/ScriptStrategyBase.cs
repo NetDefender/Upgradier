@@ -11,7 +11,7 @@ public abstract class ScriptStrategyBase : IScriptStrategy
         Environment = environment;
     }
     public string Name { get; }
-    protected string? Environment { get; }
+    public string? Environment { get; }
     public string Provider { get; }
     public abstract ValueTask<IEnumerable<Script>> GetScriptsAsync(CancellationToken cancellationToken);
     public abstract ValueTask<StreamReader> GetScriptContentsAsync(Script script, CancellationToken cancellationToken);

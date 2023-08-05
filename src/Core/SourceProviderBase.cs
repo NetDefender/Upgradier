@@ -4,11 +4,12 @@ public abstract class SourceProviderBase : ISourceProvider
 {
     protected SourceProviderBase(string? environment, string name)
     {
+        ArgumentNullException.ThrowIfNullOrEmpty(name);
         Environment = environment;
         Name = name;
     }
     public string Name { get; }
-    protected string? Environment { get; }
+    public string? Environment { get; }
     public abstract ValueTask<IEnumerable<Source>> GetSourcesAsync(CancellationToken cancellationToken);
 }    
 

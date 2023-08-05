@@ -67,8 +67,8 @@ public sealed class UpdateBuilder
         {
             WaitTimeout = _waitTimeout,
             Providers = _providerFactories.AsReadOnly(),
-            SourceAdapter = _sourceProvider,
-            ScriptAdapter = _scriptStrategy
+            SourceProvider = _sourceProvider,
+            ScriptStrategy = _scriptStrategy
         });
     }
 

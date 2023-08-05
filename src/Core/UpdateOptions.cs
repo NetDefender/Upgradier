@@ -7,7 +7,7 @@ namespace Upgradier.Core
     {
         public int WaitTimeout { get; init; }
         public IEnumerable<Func<IProviderFactory>> Providers { get; init; } = Enumerable.Empty<Func<IProviderFactory>>();
-        public Func<ISourceProvider> SourceAdapter { get; init; } = default!;
-        public Func<IScriptStrategy> ScriptAdapter { get; init; } = default!;
+        public Func<ISourceProvider> SourceProvider { get; init; } = default!;
+        public Func<IScriptStrategy> ScriptStrategy { get; init; } = default!;
     }
 }
