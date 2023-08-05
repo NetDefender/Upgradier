@@ -1,7 +1,9 @@
-﻿using System.Diagnostics.Tracing;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Tracing;
 
 namespace Upgradier.Core;
 
+[ExcludeFromCodeCoverage]
 public class UpdaterEventSource : EventSource
 {
     public static class Keywords

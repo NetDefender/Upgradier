@@ -5,7 +5,7 @@ namespace Upgradier.Core;
 
 public static class CoreExtensions
 {
-    public static void ThrowIfDirectoryNotExists(string path, string? message = null)
+    public static void ThrowIfDirectoryNotExists(this string path, string? message = null)
     {
         DirectoryInfo directoryInfo = new (path);
         if (!directoryInfo.Exists)
@@ -14,19 +14,11 @@ public static class CoreExtensions
         }
     }
 
-    public static void ThrowIfIsNotAbsoluteUri(Uri uri, string? message = null)
+    public static void ThrowIfIsNotAbsoluteUri(this Uri uri, string? message = null)
     {
         if (uri is null || !uri.IsAbsoluteUri || !IsHttpScheme(uri))
         {
             throw new DirectoryNotFoundException($"The value {uri} is not an absolute Uri. {message}");
-        }
-    }
-
-    public static void ThrowIfStringIsNotAbsoluteWebResource([StringSyntax(StringSyntaxAttribute.Uri)]string possibleUri, string? message = null)
-    {
-        if (!TryCreateUri(possibleUri, out Uri? uri) || !IsHttpScheme(uri))
-        {
-            throw new DirectoryNotFoundException($"The value {possibleUri} is not an absolute Uri. {message}");
         }
     }
 

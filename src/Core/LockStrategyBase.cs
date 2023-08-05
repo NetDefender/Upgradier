@@ -4,12 +4,12 @@ public abstract class LockStrategyBase : ILockStrategy
 {
     protected LockStrategyBase(string? environment, SourceDatabase context)
     {
+        ArgumentNullException.ThrowIfNull(context);
         Environment = environment;
         Context = context;
     }
     public string? Environment { get; }
     protected internal SourceDatabase Context { get; }
-    public bool IsLockAdquired { get; protected set; }
     public abstract Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default);
     public abstract Task FreeAsync(CancellationToken cancellationToken = default);
     public abstract Task EnsureSchema(CancellationToken cancellationToken = default);
@@ -26,6 +26,5 @@ public interface ILockStrategy : IDisposable
     Task FreeAsync(CancellationToken cancellationToken = default);
     Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default);
     Task EnsureSchema(CancellationToken cancellationToken = default);
-    bool IsLockAdquired { get; }
     string? Environment { get; }
 }

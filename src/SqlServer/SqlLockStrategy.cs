@@ -22,6 +22,7 @@ public class SqlLockStrategy : LockStrategyBase
         await EnsureSchema(cancellationToken).ConfigureAwait(false);
         return lockResult is SqlLockResult.Granted or SqlLockResult.Success;
     }
+
     public sealed override async Task FreeAsync(CancellationToken cancellationToken = default)
     {
         if (_transaction != null)
