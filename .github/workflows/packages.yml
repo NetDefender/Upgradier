@@ -42,7 +42,7 @@ jobs:
         label: Test Coverage
         color: brightgreen
         path: tests/Upgradier.Tests/coverage-results/coverage.opencover.xml
-        gist-filename: code-coverage-upgradier.json
+        gist-filename: "code-coverage-upgradier.json"
         gist-id: "d51c51b9b1e64ce740782fe8db02a889"
         gist-auth-token: ${{ secrets.GIST }}
     - name: Coverage result
