@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+	<DefineSwitches>EF</DefineSwitches>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
   <ItemGroup>

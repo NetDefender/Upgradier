@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 
 namespace Upgradier.Core;
