@@ -12,12 +12,20 @@
     <EmbeddedResource Include="Migrations\1.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.10" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Ugradier.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Upgradier.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Microsoft.EntityFrameworkCore" Version="7.0.10" />
+    <PackageReference Update="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Update="Microsoft.EntityFrameworkCore.Relational" Version="7.0.10" />
   </ItemGroup>
 </Project>

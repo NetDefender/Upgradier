@@ -5,13 +5,13 @@ using Upgradier.Core;
 
 namespace Upgradier.ScriptStrategy.Aws;
 
-public class AwsScriptStrategy : ScriptStrategyBase
+public class AwsS3ScriptStrategy : ScriptStrategyBase
 {
     private readonly string _bucketName;
     private readonly ITransferUtility _transferUtility;
     private Func<TransferUtilityDownloadRequest, Task> _configureRequest = _ => Task.CompletedTask;
 
-    public AwsScriptStrategy(string bucketName, string provider, string? environment, ITransferUtility transferUtility) : base(environment, provider, nameof(AwsScriptStrategy))
+    public AwsS3ScriptStrategy(string bucketName, string provider, string? environment, ITransferUtility transferUtility) : base(environment, provider, nameof(AwsS3ScriptStrategy))
     {
         ArgumentNullException.ThrowIfNull(bucketName);
         ArgumentNullException.ThrowIfNull(transferUtility);

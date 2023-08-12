@@ -102,4 +102,12 @@ public static class CoreExtensions
         }
         return builder;
     }
+
+    public static void ThrowIfNotExists(this FileInfo file)
+    {
+        if (!file.Exists)
+        {
+            throw new FileNotFoundException($"Could not download file to {file.FullName}", file.FullName);
+        }
+    }
 }
