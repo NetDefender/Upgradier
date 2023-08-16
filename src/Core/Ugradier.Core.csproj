@@ -4,11 +4,11 @@
 		<IsPackable>true</IsPackable>
 	</PropertyGroup>
 	<ItemGroup>
-	  <PackageReference Update="Microsoft.EntityFrameworkCore" Version="7.0.10" />
-	  <PackageReference Update="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
+	  <PackageReference Update="Microsoft.EntityFrameworkCore" />
+	  <PackageReference Update="Microsoft.EntityFrameworkCore.Design">
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
-	  <PackageReference Update="Microsoft.EntityFrameworkCore.Relational" Version="7.0.10" />
+	  <PackageReference Update="Microsoft.EntityFrameworkCore.Relational" />
 	</ItemGroup>
 </Project>
