@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.17.0" />
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.201.16" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.201.17" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageVersion Include="MinVer" Version="4.3.0">
