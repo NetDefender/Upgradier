@@ -79,7 +79,7 @@ public sealed class UpdateManager : IUpdateManager
             {
                 DatabaseVersion currentVersion = await sourceDatabase.Version.FirstAsync(cancellationToken).ConfigureAwait(false);
                 updateResult = updateResult with { OriginalVersion = currentVersion.VersionId };
-                foreach (Batch batch in batches.Where(s => s.VersionId > currentVersion.VersionId))
+                foreach (Batch batch in batches.Where(b => b.VersionId > currentVersion.VersionId).OrderBy(b => b.VersionId))
                 {
                     using StreamReader sqlContentStream = await batchStrategy.GetBatchContentsAsync(batch, cancellationToken).ConfigureAwait(false);
                     string sqlContent = await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
