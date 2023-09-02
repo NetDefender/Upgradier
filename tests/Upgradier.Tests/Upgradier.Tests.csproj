@@ -19,8 +19,8 @@
 		<PackageReference Include="coverlet.collector" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Aws\Upgradier.ScriptStrategy.Aws.csproj" />
-		<ProjectReference Include="..\..\src\Azure\Upgradier.ScriptStrategy.Azure.csproj" />
+		<ProjectReference Include="..\..\src\Aws\Upgradier.BatchStrategy.Aws.csproj" />
+		<ProjectReference Include="..\..\src\Azure\Upgradier.BatchStrategy.Azure.csproj" />
 		<ProjectReference Include="..\..\src\Core\Ugradier.Core.csproj" />
 		<ProjectReference Include="..\..\src\SqlServer\Ugradier.SqlServer.csproj" />
 	</ItemGroup>
