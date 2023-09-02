@@ -56,49 +56,49 @@ public sealed class SqlFactory_Tests : IClassFixture<SqlServerDatabaseFixture>
     }
 
     [Theory]
-    [InlineData(@"c:\path\scripts")]
-    [InlineData(@"\\path.place.com\scripts")]
-    public async Task CreateScriptStrategy_Is_FileScriptStrategy(string directory)
+    [InlineData(@"c:\path\batches")]
+    [InlineData(@"\\path.place.com\batches")]
+    public async Task CreateBatchStrategy_Is_FileBatchStrategy(string directory)
     {
         SqlFactory factory = new("dev", directory);
-        IScriptStrategy scriptStrategy = factory.CreateScriptStrategy();
-        Assert.True(scriptStrategy is FileScriptStrategy);
+        IBatchStrategy batchStrategy = factory.CreateBatchStrategy();
+        Assert.True(batchStrategy is FileBatchStrategy);
     }
 
     [Theory]
-    [InlineData("https://enterprise.es/scripts")]
-    [InlineData("http://enterprise.es/scripts")]
-    public async Task CreateScriptStrategy_Is_WebScriptStrategy(string url)
+    [InlineData("https://enterprise.es/batches")]
+    [InlineData("http://enterprise.es/batches")]
+    public async Task CreateBatchStrategy_Is_WebBatchStrategy(string url)
     {
         SqlFactory factory = new("dev", url);
-        IScriptStrategy scriptStrategy = factory.CreateScriptStrategy();
-        Assert.True(scriptStrategy is WebScriptStrategy);
+        IBatchStrategy batchStrategy = factory.CreateBatchStrategy();
+        Assert.True(batchStrategy is WebBatchStrategy);
     }
 
     [Theory]
-    [InlineData("ftp://enterprise.es/scripts")]
-    [InlineData("ftps://enterprise.es/scripts")]
-    [InlineData("sftp://enterprise.es/scripts")]
-    [InlineData("file://enterprise.es/scripts")]
-    [InlineData("gopher://enterprise.es/scripts")]
-    [InlineData("ws://enterprise.es/scripts")]
-    [InlineData("wss://enterprise.es/scripts")]
-    [InlineData("mailto://enterprise.es/scripts")]
-    [InlineData("news://enterprise.es/scripts")]
-    [InlineData("nntp://enterprise.es/scripts")]
-    [InlineData("ssh://enterprise.es/scripts")]
-    [InlineData("telnet://enterprise.es/scripts")]
-    [InlineData("net.tcp://enterprise.es/scripts")]
-    [InlineData("net.pipe://enterprise.es/scripts")]
+    [InlineData("ftp://enterprise.es/batches")]
+    [InlineData("ftps://enterprise.es/batches")]
+    [InlineData("sftp://enterprise.es/batches")]
+    [InlineData("file://enterprise.es/batches")]
+    [InlineData("gopher://enterprise.es/batches")]
+    [InlineData("ws://enterprise.es/batches")]
+    [InlineData("wss://enterprise.es/batches")]
+    [InlineData("mailto://enterprise.es/batches")]
+    [InlineData("news://enterprise.es/batches")]
+    [InlineData("nntp://enterprise.es/batches")]
+    [InlineData("ssh://enterprise.es/batches")]
+    [InlineData("telnet://enterprise.es/batches")]
+    [InlineData("net.tcp://enterprise.es/batches")]
+    [InlineData("net.pipe://enterprise.es/batches")]
     [InlineData(null)]
     [InlineData("   ")]
     [InlineData("")]
-    public async Task CreateScriptStrategy_Fails_For_Unknown_Schemes(string url)
+    public async Task CreateBatchStrategy_Fails_For_Unknown_Schemes(string url)
     {
         SqlFactory factory = new("dev", url);
         try
         {
-            IScriptStrategy scriptStrategy = factory.CreateScriptStrategy();
+            IBatchStrategy batchStrategy = factory.CreateBatchStrategy();
             Assert.Fail("By default there is not a strategy for other protocols except http/https but looks like it is");
         }
         catch (InvalidOperationException ex)

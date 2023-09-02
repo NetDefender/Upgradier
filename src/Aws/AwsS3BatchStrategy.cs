@@ -3,15 +3,15 @@ using System.Text.Json;
 using Amazon.S3.Transfer;
 using Upgradier.Core;
 
-namespace Upgradier.ScriptStrategy.Aws;
+namespace Upgradier.BatchStrategy.Aws;
 
-public class AwsS3ScriptStrategy : ScriptStrategyBase
+public class AwsS3BatchStrategy : BatchStrategyBase
 {
     private readonly string _bucketName;
     private readonly ITransferUtility _transferUtility;
     private Func<TransferUtilityDownloadRequest, Task> _configureRequest = _ => Task.CompletedTask;
 
-    public AwsS3ScriptStrategy(string bucketName, string provider, string? environment, ITransferUtility transferUtility) : base(environment, provider, nameof(AwsS3ScriptStrategy))
+    public AwsS3BatchStrategy(string bucketName, string provider, string? environment, ITransferUtility transferUtility) : base(environment, provider, nameof(AwsS3BatchStrategy))
     {
         ArgumentNullException.ThrowIfNull(bucketName);
         ArgumentNullException.ThrowIfNull(transferUtility);
@@ -19,7 +19,7 @@ public class AwsS3ScriptStrategy : ScriptStrategyBase
         _transferUtility = transferUtility;
     }
 
-    public override async ValueTask<IEnumerable<Script>> GetScriptsAsync(CancellationToken cancellationToken)
+    public override async ValueTask<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken)
     {
         FileInfo downloadFile = new(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
         TransferUtilityDownloadRequest request = new()
@@ -32,18 +32,18 @@ public class AwsS3ScriptStrategy : ScriptStrategyBase
         await _transferUtility.DownloadAsync(request, cancellationToken).ConfigureAwait(false);
         downloadFile.ThrowIfNotExists();
         using FileStream downloadStream = downloadFile.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
-        List<Script>? scripts = await JsonSerializer.DeserializeAsync<List<Script>>(downloadStream, JsonSerializerOptions.Default, cancellationToken).ConfigureAwait(false);
-        ArgumentNullException.ThrowIfNull(scripts);
-        return scripts.AsReadOnly().AsEnumerable();
+        List<Batch>? batches = await JsonSerializer.DeserializeAsync<List<Batch>>(downloadStream, JsonSerializerOptions.Default, cancellationToken).ConfigureAwait(false);
+        ArgumentNullException.ThrowIfNull(batches);
+        return batches.AsReadOnly().AsEnumerable();
     }
 
-    public override async ValueTask<StreamReader> GetScriptContentsAsync(Script script, CancellationToken cancellationToken)
+    public override async ValueTask<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
     {
         FileInfo downloadFile = new(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
         StringBuilder key = new StringBuilder(50)
             .Append(Provider)
             .AppendWhen(() => !string.IsNullOrEmpty(Environment), "/", Environment!)
-            .Append('/').Append(script.VersionId).Append(".sql");
+            .Append('/').Append(batch.VersionId).Append(".sql");
         TransferUtilityDownloadRequest request = new()
         {
             FilePath = downloadFile.FullName,

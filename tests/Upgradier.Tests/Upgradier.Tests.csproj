@@ -19,11 +19,13 @@
 		<PackageReference Include="coverlet.collector" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\src\Aws\Upgradier.ScriptStrategy.Aws.csproj" />
+		<ProjectReference Include="..\..\src\Azure\Upgradier.ScriptStrategy.Azure.csproj" />
 		<ProjectReference Include="..\..\src\Core\Ugradier.Core.csproj" />
 		<ProjectReference Include="..\..\src\SqlServer\Ugradier.SqlServer.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<Content Include="Core\Scripts\**\*.*">
+		<Content Include="Core\Batches\**\*.*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

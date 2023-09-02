@@ -6,7 +6,7 @@ public sealed class UpdateManager : IUpdateManager
 {
     private readonly int _waitTimeout;
     private readonly ISourceProvider _sourceProvider;
-    private readonly IScriptStrategy? _scriptStrategy;
+    private readonly IBatchStrategy? _batchStrategy;
     private readonly IDictionary<string, IProviderFactory> _providerFactories;
     private readonly SemaphoreSlim _globalLock;
     private bool _isDisposed;
@@ -24,7 +24,7 @@ public sealed class UpdateManager : IUpdateManager
             .Select(providerFactory => providerFactory()!)
             .ToDictionary(factory => factory.Name);
         _sourceProvider = options.SourceProvider();
-        _scriptStrategy = options.ScriptStrategy?.Invoke();
+        _batchStrategy = options.BatchStrategy?.Invoke();
         _globalLock = new SemaphoreSlim(1, 1);
     }
 
@@ -66,8 +66,8 @@ public sealed class UpdateManager : IUpdateManager
     private async ValueTask<UpdateResult> UpdateSource(Source source, CancellationToken cancellationToken = default)
     {
         IProviderFactory factory = _providerFactories[source.Provider];
-        IScriptStrategy scriptStrategy = _scriptStrategy ?? factory.CreateScriptStrategy();
-        IEnumerable<Script> scripts = await scriptStrategy.GetScriptsAsync(cancellationToken).ConfigureAwait(false);
+        IBatchStrategy batchStrategy = _batchStrategy ?? factory.CreateBatchStrategy();
+        IEnumerable<Batch> batches = await batchStrategy.GetBatchesAsync(cancellationToken).ConfigureAwait(false);
 
         UpdateResult updateResult = new(source.Name, factory.Name, source.ConnectionString, -1, -1, null);
         try
@@ -79,13 +79,13 @@ public sealed class UpdateManager : IUpdateManager
             {
                 DatabaseVersion currentVersion = await sourceDatabase.Version.FirstAsync(cancellationToken).ConfigureAwait(false);
                 updateResult = updateResult with { OriginalVersion = currentVersion.VersionId };
-                foreach (Script script in scripts.Where(s => s.VersionId > currentVersion.VersionId))
+                foreach (Batch batch in batches.Where(s => s.VersionId > currentVersion.VersionId))
                 {
-                    using StreamReader sqlContentStream = await scriptStrategy.GetScriptContentsAsync(script, cancellationToken).ConfigureAwait(false);
+                    using StreamReader sqlContentStream = await batchStrategy.GetBatchContentsAsync(batch, cancellationToken).ConfigureAwait(false);
                     string sqlContent = await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
                     await sourceDatabase.Database.ExecuteSqlRawAsync(sqlContent, cancellationToken).ConfigureAwait(false);
-                    currentVersion.VersionId = script.VersionId;
-                    updateResult = updateResult with { Version = script.VersionId };
+                    currentVersion.VersionId = batch.VersionId;
+                    updateResult = updateResult with { Version = batch.VersionId };
                     await sourceDatabase.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 }
                 await lockStrategy.FreeAsync(cancellationToken).ConfigureAwait(false);

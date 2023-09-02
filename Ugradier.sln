@@ -23,9 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.Tests", "tests\Upgradier.Tests\Upgradier.Tests.csproj", "{37753308-3580-4C2E-98FE-0BD6F07EE84A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.ScriptStrategy.Aws", "src\Aws\Upgradier.ScriptStrategy.Aws.csproj", "{E65E2A7C-85E5-44EB-8EE0-EC23C87D06EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.BatchStrategy.Aws", "src\Aws\Upgradier.BatchStrategy.Aws.csproj", "{E65E2A7C-85E5-44EB-8EE0-EC23C87D06EA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.ScriptStrategy.Azure", "src\Azure\Upgradier.ScriptStrategy.Azure.csproj", "{533B479C-8327-4821-9C58-46A7DA8E1CFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.BatchStrategy.Azure", "src\Azure\Upgradier.BatchStrategy.Azure.csproj", "{533B479C-8327-4821-9C58-46A7DA8E1CFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

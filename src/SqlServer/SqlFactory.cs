@@ -5,13 +5,13 @@ namespace Upgradier.SqlServer;
 public class SqlFactory : IProviderFactory
 {
     private readonly string? _environment;
-    private readonly string _scriptsDirectoryOrBaseUrl;
+    private readonly string _batchesDirectoryOrBaseUrl;
     public const string NAME = "SqlServer";
 
-    public SqlFactory(string? environment, string scriptsDirectoryOrBaseUrl)
+    public SqlFactory(string? environment, string batchesDirectoryOrBaseUrl)
     {
         _environment = environment;
-        _scriptsDirectoryOrBaseUrl = scriptsDirectoryOrBaseUrl;
+        _batchesDirectoryOrBaseUrl = batchesDirectoryOrBaseUrl;
     }
     public string Name => NAME;
 
@@ -24,21 +24,21 @@ public class SqlFactory : IProviderFactory
         throw new InvalidCastException(nameof(sourceDatabase));
     }
 
-    public virtual IScriptStrategy CreateScriptStrategy()
+    public virtual IBatchStrategy CreateBatchStrategy()
     {
-        if (_scriptsDirectoryOrBaseUrl.IsNullOrEmptyOrWhiteSpace())
+        if (_batchesDirectoryOrBaseUrl.IsNullOrEmptyOrWhiteSpace())
         {
-            throw new InvalidOperationException($"There is not a {nameof(IScriptStrategy)} for null scheme. {nameof(_scriptsDirectoryOrBaseUrl)} is null.");
+            throw new InvalidOperationException($"There is not a {nameof(IBatchStrategy)} for null scheme. {nameof(_batchesDirectoryOrBaseUrl)} is null.");
         }
-        if (_scriptsDirectoryOrBaseUrl.TryCreateUri(out Uri? uri))
+        if (_batchesDirectoryOrBaseUrl.TryCreateUri(out Uri? uri))
         {
             if (!uri.IsHttpScheme())
             {
-                throw new InvalidOperationException($"There is not a {nameof(IScriptStrategy)} for {uri?.Scheme ?? "unknown"} scheme");
+                throw new InvalidOperationException($"There is not a {nameof(IBatchStrategy)} for {uri?.Scheme ?? "unknown"} scheme");
             }
-            return new WebScriptStrategy(new Uri(_scriptsDirectoryOrBaseUrl, UriKind.Absolute), Name, _environment);
+            return new WebBatchStrategy(new Uri(_batchesDirectoryOrBaseUrl, UriKind.Absolute), Name, _environment);
         }
-        return new FileScriptStrategy(_scriptsDirectoryOrBaseUrl, Name, _environment);
+        return new FileBatchStrategy(_batchesDirectoryOrBaseUrl, Name, _environment);
     }
 
     public virtual SourceDatabase CreateSourceDatabase(string connectionString)

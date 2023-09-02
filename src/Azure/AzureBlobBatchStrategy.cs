@@ -4,37 +4,37 @@ using Azure;
 using Azure.Storage.Blobs;
 using Upgradier.Core;
 
-namespace Upgradier.ScriptStrategy.Azure;
+namespace Upgradier.BatchStrategy.Azure;
 
-public class AzureBlobScriptStrategy : ScriptStrategyBase
+public class AzureBlobBatchStrategy : BatchStrategyBase
 {
     private readonly BlobContainerClient _containerClient;
 
-    public AzureBlobScriptStrategy(string provider, string? environment, BlobContainerClient containerClient) : base(environment, provider, nameof(AzureBlobScriptStrategy))
+    public AzureBlobBatchStrategy(string provider, string? environment, BlobContainerClient containerClient) : base(environment, provider, nameof(AzureBlobBatchStrategy))
     {
         ArgumentNullException.ThrowIfNull(containerClient);
         _containerClient = containerClient;
     }
 
-    public override async ValueTask<IEnumerable<Script>> GetScriptsAsync(CancellationToken cancellationToken)
+    public override async ValueTask<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken)
     {
         BlobClient blobClient = _containerClient.GetBlobClient(string.IsNullOrEmpty(Environment) ? "Index.json" : $"Index.{Environment}.json");
         using MemoryStream downloadStream = new ();
         using Response response = await blobClient.DownloadToAsync(downloadStream, cancellationToken).ConfigureAwait(false);
         response.ThrowWhenError(blobClient.Uri);
         downloadStream.Position = 0L;
-        List<Script>? scripts = await JsonSerializer.DeserializeAsync<List<Script>>(downloadStream, JsonSerializerOptions.Default, cancellationToken).ConfigureAwait(false);
-        ArgumentNullException.ThrowIfNull(scripts);
-        return scripts.AsReadOnly().AsEnumerable();
+        List<Batch>? batches = await JsonSerializer.DeserializeAsync<List<Batch>>(downloadStream, JsonSerializerOptions.Default, cancellationToken).ConfigureAwait(false);
+        ArgumentNullException.ThrowIfNull(batches);
+        return batches.AsReadOnly().AsEnumerable();
     }
 
-    public override async ValueTask<StreamReader> GetScriptContentsAsync(Script script, CancellationToken cancellationToken)
+    public override async ValueTask<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
     {
-        StringBuilder scriptPath = new StringBuilder(50)
+        StringBuilder batchesPath = new StringBuilder(50)
             .Append(Provider)
             .AppendWhen(() => !string.IsNullOrEmpty(Environment), "/", Environment!)
-            .Append('/').Append(script.VersionId).Append(".sql");
-        BlobClient blobClient = _containerClient.GetBlobClient(scriptPath.ToString());
+            .Append('/').Append(batch.VersionId).Append(".sql");
+        BlobClient blobClient = _containerClient.GetBlobClient(batchesPath.ToString());
         MemoryStream downloadStream = new();
         using Response response = await blobClient.DownloadToAsync(downloadStream, cancellationToken).ConfigureAwait(false);
         response.ThrowWhenError(blobClient.Uri);

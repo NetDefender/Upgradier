@@ -1,6 +1,6 @@
 # Upgradier - minimalist multiple database updater
 
-A minimalist approach for updating multiple databases to a version based in convention SQL scripts
+A minimalist approach for updating multiple databases to a version based in convention SQL batches
 
 [![Packages](https://github.com/NetDefender/Ugradier/actions/workflows/packages.yml/badge.svg)](https://github.com/NetDefender/Ugradier/actions/workflows/packages.yml)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/NetDefender/d51c51b9b1e64ce740782fe8db02a889/raw/code-coverage-upgradier.json)
@@ -29,6 +29,6 @@ erDiagram
     IUpdateManager ||--|{ Provider :has
     Provider ||--|| Name :has
     Provider ||--|| ILockStrategy :creates
-    Provider ||--|| IScriptStrategy :creates
+    Provider ||--|| IBatchStrategy :creates
     Provider ||--|| SourceDatabase :creates
 ```

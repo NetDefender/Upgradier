@@ -34,21 +34,21 @@ public class SqlLockStrategy : LockStrategyBase
     public override async Task EnsureSchema(CancellationToken cancellationToken = default)
     {
         Assembly resourceAssembly = Context.GetType().Assembly;
-        Dictionary<int, string> migrationScripts = resourceAssembly.GetManifestResourceNames().Where(resource => resource.EndsWith(".sql"))
+        Dictionary<int, string> migrationBatches = resourceAssembly.GetManifestResourceNames().Where(resource => resource.EndsWith(".sql"))
             .ToDictionary(resource => resource.ResourceId());
-        Stream? startupResource = resourceAssembly.GetManifestResourceStream(migrationScripts[0]);
+        Stream? startupResource = resourceAssembly.GetManifestResourceStream(migrationBatches[0]);
         ArgumentNullException.ThrowIfNull(startupResource);
-        using StreamReader startupScript = new(startupResource, leaveOpen: false);
-        await Context.Database.ExecuteSqlRawAsync(await startupScript.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+        using StreamReader startupBatch = new(startupResource, leaveOpen: false);
+        await Context.Database.ExecuteSqlRawAsync(await startupBatch.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
         MigrationHistory? currentMigration = await Context.MigrationHistory.FirstOrDefaultAsync(cancellationToken);
         int currentMigrationValue = currentMigration?.MigrationId ?? 0;
 
-        foreach (int migrationNeeded in migrationScripts.Keys.Where(scriptKey => scriptKey > currentMigrationValue).Order())
+        foreach (int migrationNeeded in migrationBatches.Keys.Where(batchKey => batchKey > currentMigrationValue).Order())
         {
-            Stream? migrationResource = resourceAssembly.GetManifestResourceStream(migrationScripts[migrationNeeded]);
+            Stream? migrationResource = resourceAssembly.GetManifestResourceStream(migrationBatches[migrationNeeded]);
             ArgumentNullException.ThrowIfNull(migrationResource);
-            using StreamReader migrationScript = new(migrationResource, leaveOpen: false);
-            await Context.Database.ExecuteSqlRawAsync(await migrationScript.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+            using StreamReader migrationBatch = new(migrationResource, leaveOpen: false);
+            await Context.Database.ExecuteSqlRawAsync(await migrationBatch.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
         }
     }
 

@@ -52,33 +52,33 @@ public sealed class UpdateBuilder_Tests
     }
 
     [Fact]
-    public void WithScriptStrategy_Throws_If_Null()
+    public void WithBatchStrategy_Throws_If_Null()
     {
         UpdateBuilder builder = new();
-        Assert.Throws<ArgumentNullException>(() => builder.WithScriptStrategy(null));
+        Assert.Throws<ArgumentNullException>(() => builder.WithBatchStrategy(null));
     }
 
     [Fact]
-    public void WithScriptStrategy_Sets_ScriptStrategy()
+    public void WithBatchStrategy_Sets_BatchStrategy()
     {
         UpdateBuilder builder = new();
-        Func<IScriptStrategy> scriptStrategy = () => Substitute.For<IScriptStrategy>();
-        builder.WithScriptStrategy(scriptStrategy);
-        Assert.Same(scriptStrategy, builder.GetScriptStrategy());
+        Func<IBatchStrategy> batchStrategy = () => Substitute.For<IBatchStrategy>();
+        builder.WithBatchStrategy(batchStrategy);
+        Assert.Same(batchStrategy, builder.GetBatchStrategy());
     }
 
     [Fact]
-    public void WithWebScriptStrategy_Throws_ArgumentNullException_If_ScriptStrategy_Is_Null()
+    public void WithWebBatchStrategy_Throws_ArgumentNullException_If_BatchStrategy_Is_Null()
     {
         UpdateBuilder builder = new();
-        Assert.Throws<ArgumentNullException>(() => builder.WithWebScriptStrategy(null, Substitute.For<Func<HttpRequestMessage, Task>>()));
+        Assert.Throws<ArgumentNullException>(() => builder.WithWebBatchStrategy(null, Substitute.For<Func<HttpRequestMessage, Task>>()));
     }
 
     [Fact]
-    public void WithWebScriptStrategy_Throws_ArgumentNullException_If_ConfigureRequest_Is_Null()
+    public void WithWebBatchStrategy_Throws_ArgumentNullException_If_ConfigureRequest_Is_Null()
     {
         UpdateBuilder builder = new();
-        Assert.Throws<ArgumentNullException>(() => builder.WithWebScriptStrategy(Substitute.For<Func<WebScriptStrategy>>(), null));
+        Assert.Throws<ArgumentNullException>(() => builder.WithWebBatchStrategy(Substitute.For<Func<WebBatchStrategy>>(), null));
     }
 
     [Fact]
@@ -107,13 +107,13 @@ public sealed class UpdateBuilder_Tests
         {
             Substitute.For<Func<IProviderFactory>>()
         };
-        builder.WithScriptStrategy(Substitute.For<Func<IScriptStrategy>>());
+        builder.WithBatchStrategy(Substitute.For<Func<IBatchStrategy>>());
         builder.AddProviderFactories(providerFactories);
         Assert.Throws<ArgumentNullException>(() => builder.Build());
     }
 
     [Fact]
-    public void Build_Throws_ArgumentNullException_If_ScriptStrategy_Is_Not_Set()
+    public void Build_Throws_ArgumentNullException_If_BatchStrategy_Is_Not_Set()
     {
         UpdateBuilder builder = new();
         Func<IProviderFactory>[] providerFactories = new Func<IProviderFactory>[]
@@ -130,20 +130,20 @@ public sealed class UpdateBuilder_Tests
     {
         UpdateBuilder builder = new();
         builder.WithSourceProvider(Substitute.For<Func<ISourceProvider>>());
-        builder.WithScriptStrategy(Substitute.For<Func<IScriptStrategy>>());
+        builder.WithBatchStrategy(Substitute.For<Func<IBatchStrategy>>());
         Assert.Throws<ArgumentOutOfRangeException>(() => builder.Build());
     }
 
     [Theory]
     [InlineData("https://wwww.page.es", "SqlServer", "Dev")]
-    public void WithWebScriptStrategy_Sets_ScriptStrategy([StringSyntax(StringSyntaxAttribute.Uri)]string uri, string provider, string? environment)
+    public void WithWebBatchStrategy_Sets_BatchStrategy([StringSyntax(StringSyntaxAttribute.Uri)]string uri, string provider, string? environment)
     {
-        WebScriptStrategy webStrategy = Substitute.For<WebScriptStrategy>(new Uri(uri), provider, environment);
-        Func<WebScriptStrategy> webStrategyBuilder = () => webStrategy;
+        WebBatchStrategy webStrategy = Substitute.For<WebBatchStrategy>(new Uri(uri), provider, environment);
+        Func<WebBatchStrategy> webStrategyBuilder = () => webStrategy;
         UpdateBuilder builder = new();
         Func<HttpRequestMessage, Task> httpMessageOptions = (message) => Task.CompletedTask;
-        builder.WithWebScriptStrategy(webStrategyBuilder, httpMessageOptions);
-        Assert.Same(webStrategy, builder.GetScriptStrategy()?.Invoke());
+        builder.WithWebBatchStrategy(webStrategyBuilder, httpMessageOptions);
+        Assert.Same(webStrategy, builder.GetBatchStrategy()?.Invoke());
     }
 
     [Fact]
@@ -154,10 +154,10 @@ public sealed class UpdateBuilder_Tests
         factory.Name.Returns("ProviderA");
         Func<IProviderFactory>[] factories = new Func<IProviderFactory>[] { () => factory };
         builder.AddProviderFactories(factories);
-        WebScriptStrategy webStrategy = Substitute.For<WebScriptStrategy>(new Uri("http://invent.com"), "SqlServer", "Dev");
-        Func<WebScriptStrategy> webStrategyFactory = () => webStrategy;
+        WebBatchStrategy webStrategy = Substitute.For<WebBatchStrategy>(new Uri("http://invent.com"), "SqlServer", "Dev");
+        Func<WebBatchStrategy> webStrategyFactory = () => webStrategy;
         Func<HttpRequestMessage, Task> httpMessageOptions = (message) => Task.CompletedTask;
-        builder.WithWebScriptStrategy(webStrategyFactory, httpMessageOptions);
+        builder.WithWebBatchStrategy(webStrategyFactory, httpMessageOptions);
         builder.WithSourceProvider(() => Substitute.For<ISourceProvider>());
         builder.WithWaitTimeout(100);
         UpdateManager updateManager = builder.Build();

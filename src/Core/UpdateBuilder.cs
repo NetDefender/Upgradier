@@ -7,7 +7,7 @@ public sealed class UpdateBuilder
 {
     private int _waitTimeout;
     private Func<ISourceProvider>? _sourceProvider;
-    private Func<IScriptStrategy>? _scriptStrategy;
+    private Func<IBatchStrategy>? _batchStrategy;
     private readonly List<Func<IProviderFactory>> _providerFactories;
 
     public UpdateBuilder()
@@ -30,20 +30,20 @@ public sealed class UpdateBuilder
         return this;
     }
 
-    public UpdateBuilder WithScriptStrategy(Func<IScriptStrategy> scriptStrategy)
+    public UpdateBuilder WithBatchStrategy(Func<IBatchStrategy> batchStrategy)
     {
-        ArgumentNullException.ThrowIfNull(scriptStrategy);
-        _scriptStrategy = scriptStrategy;
+        ArgumentNullException.ThrowIfNull(batchStrategy);
+        _batchStrategy = batchStrategy;
         return this;
     }
 
-    public UpdateBuilder WithWebScriptStrategy(Func<WebScriptStrategy> scriptStrategy, Func<HttpRequestMessage, Task> configureRequest)
+    public UpdateBuilder WithWebBatchStrategy(Func<WebBatchStrategy> batchStrategy, Func<HttpRequestMessage, Task> configureRequest)
     {
-        ArgumentNullException.ThrowIfNull(scriptStrategy);
+        ArgumentNullException.ThrowIfNull(batchStrategy);
         ArgumentNullException.ThrowIfNull(configureRequest);
-        _scriptStrategy = () =>
+        _batchStrategy = () =>
         {
-            WebScriptStrategy webStrategy = scriptStrategy();
+            WebBatchStrategy webStrategy = batchStrategy();
             webStrategy.ConfigureRequestMessage(configureRequest);
             return webStrategy;
         };
@@ -60,14 +60,14 @@ public sealed class UpdateBuilder
     public UpdateManager Build()
     {
         ArgumentNullException.ThrowIfNull(_sourceProvider);
-        ArgumentNullException.ThrowIfNull(_scriptStrategy);
+        ArgumentNullException.ThrowIfNull(_batchStrategy);
         ArgumentOutOfRangeException.ThrowIfZero(_providerFactories.Count);
         return new(new UpdateOptions
         {
             WaitTimeout = _waitTimeout,
             Providers = _providerFactories.AsReadOnly(),
             SourceProvider = _sourceProvider,
-            ScriptStrategy = _scriptStrategy
+            BatchStrategy = _batchStrategy
         });
     }
 
@@ -78,9 +78,9 @@ public sealed class UpdateBuilder
     }
 
     [ExcludeFromCodeCoverage]
-    internal Func<IScriptStrategy>? GetScriptStrategy()
+    internal Func<IBatchStrategy>? GetBatchStrategy()
     {
-        return _scriptStrategy;
+        return _batchStrategy;
     }
 
     [ExcludeFromCodeCoverage]

@@ -1,6 +1,6 @@
 ﻿namespace Upgradier.Core;
 
-public class Script
+public class Batch
 {
     public required long VersionId { get; init; }
 }
