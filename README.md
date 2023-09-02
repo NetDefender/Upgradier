@@ -1,6 +1,6 @@
 # Upgradier - minimalist multiple database updater
 
-A minimalist approach for updating multiple databases to a version based in convention SQL batches
+A minimalist approach for updating multiple databases to a version based in conventions
 
 [![Packages](https://github.com/NetDefender/Ugradier/actions/workflows/packages.yml/badge.svg)](https://github.com/NetDefender/Ugradier/actions/workflows/packages.yml)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/NetDefender/d51c51b9b1e64ce740782fe8db02a889/raw/code-coverage-upgradier.json)
@@ -18,6 +18,9 @@ A minimalist approach for updating multiple databases to a version based in conv
 - Install [Upgradier.Core](https://www.nuget.org/packages/Upgradier.Core)
 - Install the required providers
     - [Upgradier.SqlServer](https://www.nuget.org/packages/Upgradier.SqlServer)
+- Install aditional batch strategies
+    - [Upgradier.BatchStrategy.Aws](https://www.nuget.org/packages/Upgradier.BatchStrategy.Aws)
+    - [Upgradier.BatchStrategy.Azure](https://www.nuget.org/packages/Upgradier.BatchStrategy.Azure)
 
 ## Architecture
 
