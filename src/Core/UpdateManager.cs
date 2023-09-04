@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Ugradier.Core;
 
 namespace Upgradier.Core;
 
@@ -7,6 +8,7 @@ public sealed class UpdateManager : IUpdateManager
     private readonly int _waitTimeout;
     private readonly ISourceProvider _sourceProvider;
     private readonly IBatchStrategy? _batchStrategy;
+    private readonly IBatchCacheManager? _cacheManager;
     private readonly IDictionary<string, IProviderFactory> _providerFactories;
     private readonly SemaphoreSlim _globalLock;
     private bool _isDisposed;
@@ -24,6 +26,7 @@ public sealed class UpdateManager : IUpdateManager
             .Select(providerFactory => providerFactory()!)
             .ToDictionary(factory => factory.Name);
         _sourceProvider = options.SourceProvider();
+        _cacheManager = options.CacheManager?.Invoke();
         _batchStrategy = options.BatchStrategy?.Invoke();
         _globalLock = new SemaphoreSlim(1, 1);
     }
@@ -81,8 +84,12 @@ public sealed class UpdateManager : IUpdateManager
                 updateResult = updateResult with { OriginalVersion = currentVersion.VersionId };
                 foreach (Batch batch in batches.Where(b => b.VersionId > currentVersion.VersionId).OrderBy(b => b.VersionId))
                 {
-                    using StreamReader sqlContentStream = await batchStrategy.GetBatchContentsAsync(batch, cancellationToken).ConfigureAwait(false);
-                    string sqlContent = await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+                    if (_cacheManager?.TryLoad(batch.VersionId, Environment.CurrentManagedThreadId, out string sqlContent) is not true)
+                    {
+                        using StreamReader sqlContentStream = await batchStrategy.GetBatchContentsAsync(batch, cancellationToken).ConfigureAwait(false);
+                        sqlContent = await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+                        _cacheManager?.Store(batch.VersionId, Environment.CurrentManagedThreadId, sqlContent);
+                    }
                     await sourceDatabase.Database.ExecuteSqlRawAsync(sqlContent, cancellationToken).ConfigureAwait(false);
                     currentVersion.VersionId = batch.VersionId;
                     updateResult = updateResult with { Version = batch.VersionId };

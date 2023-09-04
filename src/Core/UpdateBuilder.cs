@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
+using Ugradier.Core;
 
 namespace Upgradier.Core;
 
@@ -8,6 +9,7 @@ public sealed class UpdateBuilder
     private int _waitTimeout;
     private Func<ISourceProvider>? _sourceProvider;
     private Func<IBatchStrategy>? _batchStrategy;
+    private Func<IBatchCacheManager>? _cacheManager;
     private readonly List<Func<IProviderFactory>> _providerFactories;
 
     public UpdateBuilder()
@@ -57,17 +59,32 @@ public sealed class UpdateBuilder
         return this;
     }
 
+    public UpdateBuilder WithCacheManager(Func<IBatchCacheManager> cacheManager)
+    {
+        ArgumentNullException.ThrowIfNull(cacheManager);
+        _cacheManager = cacheManager;
+        return this;
+    }
+
+    public UpdateBuilder WithFileCacheManager(string basePath)
+    {
+        _cacheManager = () => new FileBatchCacheManager(basePath);
+        return this;
+    }
+
     public UpdateManager Build()
     {
         ArgumentNullException.ThrowIfNull(_sourceProvider);
         ArgumentNullException.ThrowIfNull(_batchStrategy);
         ArgumentOutOfRangeException.ThrowIfZero(_providerFactories.Count);
+
         return new(new UpdateOptions
         {
             WaitTimeout = _waitTimeout,
             Providers = _providerFactories.AsReadOnly(),
             SourceProvider = _sourceProvider,
-            BatchStrategy = _batchStrategy
+            BatchStrategy = _batchStrategy,
+            CacheManager = _cacheManager
         });
     }
 
@@ -87,6 +104,12 @@ public sealed class UpdateBuilder
     internal Func<ISourceProvider>? GetSourceProvider()
     {
         return _sourceProvider;
+    }
+
+    [ExcludeFromCodeCoverage]
+    internal Func<IBatchCacheManager>? GetCacheManager()
+    {
+        return _cacheManager;
     }
 
     [ExcludeFromCodeCoverage]
