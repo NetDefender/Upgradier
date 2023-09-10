@@ -7,27 +7,27 @@ public sealed class UpdateManager : IUpdateManager
 {
     private readonly int _waitTimeout;
     private readonly ISourceProvider _sourceProvider;
-    private readonly IBatchStrategy? _batchStrategy;
+    private readonly IBatchStrategy _batchStrategy;
     private readonly IBatchCacheManager? _cacheManager;
-    private readonly IDictionary<string, IProviderFactory> _providerFactories;
+    private readonly IDictionary<string, IDatabaseEngine> _databaseEngines;
     private readonly SemaphoreSlim _globalLock;
     private bool _isDisposed;
 
     public UpdateManager(UpdateOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(options.Providers);
+        ArgumentNullException.ThrowIfNull(options.DatabaseEngines);
         ArgumentOutOfRangeException.ThrowIfNegative(options.WaitTimeout);
-        ArgumentOutOfRangeException.ThrowIfZero(options.Providers.Count());
+        ArgumentOutOfRangeException.ThrowIfZero(options.DatabaseEngines.Count());
         ArgumentNullException.ThrowIfNull(options.SourceProvider);
 
         _waitTimeout = options.WaitTimeout;
-        _providerFactories = options.Providers
-            .Select(providerFactory => providerFactory()!)
-            .ToDictionary(factory => factory.Name);
+        _databaseEngines = options.DatabaseEngines
+            .Select(databaseEngine => databaseEngine()!)
+            .ToDictionary(databaseEngine => databaseEngine.Name);
         _sourceProvider = options.SourceProvider();
         _cacheManager = options.CacheManager?.Invoke();
-        _batchStrategy = options.BatchStrategy?.Invoke();
+        _batchStrategy = options.BatchStrategy.Invoke();
         _globalLock = new SemaphoreSlim(1, 1);
     }
 
@@ -68,9 +68,8 @@ public sealed class UpdateManager : IUpdateManager
 
     private async ValueTask<UpdateResult> UpdateSource(Source source, CancellationToken cancellationToken = default)
     {
-        IProviderFactory factory = _providerFactories[source.Provider];
-        IBatchStrategy batchStrategy = _batchStrategy ?? factory.CreateBatchStrategy();
-        IEnumerable<Batch> batches = await batchStrategy.GetBatchesAsync(cancellationToken).ConfigureAwait(false);
+        IDatabaseEngine factory = _databaseEngines[source.Provider];
+        IEnumerable<Batch> batches = await _batchStrategy.GetBatchesAsync(cancellationToken).ConfigureAwait(false);
 
         UpdateResult updateResult = new(source.Name, factory.Name, source.ConnectionString, -1, -1, null);
         try
@@ -84,13 +83,13 @@ public sealed class UpdateManager : IUpdateManager
                 updateResult = updateResult with { OriginalVersion = currentVersion.VersionId };
                 foreach (Batch batch in batches.Where(b => b.VersionId > currentVersion.VersionId).OrderBy(b => b.VersionId))
                 {
-                    if (_cacheManager?.TryLoad(batch.VersionId, Environment.CurrentManagedThreadId, out string sqlContent) is not true)
+                    if (_cacheManager?.TryLoad(batch.VersionId, Environment.CurrentManagedThreadId, out string? sqlContent) is not true)
                     {
-                        using StreamReader sqlContentStream = await batchStrategy.GetBatchContentsAsync(batch, cancellationToken).ConfigureAwait(false);
+                        using StreamReader sqlContentStream = await _batchStrategy.GetBatchContentsAsync(batch, cancellationToken).ConfigureAwait(false);
                         sqlContent = await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
                         _cacheManager?.Store(batch.VersionId, Environment.CurrentManagedThreadId, sqlContent);
                     }
-                    await sourceDatabase.Database.ExecuteSqlRawAsync(sqlContent, cancellationToken).ConfigureAwait(false);
+                    await sourceDatabase.Database.ExecuteSqlRawAsync(sqlContent!, cancellationToken).ConfigureAwait(false);
                     currentVersion.VersionId = batch.VersionId;
                     updateResult = updateResult with { Version = batch.VersionId };
                     await sourceDatabase.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

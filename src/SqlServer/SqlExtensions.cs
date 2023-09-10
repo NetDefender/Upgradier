@@ -2,9 +2,9 @@ namespace Upgradier.SqlServer;
 
 public static class SqlExtensions
 {
-    public static UpdateBuilder AddSqlProviderFactory(this UpdateBuilder builder, string batchesDirectoryOrBaseUrl, string? environment = null)
+    public static UpdateBuilder AddSqlServerEngine(this UpdateBuilder builder, string? environment = null)
     {
-        builder.AddProviderFactories(() => new SqlFactory(environment, batchesDirectoryOrBaseUrl));
+        builder.AddDatabaseEngines(() => new SqlEngine(environment));
         return builder;
     }
 }

@@ -11,28 +11,28 @@ public sealed class UpdateBuilder_Tests
     public void UpdateBuilder_Throws_If_AddProviderFactories_Is_Null()
     {
         UpdateBuilder builder = new();
-        Assert.Throws<ArgumentNullException>(() => builder.AddProviderFactories(null));
+        Assert.Throws<ArgumentNullException>(() => builder.AddDatabaseEngines(null));
     }
 
     [Fact]
     public void UpdateBuilder_Throws_If_AddProviderFactories_Length_Is_0()
     {
         UpdateBuilder builder = new();
-        Assert.Throws<ArgumentOutOfRangeException>(() => builder.AddProviderFactories(Array.Empty<Func<IProviderFactory>>()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => builder.AddDatabaseEngines(Array.Empty<Func<IDatabaseEngine>>()));
     }
 
     [Fact]
     public void UpdateBuilder_AddProviderFactories_Adds_That_Elements()
     {
         UpdateBuilder builder = new();
-        Func<IProviderFactory>[] factories = new Func<IProviderFactory>[]
+        Func<IDatabaseEngine>[] factories = new Func<IDatabaseEngine>[]
         {
-            () => Substitute.For<IProviderFactory>(),
-            () => Substitute.For<IProviderFactory>(),
-            () => Substitute.For<IProviderFactory>()
+            () => Substitute.For<IDatabaseEngine>(),
+            () => Substitute.For<IDatabaseEngine>(),
+            () => Substitute.For<IDatabaseEngine>()
         };
-        builder.AddProviderFactories(factories);
-        Assert.True(factories.SequenceEqual(builder.GetProviderFactories()));
+        builder.AddDatabaseEngines(factories);
+        Assert.True(factories.SequenceEqual(builder.GetDatabaseEngines()));
     }
 
     [Fact]
@@ -103,12 +103,12 @@ public sealed class UpdateBuilder_Tests
     public void Build_Throws_ArgumentNullException_If_SourceProvider_Is_Not_Set()
     {
         UpdateBuilder builder = new();
-        Func<IProviderFactory>[] providerFactories = new Func<IProviderFactory>[]
+        Func<IDatabaseEngine>[] providerFactories = new Func<IDatabaseEngine>[]
         {
-            Substitute.For<Func<IProviderFactory>>()
+            Substitute.For<Func<IDatabaseEngine>>()
         };
         builder.WithBatchStrategy(Substitute.For<Func<IBatchStrategy>>());
-        builder.AddProviderFactories(providerFactories);
+        builder.AddDatabaseEngines(providerFactories);
         Assert.Throws<ArgumentNullException>(() => builder.Build());
     }
 
@@ -116,11 +116,11 @@ public sealed class UpdateBuilder_Tests
     public void Build_Throws_ArgumentNullException_If_BatchStrategy_Is_Not_Set()
     {
         UpdateBuilder builder = new();
-        Func<IProviderFactory>[] providerFactories = new Func<IProviderFactory>[]
+        Func<IDatabaseEngine>[] providerFactories = new Func<IDatabaseEngine>[]
         {
-            Substitute.For<Func<IProviderFactory>>()
+            Substitute.For<Func<IDatabaseEngine>>()
         };
-        builder.AddProviderFactories(providerFactories);
+        builder.AddDatabaseEngines(providerFactories);
         builder.WithSourceProvider(Substitute.For<Func<ISourceProvider>>());
         Assert.Throws<ArgumentNullException>(() => builder.Build());
     }
@@ -150,10 +150,10 @@ public sealed class UpdateBuilder_Tests
     public void Build_Returns_UpdateManager()
     {
         UpdateBuilder builder = new();
-        IProviderFactory factory = Substitute.For<IProviderFactory>();
+        IDatabaseEngine factory = Substitute.For<IDatabaseEngine>();
         factory.Name.Returns("ProviderA");
-        Func<IProviderFactory>[] factories = new Func<IProviderFactory>[] { () => factory };
-        builder.AddProviderFactories(factories);
+        Func<IDatabaseEngine>[] factories = new Func<IDatabaseEngine>[] { () => factory };
+        builder.AddDatabaseEngines(factories);
         WebBatchStrategy webStrategy = Substitute.For<WebBatchStrategy>(new Uri("http://invent.com"), "SqlServer", "Dev");
         Func<WebBatchStrategy> webStrategyFactory = () => webStrategy;
         Func<HttpRequestMessage, Task> httpMessageOptions = (message) => Task.CompletedTask;

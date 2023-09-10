@@ -10,18 +10,18 @@ public sealed class UpdateBuilder
     private Func<ISourceProvider>? _sourceProvider;
     private Func<IBatchStrategy>? _batchStrategy;
     private Func<IBatchCacheManager>? _cacheManager;
-    private readonly List<Func<IProviderFactory>> _providerFactories;
+    private readonly List<Func<IDatabaseEngine>> _databaseEngines;
 
     public UpdateBuilder()
     {
-        _providerFactories = new List<Func<IProviderFactory>>();
+        _databaseEngines = new List<Func<IDatabaseEngine>>();
     }
 
-    public UpdateBuilder AddProviderFactories(params Func<IProviderFactory>[] providerFactories)
+    public UpdateBuilder AddDatabaseEngines(params Func<IDatabaseEngine>[] databaseEngines)
     {
-        ArgumentNullException.ThrowIfNull(providerFactories);
-        ArgumentOutOfRangeException.ThrowIfZero(providerFactories.Length);
-        _providerFactories.AddRange(providerFactories);
+        ArgumentNullException.ThrowIfNull(databaseEngines);
+        ArgumentOutOfRangeException.ThrowIfZero(databaseEngines.Length);
+        _databaseEngines.AddRange(databaseEngines);
         return this;
     }
 
@@ -76,12 +76,12 @@ public sealed class UpdateBuilder
     {
         ArgumentNullException.ThrowIfNull(_sourceProvider);
         ArgumentNullException.ThrowIfNull(_batchStrategy);
-        ArgumentOutOfRangeException.ThrowIfZero(_providerFactories.Count);
+        ArgumentOutOfRangeException.ThrowIfZero(_databaseEngines.Count);
 
         return new(new UpdateOptions
         {
             WaitTimeout = _waitTimeout,
-            Providers = _providerFactories.AsReadOnly(),
+            DatabaseEngines = _databaseEngines.AsReadOnly(),
             SourceProvider = _sourceProvider,
             BatchStrategy = _batchStrategy,
             CacheManager = _cacheManager
@@ -89,9 +89,9 @@ public sealed class UpdateBuilder
     }
 
     [ExcludeFromCodeCoverage]
-    internal IEnumerable<Func<IProviderFactory>> GetProviderFactories()
+    internal IEnumerable<Func<IDatabaseEngine>> GetDatabaseEngines()
     {
-        return _providerFactories.AsReadOnly();
+        return _databaseEngines.AsReadOnly();
     }
 
     [ExcludeFromCodeCoverage]

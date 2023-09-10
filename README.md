@@ -29,9 +29,9 @@ erDiagram
     UpdateBuilder||--|| IUpdateManager: creates
     UpdateBuilder||--|| Options: has
     IUpdateManager ||--|| Environment:has
-    IUpdateManager ||--|{ Provider :has
-    Provider ||--|| Name :has
-    Provider ||--|| ILockStrategy :creates
-    Provider ||--|| IBatchStrategy :creates
-    Provider ||--|| SourceDatabase :creates
+    IUpdateManager ||--|{ IDatabaseEngine :has
+    IUpdateManager ||--|{ IBatchStrategy :has
+    IDatabaseEngine ||--|| Name :has
+    IDatabaseEngine ||--|| ILockStrategy :creates
+    IDatabaseEngine ||--|| SourceDatabase :creates
 ```
