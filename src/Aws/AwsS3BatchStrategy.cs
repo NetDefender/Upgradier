@@ -19,7 +19,7 @@ public class AwsS3BatchStrategy : BatchStrategyBase
         _transferUtility = transferUtility;
     }
 
-    public override async ValueTask<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken)
+    public override async Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken)
     {
         FileInfo downloadFile = new(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
         TransferUtilityDownloadRequest request = new()
@@ -37,7 +37,7 @@ public class AwsS3BatchStrategy : BatchStrategyBase
         return batches.AsReadOnly().AsEnumerable();
     }
 
-    public override async ValueTask<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
+    public override async Task<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
     {
         FileInfo downloadFile = new(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
         StringBuilder key = new StringBuilder(50)

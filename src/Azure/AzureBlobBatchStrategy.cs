@@ -16,7 +16,7 @@ public class AzureBlobBatchStrategy : BatchStrategyBase
         _containerClient = containerClient;
     }
 
-    public override async ValueTask<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken)
+    public override async Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken)
     {
         BlobClient blobClient = _containerClient.GetBlobClient(string.IsNullOrEmpty(Environment) ? "Index.json" : $"Index.{Environment}.json");
         using MemoryStream downloadStream = new ();
@@ -28,7 +28,7 @@ public class AzureBlobBatchStrategy : BatchStrategyBase
         return batches.AsReadOnly().AsEnumerable();
     }
 
-    public override async ValueTask<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
+    public override async Task<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
     {
         StringBuilder batchesPath = new StringBuilder(50)
             .Append(Provider)

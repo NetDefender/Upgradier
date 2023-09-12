@@ -2,7 +2,7 @@
 
 public interface IBatchCacheManager
 {
-    void Store(long versionId, int threadId, string batch);
+    Task Store(long versionId, int threadId, string batch, CancellationToken cancellationToken);
 
-    bool TryLoad(long versionId, int threadId, out string? batch);
+    Task<BatchCacheResult> TryLoad(long versionId, int threadId, CancellationToken cancellationToken);
 }

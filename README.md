@@ -12,13 +12,12 @@ A minimalist approach for updating multiple databases to a version based in conv
 ## Prerequisites
 - [.NET SDK 8.0 or later](https://www.microsoft.com/net/download)
 
-
 ## Quick start
 
 - Install [Upgradier.Core](https://www.nuget.org/packages/Upgradier.Core)
-- Install the required providers
+- Install the required database engines:
     - [Upgradier.SqlServer](https://www.nuget.org/packages/Upgradier.SqlServer)
-- Install aditional batch strategies
+- Install aditional batch strategies:
     - [Upgradier.BatchStrategy.Aws](https://www.nuget.org/packages/Upgradier.BatchStrategy.Aws)
     - [Upgradier.BatchStrategy.Azure](https://www.nuget.org/packages/Upgradier.BatchStrategy.Azure)
 
@@ -26,12 +25,14 @@ A minimalist approach for updating multiple databases to a version based in conv
 
 ```mermaid
 erDiagram
-    UpdateBuilder||--|| IUpdateManager: creates
-    UpdateBuilder||--|| Options: has
-    IUpdateManager ||--|| Environment:has
-    IUpdateManager ||--|{ IDatabaseEngine :has
-    IUpdateManager ||--|{ IBatchStrategy :has
-    IDatabaseEngine ||--|| Name :has
-    IDatabaseEngine ||--|| ILockStrategy :creates
-    IDatabaseEngine ||--|| SourceDatabase :creates
+    UpdateBuilder||--|| IUpdateManager: creates-one
+    UpdateBuilder||--|| Options: has-one
+    IUpdateManager ||--|| Environment:has-one
+    IUpdateManager ||--|| ISourceProvider:has-one
+    ISourceProvider ||--|{ Source :get-many
+    IUpdateManager ||--|{ IDatabaseEngine :has-many
+    IUpdateManager ||--|| IBatchStrategy :has-one
+    IDatabaseEngine ||--|| Name :has-one
+    IDatabaseEngine ||--|| ILockStrategy :creates-one
+    IDatabaseEngine ||--|| SourceDatabase :creates-many
 ```

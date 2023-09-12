@@ -13,7 +13,10 @@ public sealed class UpdateManager : IUpdateManager
     private readonly SemaphoreSlim _globalLock;
     private bool _isDisposed;
 
-    public UpdateManager(UpdateOptions options)
+    private UpdateManager()
+    { 
+    }
+    internal UpdateManager(UpdateOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(options.DatabaseEngines);
@@ -31,7 +34,7 @@ public sealed class UpdateManager : IUpdateManager
         _globalLock = new SemaphoreSlim(1, 1);
     }
 
-    public async ValueTask<IEnumerable<UpdateResult>> Update(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<UpdateResult>> Update(CancellationToken cancellationToken = default)
     {
         bool isGlobalLockAdquired = false;
         List<UpdateResult> results = new();
@@ -59,14 +62,14 @@ public sealed class UpdateManager : IUpdateManager
         return results.AsReadOnly();
     }
 
-    public async ValueTask<UpdateResult> UpdateSource(string sourceName, CancellationToken cancellationToken = default)
+    public async Task<UpdateResult> UpdateSource(string sourceName, CancellationToken cancellationToken = default)
     {
         IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
         Source source = sources.First(s => s.Name == sourceName);
         return await UpdateSource(source, cancellationToken).ConfigureAwait(false);
     }
 
-    private async ValueTask<UpdateResult> UpdateSource(Source source, CancellationToken cancellationToken = default)
+    private async Task<UpdateResult> UpdateSource(Source source, CancellationToken cancellationToken = default)
     {
         IDatabaseEngine factory = _databaseEngines[source.Provider];
         IEnumerable<Batch> batches = await _batchStrategy.GetBatchesAsync(cancellationToken).ConfigureAwait(false);
@@ -83,12 +86,27 @@ public sealed class UpdateManager : IUpdateManager
                 updateResult = updateResult with { OriginalVersion = currentVersion.VersionId };
                 foreach (Batch batch in batches.Where(b => b.VersionId > currentVersion.VersionId).OrderBy(b => b.VersionId))
                 {
-                    if (_cacheManager?.TryLoad(batch.VersionId, Environment.CurrentManagedThreadId, out string? sqlContent) is not true)
+                    string sqlContent;
+                    if(_cacheManager is not null)
+                    {
+                        BatchCacheResult cacheResult = await _cacheManager.TryLoad(batch.VersionId, Environment.CurrentManagedThreadId, cancellationToken).ConfigureAwait(false);
+                        if (cacheResult.Success)
+                        {
+                            sqlContent = cacheResult.Contents!;
+                        }
+                        else
+                        {
+                            using StreamReader sqlContentStream = await _batchStrategy.GetBatchContentsAsync(batch, cancellationToken).ConfigureAwait(false);
+                            sqlContent = await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+                            await _cacheManager.Store(batch.VersionId, Environment.CurrentManagedThreadId, sqlContent, cancellationToken).ConfigureAwait(false);
+                        }
+                    }
+                    else
                     {
                         using StreamReader sqlContentStream = await _batchStrategy.GetBatchContentsAsync(batch, cancellationToken).ConfigureAwait(false);
                         sqlContent = await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
-                        _cacheManager?.Store(batch.VersionId, Environment.CurrentManagedThreadId, sqlContent);
                     }
+
                     await sourceDatabase.Database.ExecuteSqlRawAsync(sqlContent!, cancellationToken).ConfigureAwait(false);
                     currentVersion.VersionId = batch.VersionId;
                     updateResult = updateResult with { Version = batch.VersionId };

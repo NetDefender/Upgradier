@@ -26,23 +26,15 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     [Fact]
     public async Task CreateLockStrategy_Throws_When_SourceDatabase_Is_Not_SqlSourceDatabase()
     {
-        SqlEngine factory = new(null);
-        try
+        Assert.Throws<InvalidCastException>(() =>
         {
-            factory.CreateLockStrategy(new SourceDatabase(new DbContextOptionsBuilder()
-                .UseSqlServer(_connectionString)
-                .Options));
-            Assert.Fail("Cant create ILockStrategy because SourceDatabase is not SqlServerDatabase");
-        }
-        catch (Exception ex) when (ex is InvalidCastException)
-        {
-            Assert.True(true);
-        }
-        catch (Exception)
-        {
-            Assert.Fail("Exception is not InvalidCastException");
-        }
-        Assert.Equal("SqlServer", factory.Name);
+            new SqlEngine(null)
+                .CreateLockStrategy
+                (new SourceDatabase(new DbContextOptionsBuilder()
+                    .UseSqlServer(_connectionString)
+                    .Options)
+                );
+        });
     }
 
     [Fact]

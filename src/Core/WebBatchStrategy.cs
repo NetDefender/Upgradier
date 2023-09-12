@@ -17,7 +17,7 @@ public class WebBatchStrategy : BatchStrategyBase
         _baseUri = baseUri;
     }
 
-    public override async ValueTask<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken)
+    public override async Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken)
     {
         UriBuilder builder = new (_baseUri);
         string batchesUri = builder
@@ -31,7 +31,7 @@ public class WebBatchStrategy : BatchStrategyBase
         return batches.AsReadOnly().AsEnumerable();
     }
 
-    public override async ValueTask<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
+    public override async Task<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
     {
         UriBuilder uriBuilder = new(_baseUri);
         StringBuilder uri = new StringBuilder(uriBuilder.Path, uriBuilder.Path.Length + 30).TrimEnd('/')

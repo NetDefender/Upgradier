@@ -10,8 +10,8 @@ public sealed class BatchStrategy_Tests
         {
         }
         public string DerivedEnvironment => Environment;
-        public override ValueTask<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken) => throw new NotImplementedException();
-        public override ValueTask<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public override Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken) => throw new NotImplementedException();
+        public override Task<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     [Fact]
