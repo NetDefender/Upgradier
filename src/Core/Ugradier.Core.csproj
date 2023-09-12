@@ -1,14 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	
 	<PropertyGroup>
 		<DefineSwitches>EF</DefineSwitches>
 		<IsPackable>true</IsPackable>
 	</PropertyGroup>
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.EntityFrameworkCore" />
-	  <PackageReference Update="Microsoft.EntityFrameworkCore.Design">
-	    <PrivateAssets>all</PrivateAssets>
-	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Update="Microsoft.EntityFrameworkCore.Relational" />
-	</ItemGroup>
+	
 </Project>
