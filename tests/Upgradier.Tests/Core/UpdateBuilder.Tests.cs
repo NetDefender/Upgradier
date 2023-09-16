@@ -138,7 +138,7 @@ public sealed class UpdateBuilder_Tests
     [InlineData("https://wwww.page.es", "SqlServer", "Dev")]
     public void WithWebBatchStrategy_Sets_BatchStrategy([StringSyntax(StringSyntaxAttribute.Uri)]string uri, string provider, string? environment)
     {
-        WebBatchStrategy webStrategy = Substitute.For<WebBatchStrategy>(new Uri(uri), provider, environment);
+        WebBatchStrategy webStrategy = Substitute.For<WebBatchStrategy>(new Uri(uri), environment);
         Func<WebBatchStrategy> webStrategyBuilder = () => webStrategy;
         UpdateBuilder builder = new();
         Func<HttpRequestMessage, Task> httpMessageOptions = (message) => Task.CompletedTask;
@@ -154,7 +154,7 @@ public sealed class UpdateBuilder_Tests
         factory.Name.Returns("ProviderA");
         Func<IDatabaseEngine>[] factories = new Func<IDatabaseEngine>[] { () => factory };
         builder.AddDatabaseEngines(factories);
-        WebBatchStrategy webStrategy = Substitute.For<WebBatchStrategy>(new Uri("http://invent.com"), "SqlServer", "Dev");
+        WebBatchStrategy webStrategy = Substitute.For<WebBatchStrategy>(new Uri("http://invent.com"), "Dev");
         Func<WebBatchStrategy> webStrategyFactory = () => webStrategy;
         Func<HttpRequestMessage, Task> httpMessageOptions = (message) => Task.CompletedTask;
         builder.WithWebBatchStrategy(webStrategyFactory, httpMessageOptions);
