@@ -12,7 +12,7 @@ public static class Extensions
         {
             AmazonS3Client awsClient = factory();
             TransferUtility utility = new (awsClient);
-            return new AwsS3BatchStrategy(bucketName, provider, environment, utility);
+            return new AwsS3BatchStrategy(bucketName, environment, utility);
         };
         builder.WithBatchStrategy(batchStrategy);
         return builder;

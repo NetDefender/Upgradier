@@ -2,12 +2,10 @@
 
 public abstract class BatchStrategyBase : IBatchStrategy
 {
-    protected BatchStrategyBase(string? environment, string provider, string name)
+    protected BatchStrategyBase(string? environment, string name)
     {
-        ArgumentNullException.ThrowIfNullOrEmpty(provider);
         ArgumentNullException.ThrowIfNullOrEmpty(name);
         Name = name;
-        Provider = provider;
         Environment = environment;
     }
 
@@ -15,9 +13,7 @@ public abstract class BatchStrategyBase : IBatchStrategy
 
     public string? Environment { get; }
 
-    public string Provider { get; }
-
     public abstract Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken);
 
-    public abstract Task<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken);
+    public abstract Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken);
 }

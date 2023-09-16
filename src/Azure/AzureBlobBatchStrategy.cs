@@ -10,7 +10,7 @@ public class AzureBlobBatchStrategy : BatchStrategyBase
 {
     private readonly BlobContainerClient _containerClient;
 
-    public AzureBlobBatchStrategy(string provider, string? environment, BlobContainerClient containerClient) : base(environment, provider, nameof(AzureBlobBatchStrategy))
+    public AzureBlobBatchStrategy(string? environment, BlobContainerClient containerClient) : base(environment, nameof(AzureBlobBatchStrategy))
     {
         ArgumentNullException.ThrowIfNull(containerClient);
         _containerClient = containerClient;
@@ -28,10 +28,10 @@ public class AzureBlobBatchStrategy : BatchStrategyBase
         return batches.AsReadOnly().AsEnumerable();
     }
 
-    public override async Task<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
+    public override async Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken)
     {
         StringBuilder batchesPath = new StringBuilder(50)
-            .Append(Provider)
+            .Append(provider)
             .AppendWhen(() => !string.IsNullOrEmpty(Environment), "/", Environment!)
             .Append('/').Append(batch.VersionId).Append(".sql");
         BlobClient blobClient = _containerClient.GetBlobClient(batchesPath.ToString());

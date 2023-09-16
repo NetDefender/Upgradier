@@ -21,6 +21,9 @@ A minimalist approach for updating multiple databases to a version based in conv
     - [Upgradier.BatchStrategy.Aws](https://www.nuget.org/packages/Upgradier.BatchStrategy.Aws)
     - [Upgradier.BatchStrategy.Azure](https://www.nuget.org/packages/Upgradier.BatchStrategy.Azure)
 
+## Example
+Explore a classic use with SqlServer
+
 ## Architecture
 
 ```mermaid

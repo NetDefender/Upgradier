@@ -11,7 +11,7 @@ public class AwsS3BatchStrategy : BatchStrategyBase
     private readonly ITransferUtility _transferUtility;
     private Func<TransferUtilityDownloadRequest, Task> _configureRequest = _ => Task.CompletedTask;
 
-    public AwsS3BatchStrategy(string bucketName, string provider, string? environment, ITransferUtility transferUtility) : base(environment, provider, nameof(AwsS3BatchStrategy))
+    public AwsS3BatchStrategy(string bucketName, string? environment, ITransferUtility transferUtility) : base(environment, nameof(AwsS3BatchStrategy))
     {
         ArgumentNullException.ThrowIfNull(bucketName);
         ArgumentNullException.ThrowIfNull(transferUtility);
@@ -37,11 +37,11 @@ public class AwsS3BatchStrategy : BatchStrategyBase
         return batches.AsReadOnly().AsEnumerable();
     }
 
-    public override async Task<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
+    public override async Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken)
     {
         FileInfo downloadFile = new(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
         StringBuilder key = new StringBuilder(50)
-            .Append(Provider)
+            .Append(provider)
             .AppendWhen(() => !string.IsNullOrEmpty(Environment), "/", Environment!)
             .Append('/').Append(batch.VersionId).Append(".sql");
         TransferUtilityDownloadRequest request = new()

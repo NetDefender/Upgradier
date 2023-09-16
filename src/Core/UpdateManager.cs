@@ -87,23 +87,23 @@ public sealed class UpdateManager : IUpdateManager
                 foreach (Batch batch in batches.Where(b => b.VersionId > currentVersion.VersionId).OrderBy(b => b.VersionId))
                 {
                     string sqlContent;
-                    if(_cacheManager is not null)
+                    if (_cacheManager is not null)
                     {
-                        BatchCacheResult cacheResult = await _cacheManager.TryLoad(batch.VersionId, Environment.CurrentManagedThreadId, cancellationToken).ConfigureAwait(false);
+                        BatchCacheResult cacheResult = await _cacheManager.TryLoad(batch.VersionId, source.Provider, Environment.CurrentManagedThreadId, cancellationToken).ConfigureAwait(false);
                         if (cacheResult.Success)
                         {
                             sqlContent = cacheResult.Contents!;
                         }
                         else
                         {
-                            using StreamReader sqlContentStream = await _batchStrategy.GetBatchContentsAsync(batch, cancellationToken).ConfigureAwait(false);
+                            using StreamReader sqlContentStream = await _batchStrategy.GetBatchContentsAsync(batch, source.Provider, cancellationToken).ConfigureAwait(false);
                             sqlContent = await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
-                            await _cacheManager.Store(batch.VersionId, Environment.CurrentManagedThreadId, sqlContent, cancellationToken).ConfigureAwait(false);
+                            await _cacheManager.Store(batch.VersionId, source.Provider, Environment.CurrentManagedThreadId, sqlContent, cancellationToken).ConfigureAwait(false);
                         }
                     }
                     else
                     {
-                        using StreamReader sqlContentStream = await _batchStrategy.GetBatchContentsAsync(batch, cancellationToken).ConfigureAwait(false);
+                        using StreamReader sqlContentStream = await _batchStrategy.GetBatchContentsAsync(batch, source.Provider, cancellationToken).ConfigureAwait(false);
                         sqlContent = await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
                     }
 

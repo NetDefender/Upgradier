@@ -6,7 +6,7 @@ public class FileBatchStrategy : BatchStrategyBase
 {
     private readonly string _baseDirectory;
 
-    public FileBatchStrategy(string baseDirectory, string provider, string? environment) : base(environment, provider, nameof(FileBatchStrategy))
+    public FileBatchStrategy(string baseDirectory, string? environment) : base(environment, nameof(FileBatchStrategy))
     {
         ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
         _baseDirectory = !Path.EndsInDirectorySeparator(path: baseDirectory) ? baseDirectory + Path.DirectorySeparatorChar : baseDirectory;
@@ -21,9 +21,9 @@ public class FileBatchStrategy : BatchStrategyBase
         return Task.FromResult(batches.AsReadOnly().AsEnumerable());
     }
 
-    public override Task<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
+    public override Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider,CancellationToken cancellationToken)
     {
-        string batchesDirectory = Path.Combine(_baseDirectory, Provider, string.IsNullOrEmpty(Environment) ? string.Empty : Environment);
+        string batchesDirectory = Path.Combine(_baseDirectory, provider, string.IsNullOrEmpty(Environment) ? string.Empty : Environment);
         return Task.FromResult(File.OpenText(Path.Combine(batchesDirectory, $"{batch.VersionId}.sql")));
     }
 }

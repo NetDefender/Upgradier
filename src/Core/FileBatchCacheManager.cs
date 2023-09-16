@@ -9,15 +9,15 @@ public sealed class FileBatchCacheManager : IBatchCacheManager
         _basePath = basePath;
     }
 
-    public async Task Store(long versionId, int threadId, string batch, CancellationToken cancellationToken)
+    public async Task Store(long versionId, string provider, int threadId, string batch, CancellationToken cancellationToken)
     {
-        await File.WriteAllTextAsync(Path.Combine(_basePath, threadId.ToString(), $"{versionId}.sql"), batch, cancellationToken).ConfigureAwait(false);
+        await File.WriteAllTextAsync(Path.Combine(_basePath, provider, threadId.ToString(), $"{versionId}.sql"), batch, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<BatchCacheResult> TryLoad(long versionId, int threadId, CancellationToken cancellationToken)
+    public async Task<BatchCacheResult> TryLoad(long versionId, string provider, int threadId, CancellationToken cancellationToken)
     {
-        FileInfo batchFile = new (Path.Combine(_basePath, threadId.ToString(), $"{versionId}.sql"));
-        if(batchFile.Exists )
+        FileInfo batchFile = new(Path.Combine(_basePath, provider, threadId.ToString(), $"{versionId}.sql"));
+        if (batchFile.Exists)
         {
             return new BatchCacheResult(true, await File.ReadAllTextAsync(batchFile.FullName, cancellationToken).ConfigureAwait(false));
         }

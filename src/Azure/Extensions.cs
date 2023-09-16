@@ -19,7 +19,7 @@ public static class Extensions
         Func<IBatchStrategy> batchStrategy = () =>
         {
             BlobContainerClient azureClient = factory();
-            return new AzureBlobBatchStrategy(provider, environment, azureClient);
+            return new AzureBlobBatchStrategy(environment, azureClient);
         };
         builder.WithBatchStrategy(batchStrategy);
         return builder;

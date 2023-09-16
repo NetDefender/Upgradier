@@ -10,7 +10,7 @@ public class WebBatchStrategy : BatchStrategyBase
     private static readonly HttpClient _client = new ();
     private Func<HttpRequestMessage, Task> _configureRequest = _ => Task.CompletedTask;
 
-    public WebBatchStrategy(Uri baseUri, string provider, string? environment) : base(environment, provider, nameof(FileBatchStrategy))
+    public WebBatchStrategy(Uri baseUri, string? environment) : base(environment, nameof(FileBatchStrategy))
     {
         ArgumentNullException.ThrowIfNull(baseUri);
         baseUri.ThrowIfIsNotAbsoluteUri();
@@ -31,11 +31,11 @@ public class WebBatchStrategy : BatchStrategyBase
         return batches.AsReadOnly().AsEnumerable();
     }
 
-    public override async Task<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken)
+    public override async Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken)
     {
         UriBuilder uriBuilder = new(_baseUri);
         StringBuilder uri = new StringBuilder(uriBuilder.Path, uriBuilder.Path.Length + 30).TrimEnd('/')
-            .Append('/').Append(Provider)
+            .Append('/').Append(provider)
             .AppendWhen(() => !string.IsNullOrEmpty(Environment), "/", Environment!)
             .Append('/').Append(batch.VersionId).Append(".sql");
         uriBuilder.Path = uri.ToString();

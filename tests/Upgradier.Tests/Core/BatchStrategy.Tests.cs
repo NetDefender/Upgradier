@@ -6,12 +6,12 @@ public sealed class BatchStrategy_Tests
 {
     private sealed class BatchStrategyMock : BatchStrategyBase
     {
-        public BatchStrategyMock(string? environment, string provider, string name) : base(environment, provider, name)
+        public BatchStrategyMock(string? environment, string name) : base(environment, name)
         {
         }
         public string DerivedEnvironment => Environment;
         public override Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken) => throw new NotImplementedException();
-        public override Task<StreamReader> GetBatchContentsAsync(Batch batch, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public override Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     [Fact]
@@ -19,31 +19,19 @@ public sealed class BatchStrategy_Tests
     {
         Assert.Throws<ArgumentNullException>("name", () =>
         {
-            BatchStrategyMock strategy = new(null, "SqlServer",null);
+            BatchStrategyMock strategy = new(null, null);
         });
         Assert.Throws<ArgumentException>("name", () =>
         {
-            BatchStrategyMock strategy = new(null, "SqlServer", string.Empty);
+            BatchStrategyMock strategy = new(null, string.Empty);
         });
     }
 
-    [Fact]
-    public void Provider_Cannot_Be_Null_or_Empty()
-    {
-        Assert.Throws<ArgumentNullException>("provider", () =>
-        {
-            BatchStrategyMock strategy = new(null, null, "Custom");
-        });
-        Assert.Throws<ArgumentException>("provider", () =>
-        {
-            BatchStrategyMock strategy = new(null, string.Empty, "Custom");
-        });
-    }
 
     [Fact]
     public void Environment_can_be_null()
     {
-        BatchStrategyMock strategy = new(null, "Oracle", "Test");
+        BatchStrategyMock strategy = new(null, "Test");
         Assert.Null(strategy.DerivedEnvironment);
     }
 }

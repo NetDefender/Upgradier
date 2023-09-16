@@ -16,7 +16,7 @@ public class WebBatchStrategyTests : IClassFixture<BatchServerFixture>
     {
         Assert.NotNull(_batchServerfixture.BatchesUri);
         using CancellationTokenSource cancellationTokenSource = new();
-        WebBatchStrategy strategy = new(_batchServerfixture.BatchesUri, "SqlServer", null);
+        WebBatchStrategy strategy = new(_batchServerfixture.BatchesUri, null);
         IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
@@ -33,8 +33,8 @@ public class WebBatchStrategyTests : IClassFixture<BatchServerFixture>
     {
         Assert.NotNull(_batchServerfixture.BatchesUri);
         string expectedBatchContents = await File.ReadAllTextAsync(Path.Combine("Core", "Batches", provider, environment ?? string.Empty, $"{versionId}.sql")).ConfigureAwait(false);
-        WebBatchStrategy strategy = new(_batchServerfixture.BatchesUri, provider, environment);
-        using StreamReader actualStreamContent = await strategy.GetBatchContentsAsync(new Batch { VersionId = versionId }, CancellationToken.None).ConfigureAwait(false);
+        WebBatchStrategy strategy = new(_batchServerfixture.BatchesUri, environment);
+        using StreamReader actualStreamContent = await strategy.GetBatchContentsAsync(new Batch { VersionId = versionId }, provider, CancellationToken.None).ConfigureAwait(false);
         Assert.NotNull(actualStreamContent);
         string actualBatchContents = await actualStreamContent.ReadToEndAsync(CancellationToken.None).ConfigureAwait(false);
         Assert.Equal(expectedBatchContents, actualBatchContents);

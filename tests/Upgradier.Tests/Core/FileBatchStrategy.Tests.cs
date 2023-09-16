@@ -8,7 +8,7 @@ public sealed class FileBatchStrategy_Tests
     public async Task GetAllBatches_Works_When_Base_Directory_Not_Ends_With_DirectorySeparator()
     {
         using CancellationTokenSource cancellationTokenSource = new();
-        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", "SqlServer", null);
+        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", null);
         IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
@@ -19,7 +19,7 @@ public sealed class FileBatchStrategy_Tests
     public async Task GetAllBatches_Works_When_Base_Directory_Ends_With_DirectorySeparator()
     {
         using CancellationTokenSource cancellationTokenSource = new();
-        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches{Path.DirectorySeparatorChar}", "SqlServer", null);
+        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches{Path.DirectorySeparatorChar}", null);
         IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
@@ -30,7 +30,7 @@ public sealed class FileBatchStrategy_Tests
     public async Task GetAllBatches_Returns_2_Batches_In_Null_Environment()
     {
         using CancellationTokenSource cancellationTokenSource = new();
-        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", "SqlServer", null);
+        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", null);
         IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
@@ -41,7 +41,7 @@ public sealed class FileBatchStrategy_Tests
     public async Task GetAllBatches_Returns_3_Batches_In_Dev_Environment()
     {
         using CancellationTokenSource cancellationTokenSource = new();
-        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", "SqlServer", "Dev");
+        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", "Dev");
         IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
@@ -54,11 +54,11 @@ public sealed class FileBatchStrategy_Tests
     {
         Assert.Throws<ArgumentNullException>("baseDirectory", () =>
         {
-            new FileBatchStrategy(null, "SqlServer", "Dev");
+            new FileBatchStrategy(null, "Dev");
         });
         Assert.Throws<ArgumentException>("baseDirectory", () =>
         {
-            new FileBatchStrategy(string.Empty, "SqlServer", "Dev");
+            new FileBatchStrategy(string.Empty, "Dev");
         });
     }
 
@@ -67,7 +67,7 @@ public sealed class FileBatchStrategy_Tests
     {
         await Assert.ThrowsAsync<DirectoryNotFoundException>(async () =>
         {
-            FileBatchStrategy strategy = new($"NonExistentDirectory{Path.DirectorySeparatorChar}Batches", "SqlServer", "Dev");
+            FileBatchStrategy strategy = new($"NonExistentDirectory{Path.DirectorySeparatorChar}Batches", "Dev");
             IEnumerable<Batch> batches = await strategy.GetBatchesAsync(CancellationToken.None).ConfigureAwait(false);
         });
     }
@@ -81,8 +81,8 @@ public sealed class FileBatchStrategy_Tests
     public async Task GetBatchContentsAsync_Get_Contents_By_VersionId(int versionId, string provider, string? environment)
     {
         string expectedBatchContents = await File.ReadAllTextAsync(Path.Combine("Core", "Batches", provider, environment ?? string.Empty, $"{versionId}.sql")).ConfigureAwait(false);
-        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", provider, environment);
-        using StreamReader actualStreamContent = await strategy.GetBatchContentsAsync(new Batch { VersionId = versionId }, CancellationToken.None).ConfigureAwait(false);
+        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches",  environment);
+        using StreamReader actualStreamContent = await strategy.GetBatchContentsAsync(new Batch { VersionId = versionId }, provider, CancellationToken.None).ConfigureAwait(false);
         Assert.NotNull(actualStreamContent);
         string actualBatchContents = await actualStreamContent.ReadToEndAsync(CancellationToken.None).ConfigureAwait(false);
         Assert.Equal(expectedBatchContents, actualBatchContents);
