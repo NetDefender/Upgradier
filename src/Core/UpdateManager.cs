@@ -83,8 +83,9 @@ public sealed class UpdateManager : IUpdateManager
             if (await lockStrategy.TryAdquireAsync(cancellationToken).ConfigureAwait(false))
             {
                 DatabaseVersion currentVersion = await sourceDatabase.Version.FirstAsync(cancellationToken).ConfigureAwait(false);
-                updateResult = updateResult with { OriginalVersion = currentVersion.VersionId };
-                foreach (Batch batch in batches.Where(b => b.VersionId > currentVersion.VersionId).OrderBy(b => b.VersionId))
+                long startVersion = currentVersion.VersionId;
+                updateResult = updateResult with { Version = startVersion, OriginalVersion = startVersion };
+                foreach (Batch batch in batches.Where(b => b.VersionId > startVersion).OrderBy(b => b.VersionId))
                 {
                     string sqlContent;
                     if (_cacheManager is not null)
@@ -108,9 +109,15 @@ public sealed class UpdateManager : IUpdateManager
                     }
 
                     await sourceDatabase.Database.ExecuteSqlRawAsync(sqlContent!, cancellationToken).ConfigureAwait(false);
-                    currentVersion.VersionId = batch.VersionId;
-                    updateResult = updateResult with { Version = batch.VersionId };
+
+                    sourceDatabase.Remove(currentVersion);
                     await sourceDatabase.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+                    currentVersion.VersionId = batch.VersionId;
+                    await sourceDatabase.AddAsync(currentVersion);
+                    await sourceDatabase.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+                    updateResult = updateResult with { Version = batch.VersionId };
                 }
                 await lockStrategy.FreeAsync(cancellationToken).ConfigureAwait(false);
             }

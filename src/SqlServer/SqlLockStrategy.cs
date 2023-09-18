@@ -13,7 +13,7 @@ public class SqlLockStrategy : LockStrategyBase
     }
     public sealed override async Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default)
     {
-        _transaction = await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken).ConfigureAwait(false);
+        _transaction = await Context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
         SqlLockResult lockResult = Context.Database.SqlQueryRaw<SqlLockResult>("""
             DECLARE @LockResult INT;
             EXEC @LockResult = sp_getapplock @Resource = N'sqlserver-lock-strategy', @LockMode = 'Exclusive', @LockOwner = 'Transaction';
@@ -33,7 +33,7 @@ public class SqlLockStrategy : LockStrategyBase
 
     public override async Task EnsureSchema(CancellationToken cancellationToken = default)
     {
-        Assembly resourceAssembly = Context.GetType().Assembly;
+        Assembly resourceAssembly = typeof(SqlLockStrategy).Assembly;
         Dictionary<int, string> migrationBatches = resourceAssembly.GetManifestResourceNames().Where(resource => resource.EndsWith(".sql"))
             .ToDictionary(resource => resource.ResourceId());
         Stream? startupResource = resourceAssembly.GetManifestResourceStream(migrationBatches[0]);
