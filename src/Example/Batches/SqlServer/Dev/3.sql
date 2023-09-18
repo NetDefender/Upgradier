@@ -1,1 +1,1 @@
-﻿DELETE FROM Price
+﻿PRINT 'No-Op'

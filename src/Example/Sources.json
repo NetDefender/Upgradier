@@ -1,0 +1,7 @@
+[
+  {
+    "Name": "Test-Tenant",
+    "Provider": "SqlServer",
+    "ConnectionString": "Server=.;Initial Catalog=Test-Database;Integrated Security=SSPI;TrustServerCertificate=True"
+  }
+]

@@ -1,0 +1,20 @@
+﻿
+using System.Text.Json;
+using Upgradier.Core;
+
+public sealed class FileBasedSourceProvider : SourceProviderBase
+{
+    public FileBasedSourceProvider(string fileName, string? environment) : base(environment, nameof(FileBasedSourceProvider))
+    {
+        FileName = fileName;
+    }
+
+    public string FileName { get; }
+
+    public override async Task<IEnumerable<Source>> GetSourcesAsync(CancellationToken cancellationToken)
+    {
+        using FileStream fs = new (FileName, FileMode.Open, FileAccess.Read);
+        IEnumerable<Source>? sources = await JsonSerializer.DeserializeAsync<IEnumerable<Source>>(fs, cancellationToken: cancellationToken);
+        return sources ?? Enumerable.Empty<Source>();
+    }
+}

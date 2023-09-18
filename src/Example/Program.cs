@@ -1,12 +1,17 @@
-﻿
-using Upgradier.Core;
+﻿using Upgradier.Core;
 using Upgradier.SqlServer;
 
 const string ENVIRONMENT = "dev";
 
-UpdateBuilder builder = new UpdateBuilder()
-    //.WithFileBatchAdapter("")
+UpdateBuilder updateBuilder = new UpdateBuilder()
+    .WithFileBatchAdapter("Batches", ENVIRONMENT)
+    .WithSourceProvider(() => new FileBasedSourceProvider("Sources.json", ENVIRONMENT))
     .AddSqlServerEngine(ENVIRONMENT);
 
-using UpdateManager updateManager = builder.Build();
+using UpdateManager updateManager = updateBuilder.Build();
 IEnumerable<UpdateResult> updateResults = await updateManager.Update();
+
+foreach (UpdateResult result in updateResults)
+{
+    Console.WriteLine(result);
+}
