@@ -5,7 +5,7 @@ const string ENVIRONMENT = "dev";
 
 UpdateBuilder updateBuilder = new UpdateBuilder()
     .WithFileBatchAdapter("Batches", ENVIRONMENT)
-    .WithSourceProvider(() => new FileBasedSourceProvider("Sources.json", ENVIRONMENT))
+    .WithSourceProvider(() => new FileSourceProvider("Sources.json", ENVIRONMENT))
     .AddSqlServerEngine(ENVIRONMENT);
 
 using UpdateManager updateManager = updateBuilder.Build();

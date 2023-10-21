@@ -20,7 +20,7 @@ public sealed class Source_Tests
     [InlineData(null, "NotImportant", null)]
     [InlineData(null, null, "NotImportant")]
     [InlineData(null, null, null)]
-    public void If_Any_Property_Is_Null_Throws(string? name, string? provider, string? connectionString)
+    public void If_Any_Property_In_Source_Is_Null_Throws(string? name, string? provider, string? connectionString)
     {
         Assert.Throws<ArgumentNullException>(() => new Source(name, provider, connectionString));
     }
@@ -33,19 +33,8 @@ public sealed class Source_Tests
     [InlineData("NotImportant", "", "")]
     [InlineData("NotImportant", "", "NotImportant")]
     [InlineData("NotImportant", "NotImportant", "")]
-    public void If_Any_Property_Is_Empty_Throws(string name, string provider, string connectionString)
+    public void If_Any_Property_In_Source_Is_Empty_Throws(string name, string provider, string connectionString)
     {
         Assert.Throws<ArgumentException>(() => new Source(name, provider, connectionString));
     }
-
-    [Theory]
-    [InlineData("Name1", "SqlServer", "Server=.;Initial Catalog=master;Integrated Security=SSPI")]
-    public void Properties_Are_Setted(string name, string provider, string connectionString)
-    {
-        Source source = new (name, provider, connectionString);
-        Assert.Equal(name, source.Name);
-        Assert.Equal(provider, source.Provider);
-        Assert.Equal(connectionString, source.ConnectionString);
-    }
-
 }

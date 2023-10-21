@@ -2,9 +2,9 @@
 using System.Text.Json;
 using Upgradier.Core;
 
-public sealed class FileBasedSourceProvider : SourceProviderBase
+public sealed class FileSourceProvider : SourceProviderBase
 {
-    public FileBasedSourceProvider(string fileName, string? environment) : base(environment, nameof(FileBasedSourceProvider))
+    public FileSourceProvider(string fileName, string? environment) : base(environment, nameof(FileSourceProvider))
     {
         FileName = fileName;
     }
