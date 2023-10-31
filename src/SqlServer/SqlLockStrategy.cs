@@ -8,7 +8,7 @@ namespace Upgradier.SqlServer;
 public class SqlLockStrategy : LockStrategyBase
 {
     private IDbContextTransaction? _transaction;
-    public SqlLockStrategy(string? environment, SqlSourceDatabase context) : base(environment, context)
+    public SqlLockStrategy(SqlSourceDatabase context) : base(context)
     {
     }
     public sealed override async Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default)

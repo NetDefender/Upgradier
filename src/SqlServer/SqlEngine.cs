@@ -4,12 +4,10 @@ namespace Upgradier.SqlServer;
 
 public class SqlEngine : IDatabaseEngine
 {
-    private readonly string? _environment;
     public const string NAME = "SqlServer";
 
-    public SqlEngine(string? environment)
+    public SqlEngine()
     {
-        _environment = environment;
     }
 
     public string Name => NAME;
@@ -18,7 +16,7 @@ public class SqlEngine : IDatabaseEngine
     {
         if (sourceDatabase is SqlSourceDatabase sqlSourceDatabase)
         {
-            return new SqlLockStrategy(_environment, sqlSourceDatabase);
+            return new SqlLockStrategy(sqlSourceDatabase);
         }
         throw new InvalidCastException(nameof(sourceDatabase));
     }
@@ -27,6 +25,6 @@ public class SqlEngine : IDatabaseEngine
     {
         DbContextOptionsBuilder<SqlSourceDatabase> builder = new DbContextOptionsBuilder<SqlSourceDatabase>()
             .UseSqlServer(connectionString);
-        return new SqlSourceDatabase(_environment, builder.Options);
+        return new SqlSourceDatabase(builder.Options);
     }
 }

@@ -1,11 +1,13 @@
-﻿namespace Upgradier.Core;
+﻿using Ugradier.Core;
+
+namespace Upgradier.Core;
 
 public abstract class LockStrategyBase : ILockStrategy
 {
-    protected LockStrategyBase(string? environment, SourceDatabase context)
+    protected LockStrategyBase(SourceDatabase context)
     {
         ArgumentNullException.ThrowIfNull(context);
-        Environment = environment;
+        Environment = EnvironmentVariables.GetExecutionEnvironment();
         Context = context;
     }
     public string? Environment { get; }

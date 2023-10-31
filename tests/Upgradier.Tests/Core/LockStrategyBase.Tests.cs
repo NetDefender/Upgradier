@@ -13,21 +13,12 @@ public sealed class LockStrategyBase_Tests
         {
             try
             {
-                Substitute.For<LockStrategyBase>("dev", null);
+                Substitute.For<LockStrategyBase>(null);
             }
             catch (Exception ex)
             {
                 throw ex.GetBaseException();
             }
         });
-    }
-
-    [Fact]
-    public void Environment_Is_Assigned()
-    {
-        const string ENVIRONMENT = "Dev";
-        SourceDatabase sourceDatabase = Substitute.For<SourceDatabase>(ENVIRONMENT, new DbContextOptionsBuilder().Options);
-        LockStrategyBase strategy = Substitute.For<LockStrategyBase>(ENVIRONMENT, sourceDatabase);
-        Assert.Equal(ENVIRONMENT, strategy.Environment);
     }
 }

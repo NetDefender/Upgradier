@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Ugradier.Core;
 using Upgradier.Core;
 using Upgradier.SqlServer;
 using Upgradier.Tests.Core;
@@ -18,34 +19,33 @@ public sealed class SqlLockStrategy_Tests : IClassFixture<SqlServerDatabaseFixtu
         _output = output;
     }
 
-    private SqlSourceDatabase CreateSourceDatabase(string? environment)
+    private SqlLockStrategy CreateLockStrategy()
     {
-        return new SqlSourceDatabase(environment, new DbContextOptionsBuilder<SqlSourceDatabase>()
+        SqlSourceDatabase db = new (new DbContextOptionsBuilder<SqlSourceDatabase>()
             .UseSqlServer(_connectionString).Options);
-    }
-
-    private SqlLockStrategy CreateLockStrategy(string? environment) 
-    {
-        return new SqlLockStrategy(environment, CreateSourceDatabase(environment));
+        return new SqlLockStrategy(db);
     }
 
     [Fact]
     [TestOrder(1)]
     public async Task TryAdquireAsync_FirstTime_Initializes_Database_With_MigrationId_1()
     {
-        using SqlLockStrategy strategy = CreateLockStrategy("dev");
+        EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
+        using SqlLockStrategy strategy = CreateLockStrategy();
         using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         bool adquired = await strategy.TryAdquireAsync(cancellationTokenSource.Token);
         Assert.True(adquired, "Lock should be adquired");
         MigrationHistory migrationHistory = await strategy.Context.MigrationHistory.FirstAsync(cancellationTokenSource.Token);
         Assert.Equal(1, migrationHistory.MigrationId);
+        EnvironmentVariables.SetExecutionEnvironment(null);
     }
 
     [Fact]
     [TestOrder(2)]
     public async Task EnsureSchema_Called_Multiple_Times_Doesnt_Change_MigrationId()
     {
-        using SqlLockStrategy strategy = CreateLockStrategy("dev");
+        EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
+        using SqlLockStrategy strategy = CreateLockStrategy();
         using CancellationTokenSource cancellationTokenSource = new ();
         await strategy.EnsureSchema(cancellationTokenSource.Token);
         await strategy.EnsureSchema(cancellationTokenSource.Token);
@@ -56,5 +56,6 @@ public sealed class SqlLockStrategy_Tests : IClassFixture<SqlServerDatabaseFixtu
         await strategy.EnsureSchema(cancellationTokenSource.Token);
         MigrationHistory migrationHistory = await strategy.Context.MigrationHistory.FirstAsync(cancellationTokenSource.Token);
         Assert.Equal(1, migrationHistory.MigrationId);
+        EnvironmentVariables.SetExecutionEnvironment(null);
     }
 }

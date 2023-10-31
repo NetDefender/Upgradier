@@ -99,7 +99,7 @@ public sealed class UpdateBuilder_Tests
         factory.Name.Returns("ProviderA");
         Func<IDatabaseEngine>[] factories = new Func<IDatabaseEngine>[] { () => factory };
         builder.AddDatabaseEngines(factories);
-        WebBatchStrategy webStrategy = Substitute.For<WebBatchStrategy>(new Uri("http://invent.com"), "Dev");
+        WebBatchStrategy webStrategy = Substitute.For<WebBatchStrategy>(new Uri("http://invent.com"));
         Func<WebBatchStrategy> webStrategyFactory = () => webStrategy;
         Func<HttpRequestMessage, Task> httpMessageOptions = (message) => Task.CompletedTask;
         builder.WithWebBatchStrategy(webStrategyFactory, httpMessageOptions);
