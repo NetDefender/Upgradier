@@ -10,7 +10,7 @@ public class WebBatchStrategy : BatchStrategyBase
     private static readonly HttpClient _client = new ();
     private Func<HttpRequestMessage, Task> _configureRequest = _ => Task.CompletedTask;
 
-    public WebBatchStrategy(Uri baseUri, string? environment) : base(environment, nameof(FileBatchStrategy))
+    public WebBatchStrategy(Uri baseUri) : base(nameof(FileBatchStrategy))
     {
         ArgumentNullException.ThrowIfNull(baseUri);
         baseUri.ThrowIfIsNotAbsoluteUri();

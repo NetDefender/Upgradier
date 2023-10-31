@@ -1,12 +1,14 @@
-﻿namespace Upgradier.Core;
+﻿using Ugradier.Core;
+
+namespace Upgradier.Core;
 
 public abstract class BatchStrategyBase : IBatchStrategy
 {
-    protected BatchStrategyBase(string? environment, string name)
+    protected BatchStrategyBase(string name)
     {
-        ArgumentNullException.ThrowIfNullOrEmpty(name);
+        ArgumentException.ThrowIfNullOrEmpty(name);
         Name = name;
-        Environment = environment;
+        Environment = EnvironmentVariables.GetExecutionEnvironment();
     }
 
     public string Name { get; }

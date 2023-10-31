@@ -1,12 +1,14 @@
-﻿namespace Upgradier.Core;
+﻿using Ugradier.Core;
+
+namespace Upgradier.Core;
 
 public abstract class SourceProviderBase : ISourceProvider
 {
-    protected SourceProviderBase(string? environment, string name)
+    protected SourceProviderBase(string name)
     {
         ArgumentException.ThrowIfNullOrEmpty(name);
-        Environment = environment;
         Name = name;
+        Environment = EnvironmentVariables.GetExecutionEnvironment();
     }
 
     public string Name { get; }

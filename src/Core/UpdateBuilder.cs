@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Net.Http;
+﻿using System.Net.Http;
 using Ugradier.Core;
 
 namespace Upgradier.Core;
@@ -14,7 +13,7 @@ public sealed class UpdateBuilder
 
     public UpdateBuilder()
     {
-        _databaseEngines = new List<Func<IDatabaseEngine>>();
+        _databaseEngines = [];
     }
 
     public UpdateBuilder AddDatabaseEngines(params Func<IDatabaseEngine>[] databaseEngines)
@@ -86,35 +85,5 @@ public sealed class UpdateBuilder
             BatchStrategy = _batchStrategy,
             CacheManager = _cacheManager
         });
-    }
-
-    [ExcludeFromCodeCoverage]
-    internal IEnumerable<Func<IDatabaseEngine>> GetDatabaseEngines()
-    {
-        return _databaseEngines.AsReadOnly();
-    }
-
-    [ExcludeFromCodeCoverage]
-    internal Func<IBatchStrategy>? GetBatchStrategy()
-    {
-        return _batchStrategy;
-    }
-
-    [ExcludeFromCodeCoverage]
-    internal Func<ISourceProvider>? GetSourceProvider()
-    {
-        return _sourceProvider;
-    }
-
-    [ExcludeFromCodeCoverage]
-    internal Func<IBatchCacheManager>? GetCacheManager()
-    {
-        return _cacheManager;
-    }
-
-    [ExcludeFromCodeCoverage]
-    internal int GetWaitTimeout()
-    {
-        return _waitTimeout;
     }
 }

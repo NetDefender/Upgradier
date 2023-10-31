@@ -22,20 +22,6 @@ public sealed class UpdateBuilder_Tests
     }
 
     [Fact]
-    public void UpdateBuilder_AddProviderFactories_Adds_That_Elements()
-    {
-        UpdateBuilder builder = new();
-        Func<IDatabaseEngine>[] factories = new Func<IDatabaseEngine>[]
-        {
-            () => Substitute.For<IDatabaseEngine>(),
-            () => Substitute.For<IDatabaseEngine>(),
-            () => Substitute.For<IDatabaseEngine>()
-        };
-        builder.AddDatabaseEngines(factories);
-        Assert.True(factories.SequenceEqual(builder.GetDatabaseEngines()));
-    }
-
-    [Fact]
     public void WithSourceProvider_Throws_If_Null()
     {
         UpdateBuilder builder = new();
@@ -43,28 +29,10 @@ public sealed class UpdateBuilder_Tests
     }
 
     [Fact]
-    public void WithSourceProvider_Sets_SourceProvider()
-    {
-        UpdateBuilder builder = new();
-        Func<ISourceProvider> sourceProvider = () => Substitute.For<ISourceProvider>();
-        builder.WithSourceProvider(sourceProvider);
-        Assert.Same(sourceProvider, builder.GetSourceProvider());
-    }
-
-    [Fact]
     public void WithBatchStrategy_Throws_If_Null()
     {
         UpdateBuilder builder = new();
         Assert.Throws<ArgumentNullException>(() => builder.WithBatchStrategy(null));
-    }
-
-    [Fact]
-    public void WithBatchStrategy_Sets_BatchStrategy()
-    {
-        UpdateBuilder builder = new();
-        Func<IBatchStrategy> batchStrategy = () => Substitute.For<IBatchStrategy>();
-        builder.WithBatchStrategy(batchStrategy);
-        Assert.Same(batchStrategy, builder.GetBatchStrategy());
     }
 
     [Fact]
@@ -86,17 +54,6 @@ public sealed class UpdateBuilder_Tests
     {
         UpdateBuilder builder = new();
         Assert.Throws<ArgumentOutOfRangeException>(() => builder.WithWaitTimeout(-1));
-    }
-
-    [Theory]
-    [InlineData(1)]
-    [InlineData(0)]
-    [InlineData(1000)]
-    public void WithWaitTimeout_SetsTimeout(int timeout)
-    {
-        UpdateBuilder builder = new();
-        builder.WithWaitTimeout(timeout);
-        Assert.Equal(timeout, builder.GetWaitTimeout());
     }
 
     [Fact]
@@ -132,18 +89,6 @@ public sealed class UpdateBuilder_Tests
         builder.WithSourceProvider(Substitute.For<Func<ISourceProvider>>());
         builder.WithBatchStrategy(Substitute.For<Func<IBatchStrategy>>());
         Assert.Throws<ArgumentOutOfRangeException>(() => builder.Build());
-    }
-
-    [Theory]
-    [InlineData("https://wwww.page.es", "SqlServer", "Dev")]
-    public void WithWebBatchStrategy_Sets_BatchStrategy([StringSyntax(StringSyntaxAttribute.Uri)]string uri, string provider, string? environment)
-    {
-        WebBatchStrategy webStrategy = Substitute.For<WebBatchStrategy>(new Uri(uri), environment);
-        Func<WebBatchStrategy> webStrategyBuilder = () => webStrategy;
-        UpdateBuilder builder = new();
-        Func<HttpRequestMessage, Task> httpMessageOptions = (message) => Task.CompletedTask;
-        builder.WithWebBatchStrategy(webStrategyBuilder, httpMessageOptions);
-        Assert.Same(webStrategy, builder.GetBatchStrategy()?.Invoke());
     }
 
     [Fact]

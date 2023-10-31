@@ -6,7 +6,7 @@ public sealed class BatchStrategy_Tests
 {
     private sealed class BatchStrategyMock : BatchStrategyBase
     {
-        public BatchStrategyMock(string? environment, string name) : base(environment, name)
+        public BatchStrategyMock(string name) : base(name)
         {
         }
         public string DerivedEnvironment => Environment;
@@ -15,23 +15,15 @@ public sealed class BatchStrategy_Tests
     }
 
     [Fact]
-    public void Name_Cannot_Be_null()
+    public void Name_Cannot_Be_null_Or_Empty()
     {
         Assert.Throws<ArgumentNullException>("name", () =>
         {
-            BatchStrategyMock strategy = new(null, null);
+            BatchStrategyMock strategy = new(null);
         });
         Assert.Throws<ArgumentException>("name", () =>
         {
-            BatchStrategyMock strategy = new(null, string.Empty);
+            BatchStrategyMock strategy = new(string.Empty);
         });
-    }
-
-
-    [Fact]
-    public void Environment_can_be_null()
-    {
-        BatchStrategyMock strategy = new(null, "Test");
-        Assert.Null(strategy.DerivedEnvironment);
     }
 }

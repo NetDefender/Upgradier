@@ -6,7 +6,7 @@ public class FileBatchStrategy : BatchStrategyBase
 {
     private readonly string _baseDirectory;
 
-    public FileBatchStrategy(string baseDirectory, string? environment) : base(environment, nameof(FileBatchStrategy))
+    public FileBatchStrategy(string baseDirectory) : base(nameof(FileBatchStrategy))
     {
         ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
         _baseDirectory = !Path.EndsInDirectorySeparator(path: baseDirectory) ? baseDirectory + Path.DirectorySeparatorChar : baseDirectory;

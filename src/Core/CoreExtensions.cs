@@ -37,9 +37,9 @@ public static class CoreExtensions
         return uri != null && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
     }
 
-    public static UpdateBuilder WithFileBatchAdapter(this UpdateBuilder builder, string baseDirectory, string? environment = null)
+    public static UpdateBuilder WithFileBatchAdapter(this UpdateBuilder builder, string baseDirectory)
     {
-        builder.WithBatchStrategy(() => new FileBatchStrategy(baseDirectory, environment));
+        builder.WithBatchStrategy(() => new FileBatchStrategy(baseDirectory));
         return builder;
     }
 
