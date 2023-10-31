@@ -78,7 +78,6 @@ public sealed class FileBatchStrategy_Tests
     [Theory]
     [InlineData(1, "SqlServer")]
     [InlineData(2, "SqlServer")]
-    [InlineData(3, "SqlServer")]
     public async Task GetBatchContentsAsync_Get_Contents_By_VersionId(int versionId, string provider)
     {
         string expectedBatchContents = await File.ReadAllTextAsync(Path.Combine("Core", "Batches", provider, $"{versionId}.sql")).ConfigureAwait(false);

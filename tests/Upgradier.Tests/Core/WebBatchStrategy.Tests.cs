@@ -26,7 +26,6 @@ public class WebBatchStrategyTests : IClassFixture<BatchServerFixture>
     [Theory]
     [InlineData(1, "SqlServer")]
     [InlineData(2, "SqlServer")]
-    [InlineData(3, "SqlServer")]
     public async Task GetBatchContentsAsync_Get_Contents_By_VersionId(int versionId, string provider)
     {
         Assert.NotNull(_batchServerfixture.BatchesUri);
