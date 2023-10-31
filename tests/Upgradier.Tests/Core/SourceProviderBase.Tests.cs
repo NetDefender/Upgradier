@@ -9,7 +9,7 @@ public sealed class SourceProviderBase_Tests
     [Fact]
     public void Ctor_Throws_ArgumentNullException_If_Name_Is_Null()
     {
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() => Substitute.For<SourceProviderBase>(null));
+        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() => Substitute.For<SourceProviderBase>(new object[] { null }));
         Assert.True(exception?.GetBaseException() is ArgumentNullException);
     }
 
