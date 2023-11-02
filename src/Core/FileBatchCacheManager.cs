@@ -1,4 +1,6 @@
-﻿namespace Ugradier.Core;
+﻿using System.Text;
+
+namespace Ugradier.Core;
 
 public sealed class FileBatchCacheManager : IBatchCacheManager
 {
@@ -9,18 +11,29 @@ public sealed class FileBatchCacheManager : IBatchCacheManager
         _basePath = basePath;
     }
 
-    public async Task Store(long versionId, string provider, int threadId, string batch, CancellationToken cancellationToken)
+    public async Task Store(long versionId, string provider, string batch, CancellationToken cancellationToken)
     {
-        await File.WriteAllTextAsync(Path.Combine(_basePath, provider, threadId.ToString(), $"{versionId}.sql"), batch, cancellationToken).ConfigureAwait(false);
+        using FileStream fsLock = new (Path.Combine(_basePath, provider, $"{versionId}.sql"), FileMode.Create, FileAccess.Write, FileShare.None);
+        using StreamWriter writer = new (fsLock, Encoding.UTF8);
+        await writer.WriteAsync(batch).ConfigureAwait(false);
     }
 
-    public async Task<BatchCacheResult> TryLoad(long versionId, string provider, int threadId, CancellationToken cancellationToken)
+    public async Task<BatchCacheResult> TryLoad(long versionId, string provider, CancellationToken cancellationToken)
     {
-        FileInfo batchFile = new(Path.Combine(_basePath, provider, threadId.ToString(), $"{versionId}.sql"));
+        FileInfo batchFile = new(Path.Combine(_basePath, provider, $"{versionId}.sql"));
         if (batchFile.Exists)
         {
-            return new BatchCacheResult(true, await File.ReadAllTextAsync(batchFile.FullName, cancellationToken).ConfigureAwait(false));
+            try
+            {
+                using StreamReader reader = batchFile.OpenText();
+                string contents = await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+                return new BatchCacheResult(true, false, contents);
+            }
+            catch (Exception)
+            {
+                return BatchCacheResult.Locked;
+            }
         }
-        return BatchCacheResult.Fail;
+        return BatchCacheResult.Miss;
     }
 }
