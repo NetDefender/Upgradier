@@ -1,4 +1,4 @@
-﻿using Ugradier.Core;
+﻿using Upgradier.Core;
 
 EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
 

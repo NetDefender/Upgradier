@@ -1,5 +1,4 @@
-﻿using Ugradier.Core;
-using Upgradier.Core;
+﻿using Upgradier.Core;
 
 namespace Upgradier.Tests.Core;
 

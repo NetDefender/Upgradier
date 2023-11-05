@@ -1,4 +1,4 @@
-﻿namespace Ugradier.Core;
+﻿namespace Upgradier.Core;
 
 public interface IBatchCacheManager
 {

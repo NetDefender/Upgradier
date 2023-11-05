@@ -1,5 +1,5 @@
 ﻿using System.Net.Http;
-using Ugradier.Core;
+using Upgradier.Core;
 
 namespace Upgradier.Core;
 

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Ugradier.Core;
+namespace Upgradier.Core;
 
 public sealed class FileBatchCacheManager : IBatchCacheManager
 {

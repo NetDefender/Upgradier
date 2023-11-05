@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Ugradier.Core;
+using Upgradier.Core;
 
 namespace Upgradier.Core
 {

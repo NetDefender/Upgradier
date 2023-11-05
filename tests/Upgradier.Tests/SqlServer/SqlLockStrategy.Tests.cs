@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Ugradier.Core;
 using Upgradier.Core;
 using Upgradier.SqlServer;
 using Upgradier.Tests.Core;
