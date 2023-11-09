@@ -19,6 +19,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.10" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.10" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
+    <PackageVersion Include="MySql.EntityFrameworkCore" Version="7.0.10" />
     <PackageVersion Include="NSubstitute" Version="5.0.0" />
     <PackageVersion Include="coverlet.msbuild" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>

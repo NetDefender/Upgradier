@@ -6,10 +6,6 @@ public class SqlEngine : IDatabaseEngine
 {
     public const string NAME = "SqlServer";
 
-    public SqlEngine()
-    {
-    }
-
     public string Name => NAME;
 
     public virtual ILockStrategy CreateLockStrategy(SourceDatabase sourceDatabase)

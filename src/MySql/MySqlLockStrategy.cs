@@ -1,27 +1,23 @@
-using System.Data;
+﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Upgradier.SqlServer;
+namespace Upgradier.MySql;
 
-public class SqlLockStrategy : LockStrategyBase
+public class MySqlLockStrategy : LockStrategyBase
 {
     private IDbContextTransaction? _transaction;
 
-    public SqlLockStrategy(SqlSourceDatabase context) : base(context)
+    public MySqlLockStrategy(MySqlSourceDatabase context) : base(context)
     {
     }
 
     public sealed override async Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default)
     {
         _transaction = await Context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
-        SqlLockResult lockResult = Context.Database.SqlQueryRaw<SqlLockResult>("""
-            DECLARE @LockResult INT;
-            EXEC @LockResult = sp_getapplock @Resource = N'sqlserver-lock-strategy', @LockMode = 'Exclusive', @LockOwner = 'Transaction';
-            SELECT @LockResult;
-            """).AsEnumerable().First();
+        MySqlLockResult? lockResult = Context.Database.SqlQueryRaw<MySqlLockResult?>("SELECT GET_LOCK('mysql-lock-strategy', 0);").AsEnumerable().First();
         await EnsureSchema(cancellationToken).ConfigureAwait(false);
-        return lockResult is SqlLockResult.Granted or SqlLockResult.Success;
+        return lockResult == MySqlLockResult.Granted;
     }
 
     public sealed override async Task FreeAsync(CancellationToken cancellationToken = default)

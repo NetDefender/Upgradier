@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.BatchStrategy.Azu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example", "src\Example\Example.csproj", "{C3B80FCF-E091-4B65-8197-9011A476A821}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upgradier.MySql", "src\MySql\Upgradier.MySql.csproj", "{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{C3B80FCF-E091-4B65-8197-9011A476A821}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3B80FCF-E091-4B65-8197-9011A476A821}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3B80FCF-E091-4B65-8197-9011A476A821}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
