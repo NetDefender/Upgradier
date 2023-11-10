@@ -26,7 +26,7 @@ public class SqlLockStrategy : LockStrategyBase
 
     public sealed override async Task FreeAsync(CancellationToken cancellationToken = default)
     {
-        if (_transaction != null)
+        if (_transaction is not null)
         {
             await _transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         }

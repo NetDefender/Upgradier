@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<DefineSwitches>EF</DefineSwitches>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Core\Ugradier.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Using Include="Upgradier.Core" />
+	</ItemGroup>
+
+</Project>
