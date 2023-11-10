@@ -21,7 +21,31 @@ A minimalist approach for updating multiple databases concurrently to a version 
     - [Upgradier.BatchStrategy.Azure](https://www.nuget.org/packages/Upgradier.BatchStrategy.Azure)
 
 ## Example
-Explore a classic use with SqlServer
+
+First set the environment, "Dev" in the example. Environment is used to get the batches:
+```csharp
+EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
+```
+Create UpdateBuilder with options:
+
+```csharp
+UpdateBuilder updateBuilder = new UpdateBuilder()
+    .WithFileBatchAdapter("Batches")
+    .WithSourceProvider(() => new FileSourceProvider("Sources.json"))
+    .AddSqlServerEngine()
+    .AddMySqlServerEngine()
+    .AddPostgreSqlServerEngine();
+```
+Build to create the UpdateManager:
+
+```csharp
+using UpdateManager updateManager = updateBuilder.Build();
+```
+
+Update the databases:
+```csharp
+IEnumerable<UpdateResult> updateResults = await updateManager.Update();
+```
 
 ## Architecture
 
