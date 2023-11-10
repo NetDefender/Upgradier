@@ -1,11 +1,11 @@
-﻿using Upgradier.Core;
-
-EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
+﻿EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
 
 UpdateBuilder updateBuilder = new UpdateBuilder()
     .WithFileBatchAdapter("Batches")
     .WithSourceProvider(() => new FileSourceProvider("Sources.json"))
-    .AddSqlServerEngine();
+    .AddSqlServerEngine()
+    .AddMySqlServerEngine()
+    .AddPostgreSqlServerEngine();
 
 using UpdateManager updateManager = updateBuilder.Build();
 IEnumerable<UpdateResult> updateResults = await updateManager.Update();
