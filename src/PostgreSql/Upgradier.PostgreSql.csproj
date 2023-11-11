@@ -6,6 +6,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Migrations\0.sql" />
+	  <None Remove="Migrations\1.sql" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Migrations\0.sql" />
+	  <EmbeddedResource Include="Migrations\1.sql" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 	</ItemGroup>
 
