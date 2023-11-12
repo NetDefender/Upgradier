@@ -16,11 +16,11 @@ public static class Extensions
 
     public static UpdateBuilder WithAzureBlobBatchStrategy(this UpdateBuilder builder, Func<BlobContainerClient> factory, string provider)
     {
-        Func<IBatchStrategy> batchStrategy = () =>
+        IBatchStrategy batchStrategy()
         {
             BlobContainerClient azureClient = factory();
-            return new AzureBlobBatchStrategy( azureClient);
-        };
+            return new AzureBlobBatchStrategy(azureClient);
+        }
         builder.WithBatchStrategy(batchStrategy);
         return builder;
     }

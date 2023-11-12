@@ -10,7 +10,7 @@ public static class EnvironmentVariables
 
     public const string UPGRADIER_ENV_PRE = "Pre";
 
-    public static string GetExecutionEnvironment()
+    public static string? GetExecutionEnvironment()
     {
         return Environment.GetEnvironmentVariable(UPGRADIER_ENV_NAME);
     }

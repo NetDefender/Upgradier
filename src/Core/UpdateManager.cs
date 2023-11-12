@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Ugradier.Core;
 
 namespace Upgradier.Core;
 
@@ -11,6 +10,7 @@ public sealed class UpdateManager : IUpdateManager
 
     private UpdateManager()
     {
+        throw new InvalidOperationException("Empty constructor is not allowed");
     }
 
     internal UpdateManager(UpdateOptions options)
