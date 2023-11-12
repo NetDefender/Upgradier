@@ -1,64 +1,40 @@
-using System.Threading;
 using Microsoft.EntityFrameworkCore;
-using Upgradier.Core;
 
 namespace Upgradier.Core;
 
 public sealed class UpdateManager : IUpdateManager
 {
-    private readonly int _waitTimeout;
     private readonly ISourceProvider _sourceProvider;
     private readonly IBatchStrategy _batchStrategy;
     private readonly IBatchCacheManager? _cacheManager;
     private readonly IDictionary<string, IDatabaseEngine> _databaseEngines;
-    private readonly SemaphoreSlim _globalLock;
-    private bool _isDisposed;
 
     private UpdateManager()
-    { 
+    {
     }
     internal UpdateManager(UpdateOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(options.DatabaseEngines);
-        ArgumentOutOfRangeException.ThrowIfNegative(options.WaitTimeout);
         ArgumentOutOfRangeException.ThrowIfZero(options.DatabaseEngines.Count());
         ArgumentNullException.ThrowIfNull(options.SourceProvider);
 
-        _waitTimeout = options.WaitTimeout;
         _databaseEngines = options.DatabaseEngines
             .Select(databaseEngine => databaseEngine()!)
             .ToDictionary(databaseEngine => databaseEngine.Name);
         _sourceProvider = options.SourceProvider();
         _cacheManager = options.CacheManager?.Invoke();
         _batchStrategy = options.BatchStrategy.Invoke();
-        _globalLock = new SemaphoreSlim(1, 1);
     }
 
     public async Task<IEnumerable<UpdateResult>> Update(CancellationToken cancellationToken = default)
     {
-        bool isGlobalLockAdquired = false;
         List<UpdateResult> results = [];
-        try
+        IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
+        foreach (Source source in sources)
         {
-            if (await _globalLock.WaitAsync(_waitTimeout, cancellationToken).ConfigureAwait(false))
-            {
-                isGlobalLockAdquired = true;
-                IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
-
-                foreach (Source source in sources)
-                {
-                    UpdateResult result = await UpdateSource(source, cancellationToken).ConfigureAwait(false);
-                    results.Add(result);
-                }
-            }
-        }
-        finally
-        {
-            if (isGlobalLockAdquired)
-            {
-                _globalLock.Release();
-            }
+            UpdateResult result = await UpdateSource(source, cancellationToken).ConfigureAwait(false);
+            results.Add(result);
         }
         return results.AsReadOnly();
     }
@@ -136,27 +112,5 @@ public sealed class UpdateManager : IUpdateManager
     {
         using StreamReader sqlContentStream = await _batchStrategy.GetBatchContentsAsync(batch, source.Provider, cancellationToken).ConfigureAwait(false);
         return await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    public bool IsUpdating()
-    {
-        return _globalLock.CurrentCount == 0;
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (!_isDisposed)
-        {
-            if (disposing)
-            {
-                _globalLock.Dispose();
-            }
-            _isDisposed = true;
-        }
-    }
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

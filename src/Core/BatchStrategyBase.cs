@@ -1,6 +1,4 @@
-﻿using Upgradier.Core;
-
-namespace Upgradier.Core;
+﻿namespace Upgradier.Core;
 
 public abstract class BatchStrategyBase : IBatchStrategy
 {

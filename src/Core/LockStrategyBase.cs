@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using Upgradier.Core;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 
 namespace Upgradier.Core;
 
@@ -12,10 +11,15 @@ public abstract class LockStrategyBase : ILockStrategy
         Environment = EnvironmentVariables.GetExecutionEnvironment();
         Context = context;
     }
+
     public string? Environment { get; }
+
     protected internal SourceDatabase Context { get; }
+
     public abstract Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default);
+
     public abstract Task FreeAsync(CancellationToken cancellationToken = default);
+
     public virtual async Task EnsureSchema(CancellationToken cancellationToken = default)
     {
         Assembly resourceAssembly = GetType().Assembly;
@@ -36,6 +40,7 @@ public abstract class LockStrategyBase : ILockStrategy
             await Context.Database.ExecuteSqlRawAsync(await migrationBatch.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
         }
     }
+
     public void Dispose()
     {
         Dispose(disposing: true);
@@ -47,7 +52,10 @@ public abstract class LockStrategyBase : ILockStrategy
 public interface ILockStrategy : IDisposable
 {
     Task FreeAsync(CancellationToken cancellationToken = default);
+
     Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default);
+
     Task EnsureSchema(CancellationToken cancellationToken = default);
+
     string? Environment { get; }
 }

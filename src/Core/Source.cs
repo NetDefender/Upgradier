@@ -11,7 +11,10 @@ public class Source
         Provider = provider;
         ConnectionString = connectionString;
     }
+
     public string Name { get; }
+
     public string Provider { get; }
+
     public string ConnectionString { get; }
 }

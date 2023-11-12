@@ -5,7 +5,6 @@ namespace Upgradier.Core;
 
 public sealed class UpdateBuilder
 {
-    private int _waitTimeout;
     private Func<ISourceProvider>? _sourceProvider;
     private Func<IBatchStrategy>? _batchStrategy;
     private Func<IBatchCacheManager>? _cacheManager;
@@ -51,13 +50,6 @@ public sealed class UpdateBuilder
         return this;
     }
 
-    public UpdateBuilder WithWaitTimeout(int timeout)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegative(timeout);
-        _waitTimeout = timeout;
-        return this;
-    }
-
     public UpdateBuilder WithCacheManager(Func<IBatchCacheManager> cacheManager)
     {
         ArgumentNullException.ThrowIfNull(cacheManager);
@@ -79,7 +71,6 @@ public sealed class UpdateBuilder
 
         return new(new UpdateOptions
         {
-            WaitTimeout = _waitTimeout,
             DatabaseEngines = _databaseEngines.AsReadOnly(),
             SourceProvider = _sourceProvider,
             BatchStrategy = _batchStrategy,

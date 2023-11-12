@@ -7,7 +7,7 @@ UpdateBuilder updateBuilder = new UpdateBuilder()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine();
 
-using UpdateManager updateManager = updateBuilder.Build();
+UpdateManager updateManager = updateBuilder.Build();
 IEnumerable<UpdateResult> updateResults = await updateManager.Update();
 
 foreach (UpdateResult result in updateResults)

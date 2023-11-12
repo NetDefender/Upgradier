@@ -50,13 +50,6 @@ public sealed class UpdateBuilder_Tests
     }
 
     [Fact]
-    public void WithWaitTimeout_Throws_ArgumentOutOfRangeException_If_Negative()
-    {
-        UpdateBuilder builder = new();
-        Assert.Throws<ArgumentOutOfRangeException>(() => builder.WithWaitTimeout(-1));
-    }
-
-    [Fact]
     public void Build_Throws_ArgumentNullException_If_SourceProvider_Is_Not_Set()
     {
         UpdateBuilder builder = new();
@@ -104,7 +97,6 @@ public sealed class UpdateBuilder_Tests
         Func<HttpRequestMessage, Task> httpMessageOptions = (message) => Task.CompletedTask;
         builder.WithWebBatchStrategy(webStrategyFactory, httpMessageOptions);
         builder.WithSourceProvider(() => Substitute.For<ISourceProvider>());
-        builder.WithWaitTimeout(100);
         UpdateManager updateManager = builder.Build();
         Assert.NotNull(updateManager);
     }

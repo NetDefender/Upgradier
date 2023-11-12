@@ -1,13 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Upgradier.Core;
 
 namespace Upgradier.Core
 {
     [ExcludeFromCodeCoverage]
     public class UpdateOptions
     {
-        public int WaitTimeout { get; init; }
-
         public IEnumerable<Func<IDatabaseEngine>> DatabaseEngines { get; init; } = Enumerable.Empty<Func<IDatabaseEngine>>();
 
         public Func<ISourceProvider> SourceProvider { get; init; } = default!;
