@@ -43,7 +43,7 @@ public sealed class FileBatchStrategy_Tests
         EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
         using CancellationTokenSource cancellationTokenSource = new();
         FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches");
-        IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+        IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token);
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 3));
@@ -70,7 +70,7 @@ public sealed class FileBatchStrategy_Tests
         await Assert.ThrowsAsync<DirectoryNotFoundException>(async () =>
         {
             FileBatchStrategy strategy = new($"NonExistentDirectory{Path.DirectorySeparatorChar}Batches");
-            IEnumerable<Batch> batches = await strategy.GetBatchesAsync(CancellationToken.None).ConfigureAwait(false);
+            IEnumerable<Batch> batches = await strategy.GetBatchesAsync(CancellationToken.None);
         });
     }
 
@@ -79,11 +79,10 @@ public sealed class FileBatchStrategy_Tests
     [InlineData(2, "SqlServer")]
     public async Task GetBatchContentsAsync_Get_Contents_By_VersionId(int versionId, string provider)
     {
-        string expectedBatchContents = await File.ReadAllTextAsync(Path.Combine("Core", "Batches", provider, $"{versionId}.sql")).ConfigureAwait(false);
+        string expectedBatchContents = await File.ReadAllTextAsync(Path.Combine("Core", "Batches", provider, $"{versionId}.sql"));
         FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches");
-        using StreamReader actualStreamContent = await strategy.GetBatchContentsAsync(new Batch { VersionId = versionId }, provider, CancellationToken.None).ConfigureAwait(false);
-        Assert.NotNull(actualStreamContent);
-        string actualBatchContents = await actualStreamContent.ReadToEndAsync(CancellationToken.None).ConfigureAwait(false);
-        Assert.Equal(expectedBatchContents, actualBatchContents);
+        string actualContents = await strategy.GetBatchContentsAsync(new Batch { VersionId = versionId }, provider, CancellationToken.None);
+        Assert.NotNull(actualContents);
+        Assert.Equal(expectedBatchContents, actualContents);
     }
 }

@@ -9,7 +9,7 @@ public sealed class LockStrategyBase_Tests
     [Fact]
     public void Ctor_Throws_If_SourceDatabase_Is_Null()
     {
-        _ = Assert.Throws<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
         {
             try
             {

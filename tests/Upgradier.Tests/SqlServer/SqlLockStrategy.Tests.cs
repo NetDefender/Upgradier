@@ -31,7 +31,7 @@ public sealed class SqlLockStrategy_Tests : IClassFixture<SqlServerDatabaseFixtu
     {
         EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
         using SqlLockStrategy strategy = CreateLockStrategy();
-        using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        using CancellationTokenSource cancellationTokenSource = new ();
         bool adquired = await strategy.TryAdquireAsync(cancellationTokenSource.Token);
         Assert.True(adquired, "Lock should be adquired");
         MigrationHistory migrationHistory = await strategy.Context.MigrationHistory.FirstAsync(cancellationTokenSource.Token);

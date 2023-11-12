@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Ugradier.Core;
 
 namespace Upgradier.Core;
 
@@ -6,12 +7,12 @@ public sealed class UpdateManager : IUpdateManager
 {
     private readonly ISourceProvider _sourceProvider;
     private readonly IBatchStrategy _batchStrategy;
-    private readonly IBatchCacheManager? _cacheManager;
     private readonly IDictionary<string, IDatabaseEngine> _databaseEngines;
 
     private UpdateManager()
     {
     }
+
     internal UpdateManager(UpdateOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -23,8 +24,8 @@ public sealed class UpdateManager : IUpdateManager
             .Select(databaseEngine => databaseEngine()!)
             .ToDictionary(databaseEngine => databaseEngine.Name);
         _sourceProvider = options.SourceProvider();
-        _cacheManager = options.CacheManager?.Invoke();
-        _batchStrategy = options.BatchStrategy.Invoke();
+        IBatchCacheManager? cacheManager = options.CacheManager?.Invoke();
+        _batchStrategy = cacheManager is null ? options.BatchStrategy.Invoke() : new CachedBatchStrategy(options.BatchStrategy.Invoke(), cacheManager);
     }
 
     public async Task<IEnumerable<UpdateResult>> Update(CancellationToken cancellationToken = default)
@@ -64,7 +65,7 @@ public sealed class UpdateManager : IUpdateManager
                 updateResult = updateResult with { Version = startVersion, OriginalVersion = startVersion };
                 foreach (Batch batch in batches.Where(b => b.VersionId > startVersion).OrderBy(b => b.VersionId))
                 {
-                    string batchContent = await ReadBatchContentCached(batch, source, cancellationToken).ConfigureAwait(false);
+                    string batchContent = await _batchStrategy.GetBatchContentsAsync(batch, source.Provider, cancellationToken).ConfigureAwait(false);
                     await db.Database.ExecuteSqlRawAsync(batchContent!, cancellationToken).ConfigureAwait(false);
                     db.Remove(currentVersion);
                     await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -83,34 +84,5 @@ public sealed class UpdateManager : IUpdateManager
         }
 
         return updateResult;
-    }
-
-    private async Task<string> ReadBatchContentCached(Batch batch, Source source, CancellationToken cancellationToken)
-    {
-        if (_cacheManager is null)
-        {
-            return await ReadBatchContentRaw(batch, source, cancellationToken).ConfigureAwait(false);
-        }
-        BatchCacheResult cacheResult = await _cacheManager.TryLoad(batch.VersionId, source.Provider, cancellationToken).ConfigureAwait(false);
-        if (cacheResult.Success)
-        {
-            return cacheResult.Contents!;
-        }
-        string contents = await ReadBatchContentRaw(batch, source, cancellationToken).ConfigureAwait(false);
-        try
-        {
-            await _cacheManager.Store(batch.VersionId, source.Provider, contents, cancellationToken).ConfigureAwait(false);
-            return contents;
-        }
-        catch (Exception)
-        {
-            return contents;
-        }
-    }
-
-    private async Task<string> ReadBatchContentRaw(Batch batch, Source source, CancellationToken cancellationToken)
-    {
-        using StreamReader sqlContentStream = await _batchStrategy.GetBatchContentsAsync(batch, source.Provider, cancellationToken).ConfigureAwait(false);
-        return await sqlContentStream.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
     }
 }

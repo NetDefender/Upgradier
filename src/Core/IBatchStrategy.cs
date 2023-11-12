@@ -6,5 +6,5 @@ public interface IBatchStrategy
 
     Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken);
 
-    Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken);
+    Task<string> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken);
 }

@@ -31,7 +31,7 @@ public class WebBatchStrategy : BatchStrategyBase
         return batches.AsReadOnly().AsEnumerable();
     }
 
-    public override async Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken)
+    public override async Task<string> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken)
     {
         UriBuilder uriBuilder = new(_baseUri);
         StringBuilder uri = new StringBuilder(uriBuilder.Path, uriBuilder.Path.Length + 30).TrimEnd('/')
@@ -41,9 +41,8 @@ public class WebBatchStrategy : BatchStrategyBase
         uriBuilder.Path = uri.ToString();
         using HttpRequestMessage request = new(HttpMethod.Get, uriBuilder.Uri);
         await _configureRequest(request).ConfigureAwait(false);
-        HttpResponseMessage response = await _client.SendAsync(request, cancellationToken).ConfigureAwait(false);
-        Stream stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        return new StreamReader(stream, leaveOpen: false);
+        using HttpResponseMessage response = await _client.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        return await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public void ConfigureRequestMessage(Func<HttpRequestMessage, Task> configureRequest)

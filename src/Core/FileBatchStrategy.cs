@@ -21,9 +21,9 @@ public class FileBatchStrategy : BatchStrategyBase
         return Task.FromResult(batches.AsReadOnly().AsEnumerable());
     }
 
-    public override Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider,CancellationToken cancellationToken)
+    public override Task<string> GetBatchContentsAsync(Batch batch, string provider,CancellationToken cancellationToken)
     {
         string batchesDirectory = Path.Combine(_baseDirectory, provider, string.IsNullOrEmpty(Environment) ? string.Empty : Environment);
-        return Task.FromResult(File.OpenText(Path.Combine(batchesDirectory, $"{batch.VersionId}.sql")));
+        return Task.FromResult(File.ReadAllText(Path.Combine(batchesDirectory, $"{batch.VersionId}.sql")));
     }
 }

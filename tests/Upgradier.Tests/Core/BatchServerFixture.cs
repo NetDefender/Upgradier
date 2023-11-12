@@ -22,12 +22,12 @@ public sealed class BatchServerFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        await _container.StartAsync().ConfigureAwait(false);
+        await _container.StartAsync();
         BatchesUri = new UriBuilder("http", _container.Hostname, _container.GetMappedPublicPort(CONTAINER_PORT)).Uri;
     }
 
     public async Task DisposeAsync()
     {
-        await _container.DisposeAsync().ConfigureAwait(false);
+        await _container.DisposeAsync();
     }
 }

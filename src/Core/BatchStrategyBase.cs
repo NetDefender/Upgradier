@@ -15,5 +15,5 @@ public abstract class BatchStrategyBase : IBatchStrategy
 
     public abstract Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken);
 
-    public abstract Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken);
+    public abstract Task<string> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken);
 }

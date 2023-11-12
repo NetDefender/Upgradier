@@ -11,7 +11,7 @@ public sealed class BatchStrategy_Tests
         }
         public string DerivedEnvironment => Environment;
         public override Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken) => throw new NotImplementedException();
-        public override Task<StreamReader> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public override Task<string> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     [Fact]

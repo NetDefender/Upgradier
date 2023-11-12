@@ -17,8 +17,8 @@ public class WebBatchStrategyTests : IClassFixture<BatchServerFixture>
         Assert.NotNull(_batchServerfixture.BatchesUri);
         using CancellationTokenSource cancellationTokenSource = new();
         WebBatchStrategy strategy = new(_batchServerfixture.BatchesUri);
-        IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
-        Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
+        IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token);
+            Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
         Assert.Equal(2, batches.Count());
     }
@@ -29,11 +29,10 @@ public class WebBatchStrategyTests : IClassFixture<BatchServerFixture>
     public async Task GetBatchContentsAsync_Get_Contents_By_VersionId(int versionId, string provider)
     {
         Assert.NotNull(_batchServerfixture.BatchesUri);
-        string expectedBatchContents = await File.ReadAllTextAsync(Path.Combine("Core", "Batches", provider, $"{versionId}.sql")).ConfigureAwait(false);
+        string expectedBatchContents = await File.ReadAllTextAsync(Path.Combine("Core", "Batches", provider, $"{versionId}.sql"));
         WebBatchStrategy strategy = new(_batchServerfixture.BatchesUri);
-        using StreamReader actualStreamContent = await strategy.GetBatchContentsAsync(new Batch { VersionId = versionId }, provider, CancellationToken.None).ConfigureAwait(false);
-        Assert.NotNull(actualStreamContent);
-        string actualBatchContents = await actualStreamContent.ReadToEndAsync(CancellationToken.None).ConfigureAwait(false);
-        Assert.Equal(expectedBatchContents, actualBatchContents);
+        string actualContents = await strategy.GetBatchContentsAsync(new Batch { VersionId = versionId }, provider, CancellationToken.None);
+        Assert.NotNull(actualContents);
+        Assert.Equal(expectedBatchContents, actualContents);
     }
 }
