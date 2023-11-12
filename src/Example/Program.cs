@@ -1,7 +1,7 @@
 ﻿EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
 
 UpdateBuilder updateBuilder = new UpdateBuilder()
-    .WithFileBatchAdapter("Batches")
+    .WithFileBatchStrategy("Batches")
     .WithSourceProvider(() => new FileSourceProvider("Sources.json"))
     .AddSqlServerEngine()
     .AddMySqlServerEngine()

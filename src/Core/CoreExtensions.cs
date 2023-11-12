@@ -37,7 +37,7 @@ public static class CoreExtensions
         return uri != null && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
     }
 
-    public static UpdateBuilder WithFileBatchAdapter(this UpdateBuilder builder, string baseDirectory)
+    public static UpdateBuilder WithFileBatchStrategy(this UpdateBuilder builder, string baseDirectory)
     {
         builder.WithBatchStrategy(() => new FileBatchStrategy(baseDirectory));
         return builder;
@@ -109,5 +109,10 @@ public static class CoreExtensions
         {
             throw new FileNotFoundException($"Could not download file to {file.FullName}", file.FullName);
         }
+    }
+
+    public static string EmptyIfNull(this string value)
+    {
+        return value is null ? string.Empty : value;
     }
 }

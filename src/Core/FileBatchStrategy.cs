@@ -23,7 +23,7 @@ public class FileBatchStrategy : BatchStrategyBase
 
     public override Task<string> GetBatchContentsAsync(Batch batch, string provider,CancellationToken cancellationToken)
     {
-        string batchesDirectory = Path.Combine(_baseDirectory, provider, string.IsNullOrEmpty(Environment) ? string.Empty : Environment);
-        return Task.FromResult(File.ReadAllText(Path.Combine(batchesDirectory, $"{batch.VersionId}.sql")));
+        string batchesFile = Path.Combine(_baseDirectory, provider, Environment.EmptyIfNull(), $"{batch.VersionId}.sql");
+        return Task.FromResult(File.ReadAllText(batchesFile));
     }
 }

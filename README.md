@@ -27,17 +27,18 @@ Optionally use a cache implementing IBatchCacheManager to not hit the server whe
     - [Upgradier.BatchStrategy.Aws](https://www.nuget.org/packages/Upgradier.BatchStrategy.Aws)
     - [Upgradier.BatchStrategy.Azure](https://www.nuget.org/packages/Upgradier.BatchStrategy.Azure)
 
-First set the environment, "Dev" in the example. Environment is used to get the batches:
+First set the environment, "Dev" in the example. Environment is used to get the batches and sources:
 ```csharp
 EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
 ```
+
 Create UpdateBuilder with options:
 
 ```csharp
 UpdateBuilder updateBuilder = new UpdateBuilder()
-    .WithFileBatchAdapter("Batches")
-    .WithSourceProvider(() => new FileSourceProvider("c:\\databases\\sources.json"))
-    .WithCacheManager(() => new FileBatchCacheManager("c:\\databases\\cache"))
+    .WithSourceProvider(() => new FileSourceProvider("c:\\my_files\\sources.json"))
+    .WithFileBatchStrategy("c:\\my_files\\batches")
+    .WithCacheManager(() => new FileBatchCacheManager("c:\\my_files\\cache"))
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine();

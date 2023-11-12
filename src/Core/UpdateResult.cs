@@ -3,4 +3,4 @@
 namespace Upgradier.Core;
 
 [ExcludeFromCodeCoverage]
-public record class UpdateResult(string Source, string Factory, string ConnectionString, long OriginalVersion, long Version, Exception? Error);
+public record class UpdateResult(string Source, string DatabaseEngine, string ConnectionString, long OriginalVersion, long Version, Exception? Error);
