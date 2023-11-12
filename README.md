@@ -2,11 +2,16 @@
 
 A minimalist approach for updating multiple databases concurrently to a version based in conventions.
 
+Declare a place to store de Source databases in json format. You can mix databases of different providers (SqlServer, MySql and PostgreSql).
+
+Store batches in .sql files on Disk, Web Server, Aws S3, Azure Blob, or custom IBatchStrategy.
+
+Optionally use a cache implementing IBatchCacheManager to not hit the server when each batch is requested.
+
 [![Frozen Penguin](https://github.com/NetDefender/Ugradier/blob/master/Upgradier.png)](https://github.com/NetDefender/Ugradier)
 
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
-- [Usage](#usage)
 
 ## Prerequisites
 - [.NET SDK 8.0 or later](https://www.microsoft.com/net/download)
@@ -16,11 +21,11 @@ A minimalist approach for updating multiple databases concurrently to a version 
 - Install [Upgradier.Core](https://www.nuget.org/packages/Upgradier.Core)
 - Install the required database engines:
     - [Upgradier.SqlServer](https://www.nuget.org/packages/Upgradier.SqlServer)
+	- [Upgradier.PostgreSql](https://www.nuget.org/packages/Upgradier.PostgreSql)
+	- [Upgradier.MySql](https://www.nuget.org/packages/Upgradier.MySql)
 - Install aditional batch strategies:
     - [Upgradier.BatchStrategy.Aws](https://www.nuget.org/packages/Upgradier.BatchStrategy.Aws)
     - [Upgradier.BatchStrategy.Azure](https://www.nuget.org/packages/Upgradier.BatchStrategy.Azure)
-
-## Example
 
 First set the environment, "Dev" in the example. Environment is used to get the batches:
 ```csharp
@@ -31,7 +36,8 @@ Create UpdateBuilder with options:
 ```csharp
 UpdateBuilder updateBuilder = new UpdateBuilder()
     .WithFileBatchAdapter("Batches")
-    .WithSourceProvider(() => new FileSourceProvider("Sources.json"))
+    .WithSourceProvider(() => new FileSourceProvider("c:\\databases\\sources.json"))
+    .WithCacheManager(() => new FileBatchCacheManager("c:\\databases\\cache"))
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine();
@@ -45,20 +51,4 @@ using UpdateManager updateManager = updateBuilder.Build();
 Update the databases:
 ```csharp
 IEnumerable<UpdateResult> updateResults = await updateManager.Update();
-```
-
-## Architecture
-
-```mermaid
-erDiagram
-    UpdateBuilder||--|| IUpdateManager: creates-one
-    UpdateBuilder||--|| Options: has-one
-    IUpdateManager ||--|| Environment:has-one
-    IUpdateManager ||--|| ISourceProvider:has-one
-    ISourceProvider ||--|{ Source :get-many
-    IUpdateManager ||--|{ IDatabaseEngine :has-many
-    IUpdateManager ||--|| IBatchStrategy :has-one
-    IDatabaseEngine ||--|| Name :has-one
-    IDatabaseEngine ||--|| ILockStrategy :creates-one
-    IDatabaseEngine ||--|| SourceDatabase :creates-many
 ```
