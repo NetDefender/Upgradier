@@ -1,5 +1,5 @@
 ﻿using System.Net.Http;
-using Upgradier.Core;
+using Ugradier.Core;
 
 namespace Upgradier.Core;
 
@@ -9,7 +9,7 @@ public sealed class UpdateBuilder
     private Func<IBatchStrategy>? _batchStrategy;
     private Func<IBatchCacheManager>? _cacheManager;
     private readonly List<Func<IDatabaseEngine>> _databaseEngines;
-
+    private int _parallelism = 1;
     public UpdateBuilder()
     {
         _databaseEngines = [];
@@ -52,7 +52,6 @@ public sealed class UpdateBuilder
 
     public UpdateBuilder WithCacheManager(Func<IBatchCacheManager> cacheManager)
     {
-        ArgumentNullException.ThrowIfNull(cacheManager);
         _cacheManager = cacheManager;
         return this;
     }
@@ -63,18 +62,28 @@ public sealed class UpdateBuilder
         return this;
     }
 
+    public UpdateBuilder WithParallelism(int parallelism)
+    {
+        _parallelism = parallelism;
+        return this;
+    }
+
     public UpdateManager Build()
     {
         ArgumentNullException.ThrowIfNull(_sourceProvider);
         ArgumentNullException.ThrowIfNull(_batchStrategy);
+        ArgumentNullException.ThrowIfNull(_batchStrategy);
         ArgumentOutOfRangeException.ThrowIfZero(_databaseEngines.Count);
+        ArgumentOutOfRangeException.ThrowIfLessThan(_parallelism, UpdateResultTaskBuffer.MinValue);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(_parallelism, UpdateResultTaskBuffer.MaxValue);
 
         return new(new UpdateOptions
         {
             DatabaseEngines = _databaseEngines.AsReadOnly(),
             SourceProvider = _sourceProvider,
             BatchStrategy = _batchStrategy,
-            CacheManager = _cacheManager
+            CacheManager = _cacheManager,
+            Parallelism = _parallelism
         });
     }
 }

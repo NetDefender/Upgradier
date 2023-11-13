@@ -12,5 +12,7 @@ namespace Upgradier.Core
         public Func<IBatchStrategy> BatchStrategy { get; init; } = default!;
 
         public Func<IBatchCacheManager>? CacheManager { get; init; } = default!;
+
+        public int Parallelism { get; init; }
     }
 }
