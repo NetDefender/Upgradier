@@ -8,7 +8,7 @@ UpdateBuilder updateBuilder = new UpdateBuilder()
     .AddPostgreSqlServerEngine();
 
 UpdateManager updateManager = updateBuilder.Build();
-IEnumerable<UpdateResult> updateResults = await updateManager.Update();
+IEnumerable<UpdateResult> updateResults = await updateManager.UpdateAsync();
 
 foreach (UpdateResult result in updateResults)
 {

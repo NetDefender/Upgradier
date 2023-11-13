@@ -33,7 +33,7 @@ public sealed class UpdateManager : IUpdateManager
         _batchStrategy = cacheManager is null ? options.BatchStrategy.Invoke() : new CachedBatchStrategy(options.BatchStrategy.Invoke(), cacheManager);
     }
 
-    public async Task<IEnumerable<UpdateResult>> Update(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<UpdateResult>> UpdateAsync(CancellationToken cancellationToken = default)
     {
         IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
         UpdateResultTaskBuffer updateTaskBuffer = new UpdateResultTaskBuffer(_parallelism);
@@ -97,7 +97,7 @@ public sealed class UpdateManager : IUpdateManager
         return updateResult;
     }
 
-    public async Task<UpdateResult> UpdateSource(string sourceName, CancellationToken cancellationToken = default)
+    public async Task<UpdateResult> UpdateSourceAsync(string sourceName, CancellationToken cancellationToken = default)
     {
         IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
         Source source = sources.First(s => s.Name == sourceName);

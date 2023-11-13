@@ -2,6 +2,6 @@
 
 public interface IUpdateManager
 {
-    Task<IEnumerable<UpdateResult>> Update(CancellationToken cancellationToken = default);
-    Task<UpdateResult> UpdateSource(string sourceName, CancellationToken cancellationToken = default);
+    Task<IEnumerable<UpdateResult>> UpdateAsync(CancellationToken cancellationToken = default);
+    Task<UpdateResult> UpdateSourceAsync(string sourceName, CancellationToken cancellationToken = default);
 }
