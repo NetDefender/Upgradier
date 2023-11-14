@@ -42,10 +42,10 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     {
         EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
         SqlEngine factory = new();
-        ILockStrategy lockStrategy = factory.CreateLockStrategy(new SqlSourceDatabase(new DbContextOptionsBuilder<SqlSourceDatabase>()
+        ILockManager lockStrategy = factory.CreateLockStrategy(new SqlSourceDatabase(new DbContextOptionsBuilder<SqlSourceDatabase>()
             .UseSqlServer(_connectionString)
             .Options));
-        Assert.True(lockStrategy is SqlLockStrategy);
+        Assert.True(lockStrategy is SqlLockManager);
         EnvironmentVariables.SetExecutionEnvironment(null);
     }
 

@@ -8,11 +8,11 @@ public class SqlEngine : IDatabaseEngine
 
     public string Name => NAME;
 
-    public virtual ILockStrategy CreateLockStrategy(SourceDatabase sourceDatabase)
+    public virtual ILockManager CreateLockStrategy(SourceDatabase sourceDatabase)
     {
         if (sourceDatabase is SqlSourceDatabase sqlSourceDatabase)
         {
-            return new SqlLockStrategy(sqlSourceDatabase);
+            return new SqlLockManager(sqlSourceDatabase);
         }
         throw new InvalidCastException(nameof(sourceDatabase));
     }

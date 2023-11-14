@@ -67,7 +67,7 @@ public sealed class UpdateManager : IUpdateManager
             IEnumerable<Batch> batches = await _batchStrategy.GetBatchesAsync(cancellationToken).ConfigureAwait(false);
 
             using SourceDatabase db = dbEngine.CreateSourceDatabase(source.ConnectionString);
-            using ILockStrategy @lock = dbEngine.CreateLockStrategy(db);
+            using ILockManager @lock = dbEngine.CreateLockStrategy(db);
 
             if (await @lock.TryAdquireAsync(cancellationToken).ConfigureAwait(false))
             {

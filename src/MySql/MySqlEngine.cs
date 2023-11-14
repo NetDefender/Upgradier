@@ -8,11 +8,11 @@ public class MySqlEngine : IDatabaseEngine
 
     public string Name => NAME;
 
-    public virtual ILockStrategy CreateLockStrategy(SourceDatabase sourceDatabase)
+    public virtual ILockManager CreateLockStrategy(SourceDatabase sourceDatabase)
     {
         if (sourceDatabase is MySqlSourceDatabase sqlSourceDatabase)
         {
-            return new MySqlLockStrategy(sqlSourceDatabase);
+            return new MySqlLockManager(sqlSourceDatabase);
         }
         throw new InvalidCastException(nameof(sourceDatabase));
     }

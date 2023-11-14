@@ -8,11 +8,11 @@ public class PostgreSqlEngine : IDatabaseEngine
 
     public string Name => NAME;
 
-    public virtual ILockStrategy CreateLockStrategy(SourceDatabase sourceDatabase)
+    public virtual ILockManager CreateLockStrategy(SourceDatabase sourceDatabase)
     {
         if (sourceDatabase is PostgreSqlSourceDatabase sqlSourceDatabase)
         {
-            return new PostgreSqlLockStrategy(sqlSourceDatabase);
+            return new PostgreSqlLockManager(sqlSourceDatabase);
         }
         throw new InvalidCastException(nameof(sourceDatabase));
     }

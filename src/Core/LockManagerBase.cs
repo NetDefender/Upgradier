@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Upgradier.Core;
 
-public abstract class LockStrategyBase : ILockStrategy
+public abstract class LockManagerBase : ILockManager
 {
-    protected LockStrategyBase(SourceDatabase context)
+    protected LockManagerBase(SourceDatabase context)
     {
         ArgumentNullException.ThrowIfNull(context);
         Environment = EnvironmentVariables.GetExecutionEnvironment();
@@ -49,7 +49,7 @@ public abstract class LockStrategyBase : ILockStrategy
     protected abstract void Dispose(bool disposing);
 }
 
-public interface ILockStrategy : IDisposable
+public interface ILockManager : IDisposable
 {
     Task FreeAsync(CancellationToken cancellationToken = default);
 

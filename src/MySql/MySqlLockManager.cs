@@ -2,22 +2,22 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Upgradier.PostgreSql;
+namespace Upgradier.MySql;
 
-public class PostgreSqlLockStrategy : LockStrategyBase
+public class MySqlLockManager : LockManagerBase
 {
     private IDbContextTransaction? _transaction;
 
-    public PostgreSqlLockStrategy(PostgreSqlSourceDatabase context) : base(context)
+    public MySqlLockManager(MySqlSourceDatabase context) : base(context)
     {
     }
 
     public sealed override async Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default)
     {
         _transaction = await Context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
-        bool? lockResult = Context.Database.SqlQueryRaw<bool?>("SELECT pg_try_advisory_lock(PostgreSql-lock-strategy)").AsEnumerable().First();
+        MySqlLockResult? lockResult = Context.Database.SqlQueryRaw<MySqlLockResult?>("SELECT GET_LOCK('upgradier-lock', 0);").AsEnumerable().First();
         await EnsureSchema(cancellationToken).ConfigureAwait(false);
-        return lockResult == true;
+        return lockResult == MySqlLockResult.Granted;
     }
 
     public sealed override async Task FreeAsync(CancellationToken cancellationToken = default)

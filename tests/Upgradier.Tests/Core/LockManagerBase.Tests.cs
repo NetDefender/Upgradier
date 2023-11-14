@@ -1,10 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NSubstitute;
+﻿using NSubstitute;
 using Upgradier.Core;
 
 namespace Upgradier.Tests.Core;
 
-public sealed class LockStrategyBase_Tests
+public sealed class LockManagerBaseTests
 {
     [Fact]
     public void Ctor_Throws_If_SourceDatabase_Is_Null()
@@ -13,7 +12,7 @@ public sealed class LockStrategyBase_Tests
         {
             try
             {
-                Substitute.For<LockStrategyBase>(new object[] { null! });
+                Substitute.For<LockManagerBase>(new object[] { null });
             }
             catch (Exception ex)
             {
