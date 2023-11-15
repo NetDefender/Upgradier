@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Ugradier.Core;
 
@@ -8,6 +9,7 @@ public sealed class UpdateManager : IUpdateManager
     private readonly ISourceProvider _sourceProvider;
     private readonly IBatchStrategy _batchStrategy;
     private readonly IDictionary<string, IDatabaseEngine> _databaseEngines;
+    private readonly UpdateEventDispatcher _eventDispatcher;
     private readonly int _parallelism;
 
     private UpdateManager()
@@ -31,12 +33,13 @@ public sealed class UpdateManager : IUpdateManager
         _sourceProvider = options.SourceProvider();
         IBatchCacheManager? cacheManager = options.CacheManager?.Invoke();
         _batchStrategy = cacheManager is null ? options.BatchStrategy.Invoke() : new CachedBatchStrategy(options.BatchStrategy.Invoke(), cacheManager);
+        _eventDispatcher = new(options.Events?.Invoke());
     }
 
     public async Task<IEnumerable<UpdateResult>> UpdateAsync(CancellationToken cancellationToken = default)
     {
         IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
-        UpdateResultTaskBuffer updateTaskBuffer = new UpdateResultTaskBuffer(_parallelism);
+        using UpdateResultTaskBuffer updateTaskBuffer = new (_parallelism);
         List<UpdateResult> updateResults = [];
 
         foreach (Source source in sources)
@@ -45,6 +48,7 @@ public sealed class UpdateManager : IUpdateManager
             if(!updateTaskBuffer.TryAdd(updateTask))
             {
                 UpdateResult[] bufferResults = await updateTaskBuffer.WhenAll().ConfigureAwait(false);
+                updateTaskBuffer.Clear();
                 updateTaskBuffer.Add(updateTask);
                 updateResults.AddRange(bufferResults);
             }
@@ -66,25 +70,22 @@ public sealed class UpdateManager : IUpdateManager
             updateResult = updateResult with { DatabaseEngine = dbEngine.Name };
             IEnumerable<Batch> batches = await _batchStrategy.GetBatchesAsync(cancellationToken).ConfigureAwait(false);
 
-            using SourceDatabase db = dbEngine.CreateSourceDatabase(source.ConnectionString);
-            using ILockManager @lock = dbEngine.CreateLockStrategy(db);
+            using SourceDatabase database = dbEngine.CreateSourceDatabase(source.ConnectionString);
+            using ILockManager @lock = dbEngine.CreateLockStrategy(database);
 
             if (await @lock.TryAdquireAsync(cancellationToken).ConfigureAwait(false))
             {
-                DatabaseVersion currentVersion = await db.Version.FirstAsync(cancellationToken).ConfigureAwait(false);
+                DatabaseVersion currentVersion = await database.Version.FirstAsync(cancellationToken).ConfigureAwait(false);
                 long startVersion = currentVersion.VersionId;
                 updateResult = updateResult with { Version = startVersion, OriginalVersion = startVersion };
+
                 foreach (Batch batch in batches.Where(b => b.VersionId > startVersion).OrderBy(b => b.VersionId))
                 {
-                    string batchContent = await _batchStrategy.GetBatchContentsAsync(batch, source.Provider, cancellationToken).ConfigureAwait(false);
-                    await db.Database.ExecuteSqlRawAsync(batchContent!, cancellationToken).ConfigureAwait(false);
-                    db.Remove(currentVersion);
-                    await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                    currentVersion.VersionId = batch.VersionId;
-                    db.Add(currentVersion);
-                    await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-
-                    updateResult = updateResult with { Version = batch.VersionId };
+                    await _eventDispatcher.NotifyBeforeExecuteBatchAsync(currentVersion.VersionId, database.Database.CurrentTransaction!, cancellationToken).ConfigureAwait(false);
+                    await ExecuteBatchAsync(batch, database, source, cancellationToken).ConfigureAwait(false);
+                    await IncrementVersionAsync(batch, database, currentVersion, cancellationToken).ConfigureAwait(false);
+                    updateResult = updateResult with { Version = currentVersion.VersionId };
+                    await _eventDispatcher.NotifyAfterExecuteBatchAsync(currentVersion.VersionId, database.Database.CurrentTransaction!, cancellationToken).ConfigureAwait(false);
                 }
                 await @lock.FreeAsync(cancellationToken).ConfigureAwait(false);
             }
@@ -95,6 +96,21 @@ public sealed class UpdateManager : IUpdateManager
         }
 
         return updateResult;
+    }
+
+    private async Task ExecuteBatchAsync(Batch batch, SourceDatabase database, Source source, CancellationToken cancellationToken)
+    {
+        string batchContent = await _batchStrategy.GetBatchContentsAsync(batch, source.Provider, cancellationToken).ConfigureAwait(false);
+        await database.Database.ExecuteSqlRawAsync(batchContent!, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task IncrementVersionAsync(Batch batch, SourceDatabase database, DatabaseVersion version, CancellationToken cancellationToken)
+    {
+        database.Remove(version);
+        await database.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        version.VersionId = batch.VersionId;
+        database.Add(version);
+        await database.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<UpdateResult> UpdateSourceAsync(string sourceName, CancellationToken cancellationToken = default)

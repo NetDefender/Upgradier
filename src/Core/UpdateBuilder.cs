@@ -8,6 +8,7 @@ public sealed class UpdateBuilder
     private Func<ISourceProvider>? _sourceProvider;
     private Func<IBatchStrategy>? _batchStrategy;
     private Func<IBatchCacheManager>? _cacheManager;
+    private Func<IUpdateEvents>? _events;
     private readonly List<Func<IDatabaseEngine>> _databaseEngines;
     private int _parallelism = 1;
     public UpdateBuilder()
@@ -68,6 +69,12 @@ public sealed class UpdateBuilder
         return this;
     }
 
+    public UpdateBuilder WithEvents(Func<IUpdateEvents> events)
+    {
+        _events = events;
+        return this;
+    }
+
     public UpdateManager Build()
     {
         ArgumentNullException.ThrowIfNull(_sourceProvider);
@@ -83,7 +90,8 @@ public sealed class UpdateBuilder
             SourceProvider = _sourceProvider,
             BatchStrategy = _batchStrategy,
             CacheManager = _cacheManager,
-            Parallelism = _parallelism
+            Parallelism = _parallelism,
+            Events = _events
         });
     }
 }

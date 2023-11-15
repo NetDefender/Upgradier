@@ -2,7 +2,7 @@
 
 namespace Ugradier.Core;
 
-public sealed class UpdateResultTaskBuffer
+public sealed class UpdateResultTaskBuffer : IDisposable
 {
     public static readonly int MaxValue = Environment.ProcessorCount * 20;
 
@@ -10,6 +10,7 @@ public sealed class UpdateResultTaskBuffer
 
     private readonly List<Task<UpdateResult>> _parallelTaskBuffer;
     private int _parallelism;
+    private bool _isDisposed;
 
     public UpdateResultTaskBuffer(int parallelism)
     {
@@ -37,8 +38,30 @@ public sealed class UpdateResultTaskBuffer
 
     public async Task<UpdateResult[]> WhenAll()
     {
-        UpdateResult[] results = await Task.WhenAll(_parallelTaskBuffer).ConfigureAwait(false);
+        return await Task.WhenAll(_parallelTaskBuffer).ConfigureAwait(false);
+    }
+
+    public void Clear()
+    {
         _parallelTaskBuffer.Clear();
-        return results;
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (!_isDisposed)
+        {
+            if (disposing)
+            {
+                Clear();
+            }
+
+            _isDisposed = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }
