@@ -111,7 +111,7 @@ public static class CoreExtensions
         }
     }
 
-    public static string EmptyIfNull(this string value)
+    public static string EmptyIfNull(this string? value)
     {
         return value is null ? string.Empty : value;
     }

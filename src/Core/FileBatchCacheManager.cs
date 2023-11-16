@@ -14,29 +14,39 @@ public sealed class FileBatchCacheManager : IBatchCacheManager
 
     public string? Environment { get; }
 
-    public async Task Store(long versionId, string provider, string batch, CancellationToken cancellationToken)
+    public async Task<bool> TryStore(long versionId, string provider, string batch, CancellationToken cancellationToken)
     {
-        using FileStream fsLock = new (Path.Combine(_basePath, provider, Environment.EmptyIfNull(), $"{versionId}.sql"), FileMode.Create, FileAccess.Write, FileShare.None);
-        using StreamWriter writer = new (fsLock, Encoding.UTF8);
-        await writer.WriteAsync(batch).ConfigureAwait(false);
+        try
+        {
+            using FileStream fsLock = new(Path.Combine(_basePath, provider, Environment.EmptyIfNull(), $"{versionId}.sql"), FileMode.Create, FileAccess.Write, FileShare.None);
+            using StreamWriter writer = new(fsLock, Encoding.UTF8);
+            await writer.WriteAsync(batch).ConfigureAwait(false);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // TODO: log
+            return false;
+        }
     }
 
     public async Task<BatchCacheResult> TryLoad(long versionId, string provider, CancellationToken cancellationToken)
     {
-        FileInfo batchFile = new(Path.Combine(_basePath, provider, Environment.EmptyIfNull(), $"{versionId}.sql"));
-        if (batchFile.Exists)
+        try
         {
-            try
+            FileInfo batchFile = new(Path.Combine(_basePath, provider, Environment.EmptyIfNull(), $"{versionId}.sql"));
+            if (batchFile.Exists)
             {
                 using StreamReader reader = batchFile.OpenText();
                 string contents = await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
                 return new BatchCacheResult(true, false, contents);
             }
-            catch (Exception)
-            {
-                return BatchCacheResult.Locked;
-            }
+            return BatchCacheResult.Miss;
         }
-        return BatchCacheResult.Miss;
+        catch (Exception)
+        {
+            // TODO: log
+            return BatchCacheResult.Locked;
+        }
     }
 }

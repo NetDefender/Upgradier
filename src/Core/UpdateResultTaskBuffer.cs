@@ -2,7 +2,7 @@
 
 namespace Ugradier.Core;
 
-public sealed class UpdateResultTaskBuffer : IDisposable
+public sealed class UpdateResultTaskBuffer
 {
     public static readonly int MaxValue = Environment.ProcessorCount * 20;
 
@@ -44,24 +44,5 @@ public sealed class UpdateResultTaskBuffer : IDisposable
     public void Clear()
     {
         _parallelTaskBuffer.Clear();
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (!_isDisposed)
-        {
-            if (disposing)
-            {
-                Clear();
-            }
-
-            _isDisposed = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

@@ -38,7 +38,7 @@ public sealed class UpdateManager : IUpdateManager
     public async Task<IEnumerable<UpdateResult>> UpdateAsync(CancellationToken cancellationToken = default)
     {
         IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
-        using UpdateResultTaskBuffer updateTaskBuffer = new (_parallelism);
+        UpdateResultTaskBuffer updateTaskBuffer = new (_parallelism);
         IEnumerable<Batch> batches = await _batchStrategy.GetBatchesAsync(cancellationToken).ConfigureAwait(false);
         List<UpdateResult> updateResults = [];
 
@@ -55,6 +55,7 @@ public sealed class UpdateManager : IUpdateManager
         }
 
         UpdateResult[] pendingResults = await updateTaskBuffer.WhenAll().ConfigureAwait(false);
+        updateTaskBuffer.Clear();
         updateResults.AddRange(pendingResults);
 
         return updateResults.AsReadOnly();
