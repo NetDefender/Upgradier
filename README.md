@@ -46,7 +46,7 @@ UpdateBuilder updateBuilder = new UpdateBuilder()
 Build to create the UpdateManager:
 
 ```csharp
-using UpdateManager updateManager = updateBuilder.Build();
+UpdateManager updateManager = updateBuilder.Build();
 ```
 
 Update the databases:
