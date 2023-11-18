@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using Microsoft.Extensions.Logging;
 using Ugradier.Core;
 
 namespace Upgradier.Core;
@@ -11,6 +12,8 @@ public sealed class UpdateBuilder
     private Func<IUpdateEvents>? _events;
     private readonly List<Func<IDatabaseEngine>> _databaseEngines;
     private int _parallelism = 1;
+    private ILogger _logger;
+
     public UpdateBuilder()
     {
         _databaseEngines = [];
@@ -75,6 +78,12 @@ public sealed class UpdateBuilder
         return this;
     }
 
+    public UpdateBuilder WithLogger(ILogger logger)
+    {
+        _logger = logger;
+        return this;
+    }
+
     public UpdateManager Build()
     {
         ArgumentNullException.ThrowIfNull(_sourceProvider);
@@ -91,7 +100,8 @@ public sealed class UpdateBuilder
             BatchStrategy = _batchStrategy,
             CacheManager = _cacheManager,
             Parallelism = _parallelism,
-            Events = _events
+            Events = _events,
+            Logger = _logger
         });
     }
 }

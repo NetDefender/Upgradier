@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using Ugradier.Core;
 
 namespace Upgradier.Core
@@ -17,5 +18,7 @@ namespace Upgradier.Core
         public Func<IUpdateEvents>? Events { get; init; } = default!;
 
         public int Parallelism { get; init; }
+
+        public ILogger Logger { get; init; }
     }
 }
