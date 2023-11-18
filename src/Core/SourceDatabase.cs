@@ -1,3 +1,5 @@
+using System.Threading;
+using System;
 using Microsoft.EntityFrameworkCore;
 using Upgradier.Core;
 
@@ -34,5 +36,19 @@ public class SourceDatabase : DbContext
                 .IsRequired()
                 .ValueGeneratedNever();
         });
+    }
+
+    public async Task ChangeCurrentVersionAsync(DatabaseVersion currentVersion, long newVersion, CancellationToken cancellationToken)
+    {
+        Remove(currentVersion);
+        await SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        currentVersion.VersionId = newVersion;
+        await AddAsync(currentVersion, cancellationToken).ConfigureAwait(false);
+        await SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task ExecuteBatchAsync(string batchContents, CancellationToken cancellationToken)
+    {
+        await Database.ExecuteSqlRawAsync(batchContents, cancellationToken).ConfigureAwait(false);
     }
 }

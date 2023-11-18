@@ -3,5 +3,10 @@
     "Name": "Test-Tenant",
     "Provider": "SqlServer",
     "ConnectionString": "Server=.;Initial Catalog=Test-Database;Integrated Security=SSPI;TrustServerCertificate=True"
+  },
+  {
+    "Name": "Test-02-Tenant",
+    "Provider": "SqlServer",
+    "ConnectionString": "Server=.;Initial Catalog=Test-02-Database;Integrated Security=SSPI;TrustServerCertificate=True"
   }
 ]

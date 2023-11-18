@@ -10,19 +10,19 @@ internal sealed class UpdateEventDispatcher
     {
         _events = events;
     }
-    public async Task NotifyBeforeExecuteBatchAsync(long version, IDbContextTransaction transaction, CancellationToken cancellationToken)
+    public async Task NotifyBeforeBatchProcessingAsync(long version, IDbContextTransaction transaction, CancellationToken cancellationToken)
     {
-        if(_events?.BeforeExecuteBatchAsync is not null)
+        if(_events?.BeforeBatchProcessingAsync is not null)
         {
-            await _events.BeforeExecuteBatchAsync(version, transaction, cancellationToken).ConfigureAwait(false);
+            await _events.BeforeBatchProcessingAsync(version, transaction, cancellationToken).ConfigureAwait(false);
         }
     }
 
-    public async Task NotifyAfterExecuteBatchAsync(long version, IDbContextTransaction transaction, CancellationToken cancellationToken)
+    public async Task NotifyAfterBatchProcessedAsync(long version, IDbContextTransaction transaction, CancellationToken cancellationToken)
     {
-        if (_events?.AfterExecuteBatchAsync is not null)
+        if (_events?.AfterBatchProcessedAsync is not null)
         {
-            await _events.AfterExecuteBatchAsync(version, transaction, cancellationToken).ConfigureAwait(false);
+            await _events.AfterBatchProcessedAsync(version, transaction, cancellationToken).ConfigureAwait(false);
         }
     }
 }
