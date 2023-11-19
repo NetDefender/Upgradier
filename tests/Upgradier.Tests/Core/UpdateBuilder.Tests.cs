@@ -18,7 +18,7 @@ public sealed class UpdateBuilder_Tests
     public void UpdateBuilder_Throws_If_AddProviderFactories_Length_Is_0()
     {
         UpdateBuilder builder = new();
-        Assert.Throws<ArgumentOutOfRangeException>(() => builder.AddDatabaseEngines(Array.Empty<IDatabaseEngine>()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => builder.AddDatabaseEngines([]));
     }
 
     [Fact]
@@ -46,17 +46,14 @@ public sealed class UpdateBuilder_Tests
     public void WithWebBatchStrategy_Throws_ArgumentNullException_If_ConfigureRequest_Is_Null()
     {
         UpdateBuilder builder = new();
-        Assert.Throws<ArgumentNullException>(() => builder.WithWebBatchStrategy(Substitute.For<WebBatchStrategy>(), null));
+        Assert.Throws<ArgumentNullException>(() => builder.WithWebBatchStrategy(Substitute.For<WebBatchStrategy>(new Uri("https://www.files.com")), null));
     }
 
     [Fact]
     public void Build_Throws_ArgumentNullException_If_SourceProvider_Is_Not_Set()
     {
         UpdateBuilder builder = new();
-        IDatabaseEngine[] providerFactories = new IDatabaseEngine[]
-        {
-            Substitute.For<IDatabaseEngine>()
-        };
+        IDatabaseEngine[] providerFactories = [Substitute.For<IDatabaseEngine>()];
         builder.WithBatchStrategy(Substitute.For<IBatchStrategy>());
         builder.AddDatabaseEngines(providerFactories);
         Assert.Throws<ArgumentNullException>(() => builder.Build());
@@ -66,10 +63,7 @@ public sealed class UpdateBuilder_Tests
     public void Build_Throws_ArgumentNullException_If_BatchStrategy_Is_Not_Set()
     {
         UpdateBuilder builder = new();
-        IDatabaseEngine[] providerFactories = new IDatabaseEngine[]
-        {
-            Substitute.For<IDatabaseEngine>()
-        };
+        IDatabaseEngine[] providerFactories = [Substitute.For<IDatabaseEngine>()];
         builder.AddDatabaseEngines(providerFactories);
         builder.WithSourceProvider(Substitute.For<ISourceProvider>());
         Assert.Throws<ArgumentNullException>(() => builder.Build());
