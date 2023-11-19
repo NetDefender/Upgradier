@@ -17,7 +17,7 @@ EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_
 
 UpdateBuilder updateBuilder = new UpdateBuilder()
     .WithFileBatchStrategy("Batches")
-    .WithSourceProvider(() => new FileSourceProvider("Sources.json"))
+    .WithSourceProvider(new FileSourceProvider("Sources.json"))
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine()

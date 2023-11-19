@@ -6,11 +6,11 @@ namespace Upgradier.Core;
 
 public sealed class UpdateBuilder
 {
-    private Func<ISourceProvider>? _sourceProvider;
-    private Func<IBatchStrategy>? _batchStrategy;
-    private Func<IBatchCacheManager>? _cacheManager;
-    private Func<IUpdateEvents>? _events;
-    private readonly List<Func<IDatabaseEngine>> _databaseEngines;
+    private ISourceProvider? _sourceProvider;
+    private IBatchStrategy? _batchStrategy;
+    private IBatchCacheManager? _cacheManager;
+    private IUpdateEvents? _events;
+    private readonly List<IDatabaseEngine> _databaseEngines;
     private int _parallelism = 1;
     private ILogger _logger;
 
@@ -19,7 +19,7 @@ public sealed class UpdateBuilder
         _databaseEngines = [];
     }
 
-    public UpdateBuilder AddDatabaseEngines(params Func<IDatabaseEngine>[] databaseEngines)
+    public UpdateBuilder AddDatabaseEngines(params IDatabaseEngine[] databaseEngines)
     {
         ArgumentNullException.ThrowIfNull(databaseEngines);
         ArgumentOutOfRangeException.ThrowIfZero(databaseEngines.Length);
@@ -27,59 +27,66 @@ public sealed class UpdateBuilder
         return this;
     }
 
-    public UpdateBuilder WithSourceProvider(Func<ISourceProvider> sourceProvider)
+    public UpdateBuilder WithSourceProvider(ISourceProvider sourceProvider)
     {
         ArgumentNullException.ThrowIfNull(sourceProvider);
         _sourceProvider = sourceProvider;
         return this;
     }
 
-    public UpdateBuilder WithBatchStrategy(Func<IBatchStrategy> batchStrategy)
+    public UpdateBuilder WithBatchStrategy(IBatchStrategy batchStrategy)
     {
         ArgumentNullException.ThrowIfNull(batchStrategy);
         _batchStrategy = batchStrategy;
         return this;
     }
 
-    public UpdateBuilder WithWebBatchStrategy(Func<WebBatchStrategy> batchStrategy, Func<HttpRequestMessage, Task> configureRequest)
+    public UpdateBuilder WithWebBatchStrategy(WebBatchStrategy batchStrategy, Func<HttpRequestMessage, Task> configureRequest)
     {
         ArgumentNullException.ThrowIfNull(batchStrategy);
         ArgumentNullException.ThrowIfNull(configureRequest);
-        _batchStrategy = () =>
-        {
-            WebBatchStrategy webStrategy = batchStrategy();
-            webStrategy.ConfigureRequestMessage(configureRequest);
-            return webStrategy;
-        };
+        WebBatchStrategy webStrategy = batchStrategy;
+        webStrategy.ConfigureRequestMessage(configureRequest);
+        _batchStrategy = webStrategy;
         return this;
     }
 
-    public UpdateBuilder WithCacheManager(Func<IBatchCacheManager> cacheManager)
+    public UpdateBuilder WithCacheManager(IBatchCacheManager cacheManager)
     {
+        ArgumentNullException.ThrowIfNull(cacheManager);
         _cacheManager = cacheManager;
         return this;
     }
 
     public UpdateBuilder WithFileCacheManager(string basePath)
     {
-        _cacheManager = () => new FileBatchCacheManager(basePath);
+        DirectoryInfo directory = new (basePath);
+        if(!directory.Exists)
+        {
+            throw new DirectoryNotFoundException($"Directory {basePath} doesn't exists");
+        }
+        _cacheManager = new FileBatchCacheManager(basePath);
         return this;
     }
 
     public UpdateBuilder WithParallelism(int parallelism)
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(parallelism, UpdateResultTaskBuffer.MinValue);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(parallelism, UpdateResultTaskBuffer.MaxValue);
         _parallelism = parallelism;
         return this;
     }
 
-    public UpdateBuilder WithEvents(Func<IUpdateEvents> events)
+    public UpdateBuilder WithEvents(IUpdateEvents events)
     {
+        ArgumentNullException.ThrowIfNull(events);
         _events = events;
         return this;
     }
 
     public UpdateBuilder WithLogger(ILogger logger)
     {
+        ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
         return this;
     }
@@ -87,21 +94,15 @@ public sealed class UpdateBuilder
     public UpdateManager Build()
     {
         ArgumentNullException.ThrowIfNull(_sourceProvider);
-        ArgumentNullException.ThrowIfNull(_batchStrategy);
-        ArgumentNullException.ThrowIfNull(_batchStrategy);
+        ArgumentNullException.ThrowIfNull(_databaseEngines);
         ArgumentOutOfRangeException.ThrowIfZero(_databaseEngines.Count);
-        ArgumentOutOfRangeException.ThrowIfLessThan(_parallelism, UpdateResultTaskBuffer.MinValue);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(_parallelism, UpdateResultTaskBuffer.MaxValue);
+        ArgumentNullException.ThrowIfNull(_batchStrategy);
 
-        return new(new UpdateOptions
-        {
-            DatabaseEngines = _databaseEngines.AsReadOnly(),
-            SourceProvider = _sourceProvider,
-            BatchStrategy = _batchStrategy,
-            CacheManager = _cacheManager,
-            Parallelism = _parallelism,
-            Events = _events,
-            Logger = _logger
-        });
+        return new UpdateManager(_sourceProvider
+            , _databaseEngines.ToDictionary(databaseEngine => databaseEngine.Name)
+            , _cacheManager is null ? _batchStrategy : new CachedBatchStrategy(_batchStrategy, _cacheManager)
+            , new UpdateEventDispatcher(_events)
+            , new LogAdapter(_logger)
+            , _parallelism);
     }
 }

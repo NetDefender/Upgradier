@@ -17,24 +17,26 @@ public sealed class UpdateManager : IUpdateManager
         throw new InvalidOperationException("Empty constructor is not allowed");
     }
 
-    internal UpdateManager(UpdateOptions options)
+    internal UpdateManager(ISourceProvider sourceProvider
+        , IDictionary<string, IDatabaseEngine> databaseEngines
+        , IBatchStrategy batchStrategy
+        , UpdateEventDispatcher eventDispatcher
+        , LogAdapter logger
+        , int parallelism)
     {
-        ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(options.DatabaseEngines);
-        ArgumentOutOfRangeException.ThrowIfZero(options.DatabaseEngines.Count());
-        ArgumentNullException.ThrowIfNull(options.SourceProvider);
-        ArgumentOutOfRangeException.ThrowIfLessThan(options.Parallelism, UpdateResultTaskBuffer.MinValue);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(options.Parallelism, UpdateResultTaskBuffer.MaxValue);
+        ArgumentNullException.ThrowIfNull(sourceProvider);
+        ArgumentNullException.ThrowIfNull(databaseEngines);
+        ArgumentNullException.ThrowIfNull(batchStrategy);
+        ArgumentOutOfRangeException.ThrowIfZero(databaseEngines.Count);
+        ArgumentOutOfRangeException.ThrowIfLessThan(parallelism, UpdateResultTaskBuffer.MinValue);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(parallelism, UpdateResultTaskBuffer.MaxValue);
 
-        _parallelism = options.Parallelism;
-        _databaseEngines = options.DatabaseEngines
-            .Select(databaseEngine => databaseEngine()!)
-            .ToDictionary(databaseEngine => databaseEngine.Name);
-        _sourceProvider = options.SourceProvider();
-        IBatchCacheManager? cacheManager = options.CacheManager?.Invoke();
-        _batchStrategy = cacheManager is null ? options.BatchStrategy.Invoke() : new CachedBatchStrategy(options.BatchStrategy.Invoke(), cacheManager);
-        _eventDispatcher = new(options.Events?.Invoke());
-        _logAdapter = new LogAdapter(options.Logger);
+        _sourceProvider = sourceProvider;
+        _databaseEngines = databaseEngines;
+        _batchStrategy = batchStrategy;
+        _eventDispatcher = eventDispatcher;
+        _parallelism = parallelism;
+        _logAdapter = logger;
     }
 
     public async Task<IEnumerable<UpdateResult>> UpdateAsync(CancellationToken cancellationToken = default)

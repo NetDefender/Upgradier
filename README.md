@@ -36,9 +36,9 @@ Create UpdateBuilder with options:
 
 ```csharp
 UpdateBuilder updateBuilder = new UpdateBuilder()
-    .WithSourceProvider(() => new FileSourceProvider("c:\\my_files\\sources.json"))
+    .WithSourceProvider(new FileSourceProvider("c:\\my_files\\sources.json"))
     .WithFileBatchStrategy("c:\\my_files\\batches")
-    .WithCacheManager(() => new FileBatchCacheManager("c:\\my_files\\cache"))
+    .WithCacheManager(new FileBatchCacheManager("c:\\my_files\\cache"))
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine();

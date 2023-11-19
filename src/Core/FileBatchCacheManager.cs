@@ -8,6 +8,7 @@ public sealed class FileBatchCacheManager : IBatchCacheManager
 
     public FileBatchCacheManager(string basePath)
     {
+        basePath.ThrowIfDirectoryNotExists();
         _basePath = basePath;
         Environment = EnvironmentVariables.GetExecutionEnvironment();
     }

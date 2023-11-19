@@ -6,14 +6,10 @@ namespace Upgradier.BatchStrategy.Aws;
 
 public static class Extensions
 {
-    public static UpdateBuilder WithAwsS3BatchStrategy(this UpdateBuilder builder, Func<AmazonS3Client> factory, string bucketName)
+    public static UpdateBuilder WithAwsS3BatchStrategy(this UpdateBuilder builder, AmazonS3Client awsClient, string bucketName)
     {
-        IBatchStrategy batchStrategy()
-        {
-            AmazonS3Client awsClient = factory();
-            TransferUtility utility = new(awsClient);
-            return new AwsS3BatchStrategy(bucketName,  utility);
-        }
+        TransferUtility utility = new(awsClient);
+        AwsS3BatchStrategy batchStrategy = new (bucketName, utility);
         builder.WithBatchStrategy(batchStrategy);
         return builder;
     }
