@@ -58,17 +58,6 @@ public sealed class UpdateBuilder
         return this;
     }
 
-    public UpdateBuilder WithFileCacheManager(string basePath)
-    {
-        DirectoryInfo directory = new (basePath);
-        if(!directory.Exists)
-        {
-            throw new DirectoryNotFoundException($"Directory {basePath} doesn't exists");
-        }
-        _cacheManager = new FileBatchCacheManager(basePath);
-        return this;
-    }
-
     public UpdateBuilder WithParallelism(int parallelism)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(parallelism, UpdateResultTaskBuffer.MinValue);
@@ -98,11 +87,13 @@ public sealed class UpdateBuilder
         ArgumentOutOfRangeException.ThrowIfZero(_databaseEngines.Count);
         ArgumentNullException.ThrowIfNull(_batchStrategy);
 
+        LogAdapter logAdapter = new (_logger);
+
         return new UpdateManager(_sourceProvider
             , _databaseEngines.ToDictionary(databaseEngine => databaseEngine.Name)
-            , _cacheManager is null ? _batchStrategy : new CachedBatchStrategy(_batchStrategy, _cacheManager)
-            , new UpdateEventDispatcher(_events)
-            , new LogAdapter(_logger)
+            , _cacheManager is null ? _batchStrategy : new CachedBatchStrategy(_batchStrategy, _cacheManager, logAdapter)
+            , new UpdateEventDispatcher(_events, logAdapter)
+            , logAdapter
             , _parallelism);
     }
 }

@@ -14,6 +14,6 @@ public sealed class FileSourceProvider : SourceProviderBase
     {
         using FileStream fs = new (FileName, FileMode.Open, FileAccess.Read);
         IEnumerable<Source>? sources = await JsonSerializer.DeserializeAsync<IEnumerable<Source>>(fs, cancellationToken: cancellationToken);
-        return sources ?? Enumerable.Empty<Source>();
+        return sources ?? [];
     }
 }

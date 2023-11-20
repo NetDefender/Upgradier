@@ -65,4 +65,29 @@ public sealed class LogAdapter
     {
         _logger?.LogError(ex, "An error ocurred updating the source [{Source}] with connection string [{ConnectionString}], provider [{Provider}] and batch [{Batch}]", source.Name, source.ConnectionString, source.Provider, batchWithError?.VersionId);
     }
+
+    public void LogBatchCacheHit(long batchId)
+    {
+        _logger?.LogDebug("Batch [{BatchId}] from Cache", batchId);
+    }
+
+    public void LogBatchCacheMiss(long batchId)
+    {
+        _logger?.LogDebug("Batch [{BatchId}] missed Cache", batchId);
+    }
+
+    public void LogBatchCacheStore(long batchId, bool stored)
+    {
+        _logger?.LogDebug("Batch [{BatchId}] stored [{Stored}] in Cache", batchId, stored);
+    }
+
+    public void LogBeforeBatchProcessingAsyncDispatchEvent(long version)
+    {
+        _logger?.LogDebug("Dispatching event [{Event}] with version [{Version}] ", nameof(IUpdateEvents.BeforeBatchProcessingAsync), version);
+    }
+
+    public void LogAfterBatchProcessedAsyncDispatchEvent(long version)
+    {
+        _logger?.LogDebug("Dispatching event [{Version}] stored [{Event}]", nameof(IUpdateEvents.AfterBatchProcessedAsync), version);
+    }
 }

@@ -115,4 +115,14 @@ public static class CoreExtensions
     {
         return value is null ? string.Empty : value;
     }
+
+    public static bool CreateIfNotExists(this DirectoryInfo directory)
+    {
+        if (!directory.Exists)
+        {
+            directory.Create();
+            return true;
+        }
+        return false;
+    }
 }

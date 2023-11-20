@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Upgradier.Core;
 
@@ -19,7 +20,9 @@ public sealed class FileBatchCacheManager : IBatchCacheManager
     {
         try
         {
-            using FileStream fsLock = new(Path.Combine(_basePath, provider, Environment.EmptyIfNull(), $"{versionId}.sql"), FileMode.Create, FileAccess.Write, FileShare.None);
+            DirectoryInfo batchsDirectory = new(Path.Combine(_basePath, provider, Environment.EmptyIfNull()));
+            batchsDirectory.CreateIfNotExists();
+            using FileStream fsLock = new(Path.Combine(batchsDirectory.FullName, $"{versionId}.sql"), FileMode.Create, FileAccess.Write, FileShare.None);
             using StreamWriter writer = new(fsLock, Encoding.UTF8);
             await writer.WriteAsync(batch).ConfigureAwait(false);
             return true;
@@ -35,7 +38,9 @@ public sealed class FileBatchCacheManager : IBatchCacheManager
     {
         try
         {
-            FileInfo batchFile = new(Path.Combine(_basePath, provider, Environment.EmptyIfNull(), $"{versionId}.sql"));
+            DirectoryInfo batchsDirectory = new (Path.Combine(_basePath, provider, Environment.EmptyIfNull()));
+            batchsDirectory.CreateIfNotExists();
+            FileInfo batchFile = new(Path.Combine(batchsDirectory.FullName, $"{versionId}.sql"));
             if (batchFile.Exists)
             {
                 using StreamReader reader = batchFile.OpenText();
