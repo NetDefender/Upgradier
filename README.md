@@ -36,9 +36,9 @@ Create UpdateBuilder with options:
 
 ```csharp
 UpdateBuilder updateBuilder = new UpdateBuilder()
-    .WithSourceProvider(new FileSourceProvider("c:\\my_files\\sources.json"))
+    .WithSourceProvider(options => new FileSourceProvider("c:\\my_files\\sources.json", options.Logger))
     .WithFileBatchStrategy("c:\\my_files\\batches")
-    .WithCacheManager(new FileBatchCacheManager("c:\\my_files\\cache"))
+    .WithCacheManager(options => new FileBatchCacheManager("c:\\my_files\\cache", options.Logger))
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine();
@@ -51,5 +51,5 @@ UpdateManager updateManager = updateBuilder.Build();
 
 Update the databases:
 ```csharp
-IEnumerable<UpdateResult> updateResults = await updateManager.Update();
+IEnumerable<UpdateResult> updateResults = await updateManager.UpdateAsync();
 ```
