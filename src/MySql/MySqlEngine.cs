@@ -6,6 +6,13 @@ public class MySqlEngine : IDatabaseEngine
 {
     public const string NAME = "MySql";
 
+    private LogAdapter _logger;
+
+    public MySqlEngine(LogAdapter logger)
+    {
+        _logger = logger;
+    }
+
     public string Name => NAME;
 
     public virtual ILockManager CreateLockStrategy(SourceDatabase sourceDatabase)

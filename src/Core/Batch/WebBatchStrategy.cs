@@ -8,13 +8,14 @@ public class WebBatchStrategy : BatchStrategyBase
 {
     private readonly Uri _baseUri;
     private static readonly HttpClient _client = new ();
-    private Func<HttpRequestMessage, Task> _configureRequest = _ => Task.CompletedTask;
+    private Func<HttpRequestMessage, Task> _configureRequest;
 
-    public WebBatchStrategy(Uri baseUri) : base(nameof(FileBatchStrategy))
+    public WebBatchStrategy(Uri baseUri, Func<HttpRequestMessage, Task>? configureRequest, LogAdapter logger) : base(nameof(FileBatchStrategy), logger)
     {
         ArgumentNullException.ThrowIfNull(baseUri);
         baseUri.ThrowIfIsNotAbsoluteUri();
         _baseUri = baseUri;
+        _configureRequest = configureRequest ?? (_ => Task.CompletedTask);
     }
 
     public override async Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken)

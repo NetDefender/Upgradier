@@ -39,7 +39,7 @@ public static class CoreExtensions
 
     public static UpdateBuilder WithFileBatchStrategy(this UpdateBuilder builder, string baseDirectory)
     {
-        builder.WithBatchStrategy(new FileBatchStrategy(baseDirectory));
+        builder.WithBatchStrategy(options => new FileBatchStrategy(baseDirectory, options.Logger));
         return builder;
     }
 

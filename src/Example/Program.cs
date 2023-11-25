@@ -17,9 +17,9 @@ EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_
 
 UpdateBuilder updateBuilder = new UpdateBuilder()
     .WithFileBatchStrategy("Batches")
-    .WithCacheManager(new FileBatchCacheManager("Cache"))
+    .WithCacheManager(options => new FileBatchCacheManager("Cache", options.Logger))
     .WithParallelism(10)
-    .WithSourceProvider(new FileSourceProvider("Sources.json"))
+    .WithSourceProvider(options => new FileSourceProvider("Sources.json", options.Logger))
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine()

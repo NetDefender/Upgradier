@@ -6,6 +6,13 @@ public class PostgreSqlEngine : IDatabaseEngine
 {
     public const string NAME = "PostgreSql";
 
+    private LogAdapter _logger;
+
+    public PostgreSqlEngine(LogAdapter logger)
+    {
+        _logger = logger;
+    }
+
     public string Name => NAME;
 
     public virtual ILockManager CreateLockStrategy(SourceDatabase sourceDatabase)

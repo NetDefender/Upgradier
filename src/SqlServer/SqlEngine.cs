@@ -5,8 +5,15 @@ namespace Upgradier.SqlServer;
 public class SqlEngine : IDatabaseEngine
 {
     public const string NAME = "SqlServer";
+    
+    private readonly LogAdapter _logger;
 
     public string Name => NAME;
+
+    public SqlEngine(LogAdapter logger)
+    {
+        _logger = logger;
+    }
 
     public virtual ILockManager CreateLockStrategy(SourceDatabase sourceDatabase)
     {

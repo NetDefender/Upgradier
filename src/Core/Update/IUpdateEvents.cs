@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
-using Upgradier.Core;
 
-namespace Ugradier.Core;
+namespace Upgradier.Core;
 
 public interface IUpdateEvents
 {

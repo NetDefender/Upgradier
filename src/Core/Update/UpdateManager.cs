@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Ugradier.Core;
 
 namespace Upgradier.Core;
 

@@ -1,6 +1,6 @@
 ﻿using Upgradier.Core;
 
-namespace Ugradier.Core;
+namespace Upgradier.Core;
 
 public sealed class UpdateResultTaskBuffer
 {

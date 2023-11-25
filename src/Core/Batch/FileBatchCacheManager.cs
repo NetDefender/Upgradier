@@ -6,11 +6,13 @@ namespace Upgradier.Core;
 public sealed class FileBatchCacheManager : IBatchCacheManager
 {
     private readonly string _basePath;
+    private readonly LogAdapter _logger;
 
-    public FileBatchCacheManager(string basePath)
+    public FileBatchCacheManager(string basePath, LogAdapter logger)
     {
         basePath.ThrowIfDirectoryNotExists();
         _basePath = basePath;
+        _logger = logger;
         Environment = EnvironmentVariables.GetExecutionEnvironment();
     }
 

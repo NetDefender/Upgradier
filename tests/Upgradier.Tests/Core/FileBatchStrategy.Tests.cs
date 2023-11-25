@@ -8,8 +8,8 @@ public sealed class FileBatchStrategy_Tests
     public async Task GetAllBatches_Works_When_Base_Directory_Not_Ends_With_DirectorySeparator()
     {
         using CancellationTokenSource cancellationTokenSource = new();
-        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches");
-        IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", new LogAdapter(null));
+        IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token);
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
         Assert.Equal(2, batches.Count());
@@ -19,8 +19,8 @@ public sealed class FileBatchStrategy_Tests
     public async Task GetAllBatches_Works_When_Base_Directory_Ends_With_DirectorySeparator()
     {
         using CancellationTokenSource cancellationTokenSource = new();
-        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches{Path.DirectorySeparatorChar}");
-        IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches{Path.DirectorySeparatorChar}", new LogAdapter(null));
+        IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token);
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
         Assert.Equal(2, batches.Count());
@@ -30,8 +30,8 @@ public sealed class FileBatchStrategy_Tests
     public async Task GetAllBatches_Returns_2_Batches_In_Null_Environment()
     {
         using CancellationTokenSource cancellationTokenSource = new();
-        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches");
-        IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", new LogAdapter(null));
+        IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token);
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
         Assert.Equal(2, batches.Count());
@@ -42,7 +42,7 @@ public sealed class FileBatchStrategy_Tests
     {
         EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
         using CancellationTokenSource cancellationTokenSource = new();
-        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches");
+        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", new LogAdapter(null));
         IEnumerable<Batch> batches = await strategy.GetBatchesAsync(cancellationTokenSource.Token);
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 1));
         Assert.NotNull(batches.FirstOrDefault(s => s.VersionId == 2));
@@ -56,11 +56,11 @@ public sealed class FileBatchStrategy_Tests
     {
         Assert.Throws<ArgumentNullException>("baseDirectory", () =>
         {
-            new FileBatchStrategy(null);
+            new FileBatchStrategy(null, new LogAdapter(null));
         });
         Assert.Throws<ArgumentException>("baseDirectory", () =>
         {
-            new FileBatchStrategy(string.Empty);
+            new FileBatchStrategy(string.Empty, new LogAdapter(null));
         });
     }
 
@@ -69,7 +69,7 @@ public sealed class FileBatchStrategy_Tests
     {
         await Assert.ThrowsAsync<DirectoryNotFoundException>(async () =>
         {
-            FileBatchStrategy strategy = new($"NonExistentDirectory{Path.DirectorySeparatorChar}Batches");
+            FileBatchStrategy strategy = new($"NonExistentDirectory{Path.DirectorySeparatorChar}Batches", new LogAdapter(null));
             IEnumerable<Batch> batches = await strategy.GetBatchesAsync(CancellationToken.None);
         });
     }
@@ -80,7 +80,7 @@ public sealed class FileBatchStrategy_Tests
     public async Task GetBatchContentsAsync_Get_Contents_By_VersionId(int versionId, string provider)
     {
         string expectedBatchContents = await File.ReadAllTextAsync(Path.Combine("Core", "Batches", provider, $"{versionId}.sql"));
-        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches");
+        FileBatchStrategy strategy = new($"Core{Path.DirectorySeparatorChar}Batches", new LogAdapter(null));
         string actualContents = await strategy.GetBatchContentsAsync(new Batch { VersionId = versionId }, provider, CancellationToken.None);
         Assert.NotNull(actualContents);
         Assert.Equal(expectedBatchContents, actualContents);

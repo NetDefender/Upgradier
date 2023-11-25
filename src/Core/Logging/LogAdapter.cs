@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Upgradier.Core;
 
-namespace Ugradier.Core;
+namespace Upgradier.Core;
 
-public sealed class LogAdapter
+public class LogAdapter
 {
     private readonly ILogger? _logger;
 

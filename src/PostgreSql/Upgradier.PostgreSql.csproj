@@ -20,7 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Core\Ugradier.Core.csproj" />
+		<ProjectReference Include="..\Core\Upgradier.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Using Include="Upgradier.Core" />

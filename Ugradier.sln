@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.33920.267
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ugradier.Core", "src\Core\Ugradier.Core.csproj", "{74D0B356-C89A-4449-988E-0F147277C9F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.Core", "src\Core\Upgradier.Core.csproj", "{74D0B356-C89A-4449-988E-0F147277C9F6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ugradier.SqlServer", "src\SqlServer\Ugradier.SqlServer.csproj", "{D7FC778A-FE35-47D4-AAEB-74E2247E01E6}"
 EndProject
@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example", "src\Example\Exam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.MySql", "src\MySql\Upgradier.MySql.csproj", "{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upgradier.PostgreSql", "src\PostgreSql\Upgradier.PostgreSql.csproj", "{46A281BE-95AE-445F-90A2-37BDDAF5FD77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.PostgreSql", "src\PostgreSql\Upgradier.PostgreSql.csproj", "{46A281BE-95AE-445F-90A2-37BDDAF5FD77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

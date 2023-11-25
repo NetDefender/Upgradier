@@ -6,7 +6,7 @@ public sealed class BatchStrategy_Tests
 {
     private sealed class BatchStrategyMock : BatchStrategyBase
     {
-        public BatchStrategyMock(string name) : base(name)
+        public BatchStrategyMock(string name, LogAdapter logger) : base(name, logger)
         {
         }
         public string DerivedEnvironment => Environment;
@@ -19,11 +19,11 @@ public sealed class BatchStrategy_Tests
     {
         Assert.Throws<ArgumentNullException>("name", () =>
         {
-            BatchStrategyMock strategy = new(null);
+            BatchStrategyMock strategy = new(null, new LogAdapter(null));
         });
         Assert.Throws<ArgumentException>("name", () =>
         {
-            BatchStrategyMock strategy = new(string.Empty);
+            BatchStrategyMock strategy = new(string.Empty, new LogAdapter(null));
         });
     }
 }

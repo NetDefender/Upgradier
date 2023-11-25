@@ -16,8 +16,6 @@ public static class Extensions
 
     public static UpdateBuilder WithAzureBlobBatchStrategy(this UpdateBuilder builder, BlobContainerClient blobClient, string provider)
     {
-        AzureBlobBatchStrategy batchStrategy = new (blobClient);
-        builder.WithBatchStrategy(batchStrategy);
-        return builder;
+        return builder.WithBatchStrategy(options => new AzureBlobBatchStrategy(blobClient, options.Logger));
     }
 }

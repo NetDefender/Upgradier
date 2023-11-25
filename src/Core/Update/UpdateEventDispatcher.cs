@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Ugradier.Core;
+namespace Upgradier.Core;
 
 internal sealed class UpdateEventDispatcher
 {
