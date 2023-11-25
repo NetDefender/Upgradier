@@ -35,13 +35,16 @@ EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_
 Create UpdateBuilder with options:
 
 ```csharp
+//Microsoft.Extensions.Logging.ILogger logger ...
+
 UpdateBuilder updateBuilder = new UpdateBuilder()
     .WithSourceProvider(options => new FileSourceProvider("c:\\my_files\\sources.json", options.Logger))
     .WithFileBatchStrategy("c:\\my_files\\batches")
     .WithCacheManager(options => new FileBatchCacheManager("c:\\my_files\\cache", options.Logger))
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
-    .AddPostgreSqlServerEngine();
+    .AddPostgreSqlServerEngine()
+    .WithLogger(logger);
 ```
 Build to create the UpdateManager:
 
