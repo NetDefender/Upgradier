@@ -19,7 +19,7 @@ public class SqlEngine : IDatabaseEngine
     {
         if (sourceDatabase is SqlSourceDatabase sqlSourceDatabase)
         {
-            return new SqlLockManager(sqlSourceDatabase);
+            return new SqlLockManager(sqlSourceDatabase, _logger);
         }
         throw new InvalidCastException(nameof(sourceDatabase));
     }
@@ -28,6 +28,6 @@ public class SqlEngine : IDatabaseEngine
     {
         DbContextOptionsBuilder<SqlSourceDatabase> builder = new DbContextOptionsBuilder<SqlSourceDatabase>()
             .UseSqlServer(connectionString);
-        return new SqlSourceDatabase(builder.Options);
+        return new SqlSourceDatabase(builder.Options, _logger);
     }
 }

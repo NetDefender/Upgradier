@@ -19,7 +19,7 @@ public class PostgreSqlEngine : IDatabaseEngine
     {
         if (sourceDatabase is PostgreSqlSourceDatabase sqlSourceDatabase)
         {
-            return new PostgreSqlLockManager(sqlSourceDatabase);
+            return new PostgreSqlLockManager(sqlSourceDatabase, _logger);
         }
         throw new InvalidCastException(nameof(sourceDatabase));
     }
@@ -28,6 +28,6 @@ public class PostgreSqlEngine : IDatabaseEngine
     {
         DbContextOptionsBuilder<PostgreSqlSourceDatabase> builder = new DbContextOptionsBuilder<PostgreSqlSourceDatabase>()
             .UseNpgsql(connectionString);
-        return new PostgreSqlSourceDatabase(builder.Options);
+        return new PostgreSqlSourceDatabase(builder.Options, _logger);
     }
 }

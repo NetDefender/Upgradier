@@ -1,15 +1,13 @@
-using System.Threading;
-using System;
 using Microsoft.EntityFrameworkCore;
-using Upgradier.Core;
 
 namespace Upgradier.Core;
 
 public class SourceDatabase : DbContext
 {
-    public SourceDatabase(DbContextOptions options) : base(options)
+    public SourceDatabase(DbContextOptions options, LogAdapter logger) : base(options)
     {
         Environment = EnvironmentVariables.GetExecutionEnvironment();
+        Logger = logger;
     }
 
     public virtual DbSet<DatabaseVersion> Version { get; set; }
@@ -17,6 +15,8 @@ public class SourceDatabase : DbContext
     public virtual DbSet<MigrationHistory> MigrationHistory { get; set; }
 
     protected string? Environment { get; }
+
+    protected LogAdapter Logger { get; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -8,7 +8,7 @@ public class MySqlLockManager : LockManagerBase
 {
     private IDbContextTransaction? _transaction;
 
-    public MySqlLockManager(MySqlSourceDatabase context) : base(context)
+    public MySqlLockManager(MySqlSourceDatabase context, LogAdapter logger) : base(context, logger)
     {
     }
 

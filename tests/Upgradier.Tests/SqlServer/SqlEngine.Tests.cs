@@ -26,13 +26,14 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     [Fact]
     public async Task CreateLockStrategy_Throws_When_SourceDatabase_Is_Not_SqlSourceDatabase()
     {
+        LogAdapter logger = new (null);
         Assert.Throws<InvalidCastException>(() =>
         {
-            new SqlEngine(new LogAdapter(null))
+            new SqlEngine(logger)
                 .CreateLockStrategy
                 (new SourceDatabase(new DbContextOptionsBuilder()
                     .UseSqlServer(_connectionString)
-                    .Options)
+                    .Options, logger)
                 );
         });
     }
@@ -40,11 +41,12 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     [Fact]
     public async Task CreateLockStrategy_Is_SqlLockStrategy_When_SourceDatabase_Is_SqlSourceDatabase()
     {
+        LogAdapter logger = new (null);
         EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
-        SqlEngine factory = new(new LogAdapter(null));
+        SqlEngine factory = new(logger);
         ILockManager lockStrategy = factory.CreateLockStrategy(new SqlSourceDatabase(new DbContextOptionsBuilder<SqlSourceDatabase>()
             .UseSqlServer(_connectionString)
-            .Options));
+            .Options, logger));
         Assert.True(lockStrategy is SqlLockManager);
         EnvironmentVariables.SetExecutionEnvironment(null);
     }

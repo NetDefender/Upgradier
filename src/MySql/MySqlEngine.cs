@@ -19,7 +19,7 @@ public class MySqlEngine : IDatabaseEngine
     {
         if (sourceDatabase is MySqlSourceDatabase sqlSourceDatabase)
         {
-            return new MySqlLockManager(sqlSourceDatabase);
+            return new MySqlLockManager(sqlSourceDatabase, _logger);
         }
         throw new InvalidCastException(nameof(sourceDatabase));
     }
@@ -28,6 +28,6 @@ public class MySqlEngine : IDatabaseEngine
     {
         DbContextOptionsBuilder<MySqlSourceDatabase> builder = new DbContextOptionsBuilder<MySqlSourceDatabase>()
             .UseMySQL(connectionString);
-        return new MySqlSourceDatabase(builder.Options);
+        return new MySqlSourceDatabase(builder.Options, _logger);
     }
 }

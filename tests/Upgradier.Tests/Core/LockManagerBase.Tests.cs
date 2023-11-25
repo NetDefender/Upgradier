@@ -12,7 +12,7 @@ public sealed class LockManagerBaseTests
         {
             try
             {
-                Substitute.For<LockManagerBase>(new object[] { null });
+                Substitute.For<LockManagerBase>(null, new LogAdapter(null));
             }
             catch (Exception ex)
             {

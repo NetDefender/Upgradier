@@ -5,16 +5,19 @@ namespace Upgradier.Core;
 
 public abstract class LockManagerBase : ILockManager
 {
-    protected LockManagerBase(SourceDatabase context)
+    protected LockManagerBase(SourceDatabase context, LogAdapter logger)
     {
         ArgumentNullException.ThrowIfNull(context);
         Environment = EnvironmentVariables.GetExecutionEnvironment();
         Context = context;
+        Logger = logger;
     }
 
     public string? Environment { get; }
 
     protected internal SourceDatabase Context { get; }
+
+    protected LogAdapter Logger { get; }
 
     public abstract Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default);
 

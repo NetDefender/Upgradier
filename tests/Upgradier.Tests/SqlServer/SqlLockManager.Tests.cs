@@ -20,9 +20,10 @@ public sealed class SqlLockManagerTests : IClassFixture<SqlServerDatabaseFixture
 
     private SqlLockManager CreateLockManager()
     {
+        LogAdapter logger = new (null);
         SqlSourceDatabase db = new (new DbContextOptionsBuilder<SqlSourceDatabase>()
-            .UseSqlServer(_connectionString).Options);
-        return new SqlLockManager(db);
+            .UseSqlServer(_connectionString).Options, logger);
+        return new SqlLockManager(db, logger);
     }
 
     [Fact]
