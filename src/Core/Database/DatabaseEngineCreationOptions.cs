@@ -2,5 +2,5 @@
 
 public sealed class DatabaseEngineCreationOptions
 {
-    public LogAdapter Logger { get; init; }
+    public required LogAdapter Logger { get; init; }
 }

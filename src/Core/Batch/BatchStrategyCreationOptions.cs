@@ -2,5 +2,5 @@
 
 public sealed class BatchStrategyCreationOptions
 {
-    public LogAdapter Logger { get; init; }
+    public required LogAdapter Logger { get; init; }
 }
