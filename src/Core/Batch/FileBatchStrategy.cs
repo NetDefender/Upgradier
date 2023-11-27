@@ -15,15 +15,19 @@ public class FileBatchStrategy : BatchStrategyBase
     public override Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken)
     {
         string batchesFile = Path.Combine(_baseDirectory, string.IsNullOrEmpty(Environment) ? "Index.json" : $"Index.{Environment}.json");
+        Logger.LogGetBatchesPath(batchesFile);
         using FileStream batchesStream = new (batchesFile, FileMode.Open);
         List<Batch>? batches = JsonSerializer.Deserialize<List<Batch>>(batchesStream);
         ArgumentNullException.ThrowIfNull(batches);
+        Logger.LogGetBatchesArray(batches);
         return Task.FromResult(batches.AsReadOnly().AsEnumerable());
     }
 
-    public override Task<string> GetBatchContentsAsync(Batch batch, string provider,CancellationToken cancellationToken)
+    public override async Task<string> GetBatchContentsAsync(Batch batch, string provider,CancellationToken cancellationToken)
     {
-        string batchesFile = Path.Combine(_baseDirectory, provider, Environment.EmptyIfNull(), $"{batch.VersionId}.sql");
-        return Task.FromResult(File.ReadAllText(batchesFile));
+        string batchFile = Path.Combine(_baseDirectory, provider, Environment.EmptyIfNull(), $"{batch.VersionId}.sql");
+        Logger.LogGetBatchFilePath(batchFile);
+        using StreamReader reader = new (batchFile);
+        return await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
     }
 }

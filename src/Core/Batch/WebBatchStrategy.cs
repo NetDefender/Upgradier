@@ -27,8 +27,10 @@ public class WebBatchStrategy : BatchStrategyBase
         using HttpRequestMessage request = new (HttpMethod.Get, batchesUri);
         await _configureRequest(request).ConfigureAwait(false);
         using HttpResponseMessage response = await _client.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
         List<Batch>? batches = await response.Content.ReadFromJsonAsync<List<Batch>>(cancellationToken).ConfigureAwait(false);
         ArgumentNullException.ThrowIfNull(batches);
+        Logger.LogGetBatchesArray(batches);
         return batches.AsReadOnly().AsEnumerable();
     }
 
@@ -40,9 +42,11 @@ public class WebBatchStrategy : BatchStrategyBase
             .AppendWhen(() => !string.IsNullOrEmpty(Environment), "/", Environment!)
             .Append('/').Append(batch.VersionId).Append(".sql");
         uriBuilder.Path = uri.ToString();
+        Logger.LogGetBatchUri(uriBuilder.Uri);
         using HttpRequestMessage request = new(HttpMethod.Get, uriBuilder.Uri);
         await _configureRequest(request).ConfigureAwait(false);
         using HttpResponseMessage response = await _client.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
     }
 

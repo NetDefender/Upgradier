@@ -9,7 +9,7 @@ public sealed class UpdateManager : IUpdateManager
     private readonly IDictionary<string, IDatabaseEngine> _databaseEngines;
     private readonly UpdateEventDispatcher _eventDispatcher;
     private readonly int _parallelism;
-    private readonly LogAdapter _logAdapter;
+    private readonly LogAdapter _logger;
 
     private UpdateManager()
     {
@@ -35,15 +35,15 @@ public sealed class UpdateManager : IUpdateManager
         _batchStrategy = batchStrategy;
         _eventDispatcher = eventDispatcher;
         _parallelism = parallelism;
-        _logAdapter = logger;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<UpdateResult>> UpdateAsync(CancellationToken cancellationToken = default)
     {
-        _logAdapter.LogStarting();
+        _logger.LogStarting();
         IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
-        _logAdapter.LogSources(sources);
-        UpdateResultTaskBuffer updateTaskBuffer = new (_parallelism);
+        _logger.LogSources(sources);
+        UpdateResultTaskBuffer updateTaskBuffer = new (_parallelism, _logger);
         IEnumerable<Batch> batches = await _batchStrategy.GetBatchesAsync(cancellationToken).ConfigureAwait(false);
         List<UpdateResult> updateResults = [];
 
@@ -62,14 +62,14 @@ public sealed class UpdateManager : IUpdateManager
         UpdateResult[] pendingResults = await updateTaskBuffer.WhenAll().ConfigureAwait(false);
         updateTaskBuffer.Clear();
         updateResults.AddRange(pendingResults);
-       _logAdapter.LogResults(updateResults);
+       _logger.LogResults(updateResults);
         
         return updateResults.AsReadOnly();
     }
     private async Task<UpdateResult> UpdateSource(Source source, IEnumerable<Batch> batches, CancellationToken cancellationToken = default)
     {
-        using IDisposable? updatingLoggingScope = _logAdapter.LogBeginUpdatingSource(source);
-        _logAdapter.LogUpdatingSource(source);
+        using IDisposable? updatingLoggingScope = _logger.LogBeginUpdatingSource(source);
+        _logger.LogUpdatingSource(source);
         UpdateResult updateResult = new(source.Name, default!, source.ConnectionString, -1, -1, -1, null);
         Batch? nextBatchToExecute = null;
         try
@@ -85,7 +85,7 @@ public sealed class UpdateManager : IUpdateManager
                 DatabaseVersion currentVersion = await database.Version.FirstAsync(cancellationToken).ConfigureAwait(false);
                 long startVersion = currentVersion.VersionId;
                 updateResult = updateResult with { Version = startVersion, OriginalVersion = startVersion };
-                _logAdapter.LogGettingInitialSourceVersion(source, currentVersion);
+                _logger.LogGettingInitialSourceVersion(source, currentVersion);
 
                 foreach (Batch batch in batches.Where(b => b.VersionId > startVersion).OrderBy(b => b.VersionId))
                 {
@@ -93,9 +93,8 @@ public sealed class UpdateManager : IUpdateManager
 
                     nextBatchToExecute = batch;
                     string batchContents = await _batchStrategy.GetBatchContentsAsync(batch, source.Provider, cancellationToken).ConfigureAwait(false);
-                    _logAdapter.LogExecutingBatch(source, batch, batchContents);
-                    await database.ExecuteBatchAsync(batchContents, cancellationToken).ConfigureAwait(false);
-                    await database.ChangeCurrentVersionAsync(currentVersion, batch.VersionId, cancellationToken).ConfigureAwait(false);
+                    await database.ExecuteBatchAsync(source, batch, batchContents, cancellationToken).ConfigureAwait(false);
+                    await database.ChangeCurrentVersionAsync(source, currentVersion, batch.VersionId, cancellationToken).ConfigureAwait(false);
 
                     await _eventDispatcher.NotifyAfterBatchProcessedAsync(currentVersion.VersionId, database.Database.CurrentTransaction!, cancellationToken).ConfigureAwait(false);
                 }
@@ -105,7 +104,7 @@ public sealed class UpdateManager : IUpdateManager
         }
         catch (Exception ex)
         {
-            _logAdapter.LogUpdatingSourceError(source, nextBatchToExecute, ex);
+            _logger.LogUpdatingSourceError(source, nextBatchToExecute, ex);
             updateResult = updateResult with { Version = updateResult.OriginalVersion, ErrorVersion = nextBatchToExecute?.VersionId,  Error = ex };
         }
 

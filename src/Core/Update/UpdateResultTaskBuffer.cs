@@ -1,6 +1,4 @@
-﻿using Upgradier.Core;
-
-namespace Upgradier.Core;
+﻿namespace Upgradier.Core;
 
 public sealed class UpdateResultTaskBuffer
 {
@@ -10,14 +8,15 @@ public sealed class UpdateResultTaskBuffer
 
     private readonly List<Task<UpdateResult>> _parallelTaskBuffer;
     private int _parallelism;
-    private bool _isDisposed;
+    private readonly LogAdapter _logger;
 
-    public UpdateResultTaskBuffer(int parallelism)
+    public UpdateResultTaskBuffer(int parallelism, LogAdapter _logger)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(parallelism, MinValue);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(parallelism, MaxValue);
         _parallelTaskBuffer = new List<Task<UpdateResult>>(parallelism);
         _parallelism = parallelism;
+        _logger = _logger;
     }
 
     public bool TryAdd(Task<UpdateResult> task)
@@ -25,8 +24,11 @@ public sealed class UpdateResultTaskBuffer
         if (_parallelTaskBuffer.Count < _parallelism)
         {
             _parallelTaskBuffer.Add(task);
+            _logger.LogTaskBufferAddSuccessfully(_parallelTaskBuffer.Count);
             return true;
         }
+
+        _logger.LogTaskBufferFull(_parallelTaskBuffer.Count);
 
         return false;
     }
@@ -34,6 +36,7 @@ public sealed class UpdateResultTaskBuffer
     public void Add(Task<UpdateResult> task)
     {
         _parallelTaskBuffer.Add(task);
+        _logger.LogTaskBufferAddSuccessfully(_parallelTaskBuffer.Count);
     }
 
     public async Task<UpdateResult[]> WhenAll()

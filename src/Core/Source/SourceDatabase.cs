@@ -38,8 +38,9 @@ public class SourceDatabase : DbContext
         });
     }
 
-    public async Task ChangeCurrentVersionAsync(DatabaseVersion currentVersion, long newVersion, CancellationToken cancellationToken)
+    public async Task ChangeCurrentVersionAsync(Source source, DatabaseVersion currentVersion, long newVersion, CancellationToken cancellationToken)
     {
+        Logger.LogChangingCurrentVersion(source, currentVersion.VersionId, newVersion);
         Remove(currentVersion);
         await SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         currentVersion.VersionId = newVersion;
@@ -47,8 +48,9 @@ public class SourceDatabase : DbContext
         await SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task ExecuteBatchAsync(string batchContents, CancellationToken cancellationToken)
+    public async Task ExecuteBatchAsync(Source source, Batch batch, string batchContents, CancellationToken cancellationToken)
     {
+        Logger.LogExecutingBatch(source, batch, batchContents);
         await Database.ExecuteSqlRawAsync(batchContents, cancellationToken).ConfigureAwait(false);
     }
 }
