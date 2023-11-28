@@ -82,6 +82,7 @@ public sealed class UpdateManager : IUpdateManager
 
             if (await @lock.TryAdquireAsync(cancellationToken).ConfigureAwait(false))
             {
+                ArgumentNullException.ThrowIfNull(@lock.Transaction);
                 DatabaseVersion currentVersion = await database.Version.FirstAsync(cancellationToken).ConfigureAwait(false);
                 long startVersion = currentVersion.VersionId;
                 updateResult = updateResult with { Version = startVersion, OriginalVersion = startVersion };
@@ -89,14 +90,14 @@ public sealed class UpdateManager : IUpdateManager
 
                 foreach (Batch batch in batches.Where(b => b.VersionId > startVersion).OrderBy(b => b.VersionId))
                 {
-                    await _eventDispatcher.NotifyBeforeBatchProcessingAsync(currentVersion.VersionId, database.Database.CurrentTransaction!, cancellationToken).ConfigureAwait(false);
+                    await _eventDispatcher.NotifyBeforeBatchProcessingAsync(currentVersion.VersionId, @lock.Transaction!, cancellationToken).ConfigureAwait(false);
 
                     nextBatchToExecute = batch;
                     string batchContents = await _batchStrategy.GetBatchContentsAsync(batch, source.Provider, cancellationToken).ConfigureAwait(false);
-                    await database.ExecuteBatchAsync(source, batch, batchContents, cancellationToken).ConfigureAwait(false);
-                    await database.ChangeCurrentVersionAsync(source, currentVersion, batch.VersionId, cancellationToken).ConfigureAwait(false);
+                    await database.ExecuteBatchAsync(batchContents, cancellationToken).ConfigureAwait(false);
+                    await database.ChangeCurrentVersionAsync(currentVersion, batch.VersionId, cancellationToken).ConfigureAwait(false);
 
-                    await _eventDispatcher.NotifyAfterBatchProcessedAsync(currentVersion.VersionId, database.Database.CurrentTransaction!, cancellationToken).ConfigureAwait(false);
+                    await _eventDispatcher.NotifyAfterBatchProcessedAsync(currentVersion.VersionId, @lock.Transaction!, cancellationToken).ConfigureAwait(false);
                 }
                 updateResult = updateResult with { Version = currentVersion.VersionId };
                 await @lock.FreeAsync(cancellationToken).ConfigureAwait(false);

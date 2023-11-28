@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
 namespace Upgradier.Core;
@@ -38,9 +39,9 @@ public class SourceDatabase : DbContext
         });
     }
 
-    public async Task ChangeCurrentVersionAsync(Source source, DatabaseVersion currentVersion, long newVersion, CancellationToken cancellationToken)
+    public async Task ChangeCurrentVersionAsync(DatabaseVersion currentVersion, long newVersion, CancellationToken cancellationToken)
     {
-        Logger.LogChangingCurrentVersion(source, currentVersion.VersionId, newVersion);
+        Logger.LogChangingCurrentVersion(currentVersion.VersionId, newVersion);
         Remove(currentVersion);
         await SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         currentVersion.VersionId = newVersion;
@@ -48,9 +49,30 @@ public class SourceDatabase : DbContext
         await SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task ExecuteBatchAsync(Source source, Batch batch, string batchContents, CancellationToken cancellationToken)
+    public async Task ExecuteBatchAsync(string batchContents, CancellationToken cancellationToken)
     {
-        Logger.LogExecutingBatch(source, batch, batchContents);
+        Logger.LogExecuteBatch(batchContents);
         await Database.ExecuteSqlRawAsync(batchContents, cancellationToken).ConfigureAwait(false);
+    }
+
+    public virtual async Task EnsureSchema(CancellationToken cancellationToken = default)
+    {
+        Assembly resourceAssembly = GetType().Assembly;
+        Dictionary<int, string> migrationBatches = resourceAssembly.GetManifestResourceNames().Where(resource => resource.EndsWith(".sql"))
+            .ToDictionary(resource => resource.ResourceId());
+        Stream? startupResource = resourceAssembly.GetManifestResourceStream(migrationBatches[0]);
+        ArgumentNullException.ThrowIfNull(startupResource);
+        using StreamReader startupBatch = new(startupResource, leaveOpen: false);
+        await Database.ExecuteSqlRawAsync(await startupBatch.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+        MigrationHistory? currentMigration = await MigrationHistory.FirstOrDefaultAsync(cancellationToken);
+        int currentMigrationValue = currentMigration?.MigrationId ?? 0;
+
+        foreach (int migrationNeeded in migrationBatches.Keys.Where(batchKey => batchKey > currentMigrationValue).Order())
+        {
+            Stream? migrationResource = resourceAssembly.GetManifestResourceStream(migrationBatches[migrationNeeded]);
+            ArgumentNullException.ThrowIfNull(migrationResource);
+            using StreamReader migrationBatch = new(migrationResource, leaveOpen: false);
+            await Database.ExecuteSqlRawAsync(await migrationBatch.ReadToEndAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+        }
     }
 }

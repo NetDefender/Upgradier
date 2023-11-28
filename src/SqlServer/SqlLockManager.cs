@@ -20,7 +20,7 @@ public class SqlLockManager : LockManagerBase
             EXEC @LockResult = sp_getapplock @Resource = N'sqlserver-lock-strategy', @LockMode = 'Exclusive', @LockOwner = 'Transaction';
             SELECT @LockResult;
             """).AsEnumerable().First();
-        await EnsureSchema(cancellationToken).ConfigureAwait(false);
+        await Context.EnsureSchema(cancellationToken).ConfigureAwait(false);
         return lockResult is SqlLockResult.Granted or SqlLockResult.Success;
     }
 
@@ -31,6 +31,8 @@ public class SqlLockManager : LockManagerBase
             await _transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         }
     }
+
+    public override IDbContextTransaction? Transaction { get => _transaction; }
 
     protected override void Dispose(bool disposing)
     {

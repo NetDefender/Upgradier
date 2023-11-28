@@ -63,9 +63,9 @@ public class LogAdapter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void LogExecutingBatch(Source source, Batch batch, string batchContents)
+    public void LogExecuteBatch(string batchContents)
     {
-        _logger?.LogDebug("Executing batch in source [{Source}], batch [{VersionId}] with Contents: {BatchContent}", source.Name, batch.VersionId, batchContents);
+        _logger?.LogDebug("Executing batch with Contents: {BatchContent}", batchContents);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -117,9 +117,9 @@ public class LogAdapter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void LogChangingCurrentVersion(Source source, long currentVersion, long newVersion)
+    public void LogChangingCurrentVersion(long currentVersion, long newVersion)
     {
-        _logger?.LogDebug("Incrementing version of source [{Source}] from [{CurrentVersion}] to [{NewVersion}]", source.Name,  currentVersion, newVersion);
+        _logger?.LogDebug("Incrementing version from [{CurrentVersion}] to [{NewVersion}]",  currentVersion, newVersion);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,4 +1,6 @@
-﻿namespace Upgradier.Core;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+
+namespace Upgradier.Core;
 
 public interface ILockManager : IDisposable
 {
@@ -6,7 +8,7 @@ public interface ILockManager : IDisposable
 
     Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default);
 
-    Task EnsureSchema(CancellationToken cancellationToken = default);
+    IDbContextTransaction? Transaction { get; }
 
     string? Environment { get; }
 }

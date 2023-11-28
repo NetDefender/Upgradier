@@ -12,11 +12,14 @@ public class MySqlLockManager : LockManagerBase
     {
     }
 
+
+    public override IDbContextTransaction? Transaction { get => _transaction; }
+
     public sealed override async Task<bool> TryAdquireAsync(CancellationToken cancellationToken = default)
     {
         _transaction = await Context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
         MySqlLockResult? lockResult = Context.Database.SqlQueryRaw<MySqlLockResult?>("SELECT GET_LOCK('upgradier-lock', 0);").AsEnumerable().First();
-        await EnsureSchema(cancellationToken).ConfigureAwait(false);
+        await Context.EnsureSchema(cancellationToken).ConfigureAwait(false);
         return lockResult == MySqlLockResult.Granted;
     }
 
