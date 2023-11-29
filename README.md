@@ -33,9 +33,9 @@ Create UpdateBuilder with options:
 //Microsoft.Extensions.Logging.ILogger logger ...
 
 UpdateBuilder updateBuilder = new UpdateBuilder()
-    .WithSourceProvider(options => new FileSourceProvider("c:\\my_files\\sources.json", options.Logger))
+    .WithSourceProvider(options => new FileSourceProvider("c:\\my_files\\sources.json", options.Logger, options.Environment))
     .WithFileBatchStrategy("c:\\my_files\\batches")
-    .WithCacheManager(options => new FileBatchCacheManager("c:\\my_files\\cache", options.Logger))
+    .WithCacheManager(options => new FileBatchCacheManager("c:\\my_files\\cache", options.Logger, options.Environment))
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine()
