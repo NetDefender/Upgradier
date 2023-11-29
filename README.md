@@ -27,11 +27,6 @@ Optionally use a cache implementing IBatchCacheManager to not hit the server whe
     - [Upgradier.BatchStrategy.Aws](https://www.nuget.org/packages/Upgradier.BatchStrategy.Aws)
     - [Upgradier.BatchStrategy.Azure](https://www.nuget.org/packages/Upgradier.BatchStrategy.Azure)
 
-First set the environment, "Dev" in the example. Environment is used to get the batches and sources:
-```csharp
-EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
-```
-
 Create UpdateBuilder with options:
 
 ```csharp
@@ -44,7 +39,8 @@ UpdateBuilder updateBuilder = new UpdateBuilder()
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine()
-    .WithLogger(logger);
+    .WithLogger(logger)
+    .WithEnvironment("Dev");
 ```
 Build to create the UpdateManager:
 

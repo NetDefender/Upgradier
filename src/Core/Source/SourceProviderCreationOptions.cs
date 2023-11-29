@@ -1,6 +1,5 @@
 ﻿namespace Upgradier.Core;
 
-public sealed class SourceProviderCreationOptions
+public sealed class SourceProviderCreationOptions : BaseCreationOptions
 {
-    public required LogAdapter Logger { get; init; }
 }

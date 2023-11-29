@@ -6,7 +6,8 @@ public class FileBatchStrategy : BatchStrategyBase
 {
     private readonly string _baseDirectory;
 
-    public FileBatchStrategy(string baseDirectory, LogAdapter logger) : base(nameof(FileBatchStrategy), logger)
+    public FileBatchStrategy(string baseDirectory, LogAdapter logger, string? environment)
+        : base(nameof(FileBatchStrategy), logger, environment)
     {
         ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
         _baseDirectory = !Path.EndsInDirectorySeparator(path: baseDirectory) ? baseDirectory + Path.DirectorySeparatorChar : baseDirectory;

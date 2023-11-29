@@ -10,6 +10,7 @@ on:
       - 'xunit.runner'
       - 'LICENSE.txt'
       - '.editorconfig'
+      - 'src/Example/**'
 
 jobs:
   build:

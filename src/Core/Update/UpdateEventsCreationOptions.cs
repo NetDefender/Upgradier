@@ -1,6 +1,5 @@
 ﻿namespace Upgradier.Core;
 
-public sealed class UpdateEventsCreationOptions
+public sealed class UpdateEventsCreationOptions : BaseCreationOptions
 {
-    public required LogAdapter Logger { get; init; }
 }

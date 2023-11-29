@@ -10,6 +10,7 @@ public sealed class UpdateManager : IUpdateManager
     private readonly UpdateEventDispatcher _eventDispatcher;
     private readonly int _parallelism;
     private readonly LogAdapter _logger;
+    private readonly string? _environment;
 
     private UpdateManager()
     {
@@ -21,7 +22,8 @@ public sealed class UpdateManager : IUpdateManager
         , IBatchStrategy batchStrategy
         , UpdateEventDispatcher eventDispatcher
         , LogAdapter logger
-        , int parallelism)
+        , int parallelism
+        , string? environment)
     {
         ArgumentNullException.ThrowIfNull(sourceProvider);
         ArgumentNullException.ThrowIfNull(databaseEngines);
@@ -36,6 +38,7 @@ public sealed class UpdateManager : IUpdateManager
         _eventDispatcher = eventDispatcher;
         _parallelism = parallelism;
         _logger = logger;
+        _environment = environment;
     }
 
     public async Task<IEnumerable<UpdateResult>> UpdateAsync(CancellationToken cancellationToken = default)
@@ -43,7 +46,7 @@ public sealed class UpdateManager : IUpdateManager
         _logger.LogStarting();
         IEnumerable<Source> sources = await _sourceProvider.GetSourcesAsync(cancellationToken).ConfigureAwait(false);
         _logger.LogSources(sources);
-        UpdateResultTaskBuffer updateTaskBuffer = new (_parallelism, _logger);
+        UpdateResultTaskBuffer updateTaskBuffer = new (_parallelism, _logger, _environment);
         IEnumerable<Batch> batches = await _batchStrategy.GetBatchesAsync(cancellationToken).ConfigureAwait(false);
         List<UpdateResult> updateResults = [];
 

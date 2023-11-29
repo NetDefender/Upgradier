@@ -2,12 +2,12 @@
 
 public abstract class SourceProviderBase : ISourceProvider
 {
-    protected SourceProviderBase(string name, LogAdapter logger)
+    protected SourceProviderBase(string name, LogAdapter logger, string? environment)
     {
         ArgumentException.ThrowIfNullOrEmpty(name);
         Name = name;
         Logger = logger;
-        Environment = EnvironmentVariables.GetExecutionEnvironment();
+        Environment = environment;
     }
 
     public string Name { get; }

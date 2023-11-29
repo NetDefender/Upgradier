@@ -6,11 +6,13 @@ public sealed class BatchStrategy_Tests
 {
     private sealed class BatchStrategyMock : BatchStrategyBase
     {
-        public BatchStrategyMock(string name, LogAdapter logger) : base(name, logger)
+        public BatchStrategyMock(string name, LogAdapter logger, string? environment) 
+            : base(name, logger, environment)
         {
         }
-        public string DerivedEnvironment => Environment;
+
         public override Task<IEnumerable<Batch>> GetBatchesAsync(CancellationToken cancellationToken) => throw new NotImplementedException();
+
         public override Task<string> GetBatchContentsAsync(Batch batch, string provider, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
@@ -19,11 +21,11 @@ public sealed class BatchStrategy_Tests
     {
         Assert.Throws<ArgumentNullException>("name", () =>
         {
-            BatchStrategyMock strategy = new(null, new LogAdapter(null));
+            BatchStrategyMock strategy = new(null, new LogAdapter(null), null);
         });
         Assert.Throws<ArgumentException>("name", () =>
         {
-            BatchStrategyMock strategy = new(string.Empty, new LogAdapter(null));
+            BatchStrategyMock strategy = new(string.Empty, new LogAdapter(null), null);
         });
     }
 }

@@ -8,7 +8,8 @@ public class SqlLockManager : LockManagerBase
 {
     private IDbContextTransaction? _transaction;
 
-    public SqlLockManager(SqlSourceDatabase context, LogAdapter logger) : base(context, logger)
+    public SqlLockManager(SqlSourceDatabase context, LogAdapter logger, string? environment) 
+        : base(context, logger, environment)
     {
     }
 

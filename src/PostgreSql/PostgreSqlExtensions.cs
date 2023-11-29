@@ -6,7 +6,7 @@ public static class PostgreSqlExtensions
 {
     public static UpdateBuilder AddPostgreSqlServerEngine(this UpdateBuilder builder)
     {
-        builder.AddDatabaseEngines(options => new PostgreSqlEngine(options.Logger));
+        builder.AddDatabaseEngines(options => new PostgreSqlEngine(options.Logger, options.Environment));
         return builder;
     }
 }

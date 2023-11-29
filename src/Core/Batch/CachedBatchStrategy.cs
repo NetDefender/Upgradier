@@ -5,7 +5,8 @@ public sealed class CachedBatchStrategy : BatchStrategyBase
     private readonly IBatchStrategy _baseBatchStrategy;
     private readonly IBatchCacheManager _cacheManager;
 
-    public CachedBatchStrategy(IBatchStrategy baseBatchStrategy, IBatchCacheManager cacheManager, LogAdapter logger) : base(baseBatchStrategy.Name, logger)
+    public CachedBatchStrategy(IBatchStrategy baseBatchStrategy, IBatchCacheManager cacheManager, LogAdapter logger, string? environment) 
+        : base(baseBatchStrategy.Name, logger, environment)
     {
         _baseBatchStrategy = baseBatchStrategy;
         _cacheManager = cacheManager;

@@ -8,15 +8,17 @@ public sealed class UpdateResultTaskBuffer
 
     private readonly List<Task<UpdateResult>> _parallelTaskBuffer;
     private int _parallelism;
+    private readonly string? _environment;
     private readonly LogAdapter _logger;
 
-    public UpdateResultTaskBuffer(int parallelism, LogAdapter _logger)
+    public UpdateResultTaskBuffer(int parallelism, LogAdapter logger, string? environment)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(parallelism, MinValue);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(parallelism, MaxValue);
         _parallelTaskBuffer = new List<Task<UpdateResult>>(parallelism);
         _parallelism = parallelism;
-        _logger = _logger;
+        _environment = environment;
+        _logger = logger;
     }
 
     public bool TryAdd(Task<UpdateResult> task)

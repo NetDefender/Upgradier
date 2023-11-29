@@ -1,6 +1,5 @@
 ﻿namespace Upgradier.Core;
 
-public sealed class BatchStrategyCreationOptions
+public sealed class BatchStrategyCreationOptions : BaseCreationOptions
 {
-    public required LogAdapter Logger { get; init; }
 }

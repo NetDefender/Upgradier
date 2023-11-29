@@ -3,7 +3,8 @@ using System.Text.Json;
 
 public sealed class FileSourceProvider : SourceProviderBase
 {
-    public FileSourceProvider(string fileName, LogAdapter logger) : base(nameof(FileSourceProvider), logger)
+    public FileSourceProvider(string fileName, LogAdapter logger, string? environment) 
+        : base(nameof(FileSourceProvider), logger, environment)
     {
         FileName = fileName;
     }

@@ -8,12 +8,12 @@ public sealed class FileBatchCacheManager : IBatchCacheManager
     private readonly string _basePath;
     private readonly LogAdapter _logger;
 
-    public FileBatchCacheManager(string basePath, LogAdapter logger)
+    public FileBatchCacheManager(string basePath, LogAdapter logger, string? environment)
     {
         basePath.ThrowIfDirectoryNotExists();
         _basePath = basePath;
         _logger = logger;
-        Environment = EnvironmentVariables.GetExecutionEnvironment();
+        Environment = environment;
     }
 
     public string? Environment { get; }

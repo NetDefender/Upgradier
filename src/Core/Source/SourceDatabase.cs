@@ -5,9 +5,9 @@ namespace Upgradier.Core;
 
 public class SourceDatabase : DbContext
 {
-    public SourceDatabase(DbContextOptions options, LogAdapter logger) : base(options)
+    public SourceDatabase(DbContextOptions options, LogAdapter logger, string? environment) : base(options)
     {
-        Environment = EnvironmentVariables.GetExecutionEnvironment();
+        Environment = environment;
         Logger = logger;
     }
 

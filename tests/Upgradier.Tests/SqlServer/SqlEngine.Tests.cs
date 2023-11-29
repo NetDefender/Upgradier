@@ -19,7 +19,7 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     [Fact]
     public async Task SqlFactory_Name_Is_SqlServer()
     {
-        SqlEngine factory = new (new LogAdapter(null));
+        SqlEngine factory = new (new LogAdapter(null), null);
         Assert.Equal(SqlEngine.NAME, factory.Name);
     }
 
@@ -29,11 +29,11 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
         LogAdapter logger = new (null);
         Assert.Throws<InvalidCastException>(() =>
         {
-            new SqlEngine(logger)
+            new SqlEngine(logger, null)
                 .CreateLockStrategy
                 (new SourceDatabase(new DbContextOptionsBuilder()
                     .UseSqlServer(_connectionString)
-                    .Options, logger)
+                    .Options, logger, null)
                 );
         });
     }
@@ -42,22 +42,18 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     public async Task CreateLockStrategy_Is_SqlLockStrategy_When_SourceDatabase_Is_SqlSourceDatabase()
     {
         LogAdapter logger = new (null);
-        EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
-        SqlEngine factory = new(logger);
+        SqlEngine factory = new(logger, "Dev");
         ILockManager lockStrategy = factory.CreateLockStrategy(new SqlSourceDatabase(new DbContextOptionsBuilder<SqlSourceDatabase>()
             .UseSqlServer(_connectionString)
-            .Options, logger));
+            .Options, logger, "Dev"));
         Assert.True(lockStrategy is SqlLockManager);
-        EnvironmentVariables.SetExecutionEnvironment(null);
     }
 
     [Fact]
     public async Task CreateSourceDatabase_Is_SqlSourceDatabase()
     {
-        EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
-        SqlEngine factory = new(new LogAdapter(null));
+        SqlEngine factory = new(new LogAdapter(null), "Dev");
         SourceDatabase sourceDatabase = factory.CreateSourceDatabase(_connectionString);
         Assert.True(sourceDatabase is SqlSourceDatabase);
-        EnvironmentVariables.SetExecutionEnvironment(null);
     }
 }

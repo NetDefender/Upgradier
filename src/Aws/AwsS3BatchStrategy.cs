@@ -11,7 +11,7 @@ public class AwsS3BatchStrategy : BatchStrategyBase
     private readonly ITransferUtility _transferUtility;
     private Func<TransferUtilityDownloadRequest, Task> _configureRequest = _ => Task.CompletedTask;
 
-    public AwsS3BatchStrategy(string bucketName, ITransferUtility transferUtility, LogAdapter logger) : base(nameof(AwsS3BatchStrategy), logger)
+    public AwsS3BatchStrategy(string bucketName, ITransferUtility transferUtility, LogAdapter logger, string? environment) : base(nameof(AwsS3BatchStrategy), logger, environment)
     {
         ArgumentNullException.ThrowIfNull(bucketName);
         ArgumentNullException.ThrowIfNull(transferUtility);

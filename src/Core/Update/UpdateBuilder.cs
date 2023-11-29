@@ -11,6 +11,7 @@ public sealed class UpdateBuilder
     private readonly List<Func<DatabaseEngineCreationOptions, IDatabaseEngine>> _databaseEnginesFactories;
     private int _parallelism = 1;
     private ILogger _logger;
+    private string? _environment;
 
     public UpdateBuilder()
     {
@@ -75,6 +76,13 @@ public sealed class UpdateBuilder
         return this;
     }
 
+    public UpdateBuilder WithEnvironment(string environment)
+    {
+        ArgumentNullException.ThrowIfNull(environment);
+        _environment = environment;
+        return this;
+    }
+
     public UpdateManager Build()
     {
         ArgumentNullException.ThrowIfNull(_sourceProviderFactory);
@@ -83,32 +91,33 @@ public sealed class UpdateBuilder
 
         LogAdapter logAdapter = new (_logger);
 
-        DatabaseEngineCreationOptions databaseOptions = new() {  Logger = logAdapter };
+        DatabaseEngineCreationOptions databaseOptions = new() {  Logger = logAdapter, Environment = _environment };
         Dictionary<string, IDatabaseEngine> databaseEngines = _databaseEnginesFactories.Select(factory => factory(databaseOptions)).ToDictionary(engine => engine.Name);
         foreach (IDatabaseEngine databaseEngine in databaseEngines.Values)
         {
             ArgumentNullException.ThrowIfNull(databaseEngine);
         }
 
-        UpdateEventsCreationOptions updateEventsOptions = new () { Logger = logAdapter };
+        UpdateEventsCreationOptions updateEventsOptions = new () { Logger = logAdapter, Environment = _environment };
         IUpdateEvents? events = _eventsFactory?.Invoke(updateEventsOptions);
 
-        BatchStrategyCreationOptions batchStrategyCreationOptions = new () { Logger = logAdapter };
+        BatchStrategyCreationOptions batchStrategyCreationOptions = new () { Logger = logAdapter, Environment = _environment };
         IBatchStrategy batchStrategy = _batchStrategyFactory(batchStrategyCreationOptions);
         ArgumentNullException.ThrowIfNull(batchStrategy);
 
-        BatchCacheManagerCreationOptions cacheOptions = new() { Logger = logAdapter };
+        BatchCacheManagerCreationOptions cacheOptions = new() { Logger = logAdapter, Environment = _environment };
         IBatchCacheManager? batchCacheManager = _cacheManagerFactory?.Invoke(cacheOptions);
 
-        SourceProviderCreationOptions sourceCreationOptions = new() { Logger = logAdapter };
+        SourceProviderCreationOptions sourceCreationOptions = new() { Logger = logAdapter, Environment = _environment };
         ISourceProvider sourceProvider = _sourceProviderFactory(sourceCreationOptions);
         ArgumentNullException.ThrowIfNull(sourceProvider);
 
         return new UpdateManager(sourceProvider
             , databaseEngines
-            , batchCacheManager is null ? batchStrategy : new CachedBatchStrategy(batchStrategy, batchCacheManager, logAdapter)
-            , new UpdateEventDispatcher(events, logAdapter)
+            , batchCacheManager is null ? batchStrategy : new CachedBatchStrategy(batchStrategy, batchCacheManager, logAdapter, _environment)
+            , new UpdateEventDispatcher(events, logAdapter, _environment)
             , logAdapter
-            , _parallelism);
+            , _parallelism
+            , _environment);
     }
 }

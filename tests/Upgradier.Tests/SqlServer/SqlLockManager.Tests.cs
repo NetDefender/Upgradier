@@ -18,34 +18,31 @@ public sealed class SqlLockManagerTests : IClassFixture<SqlServerDatabaseFixture
         _output = output;
     }
 
-    private SqlLockManager CreateLockManager()
+    private SqlLockManager CreateLockManager(string? environment)
     {
         LogAdapter logger = new (null);
         SqlSourceDatabase db = new (new DbContextOptionsBuilder<SqlSourceDatabase>()
-            .UseSqlServer(_connectionString).Options, logger);
-        return new SqlLockManager(db, logger);
+            .UseSqlServer(_connectionString).Options, logger, environment);
+        return new SqlLockManager(db, logger, environment);
     }
 
     [Fact]
     [TestOrder(1)]
     public async Task TryAdquireAsync_FirstTime_Initializes_Database_With_MigrationId_1()
     {
-        EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
-        using SqlLockManager manager = CreateLockManager();
+        using SqlLockManager manager = CreateLockManager("Dev");
         using CancellationTokenSource cancellationTokenSource = new ();
         bool adquired = await manager.TryAdquireAsync(cancellationTokenSource.Token);
         Assert.True(adquired, "Lock should be adquired");
         MigrationHistory migrationHistory = await manager.Context.MigrationHistory.FirstAsync(cancellationTokenSource.Token);
         Assert.Equal(1, migrationHistory.MigrationId);
-        EnvironmentVariables.SetExecutionEnvironment(null);
     }
 
     [Fact]
     [TestOrder(2)]
     public async Task EnsureSchema_Called_Multiple_Times_Doesnt_Change_MigrationId()
     {
-        EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
-        using SqlLockManager manager = CreateLockManager();
+        using SqlLockManager manager = CreateLockManager("Dev");
         using CancellationTokenSource cancellationTokenSource = new ();
         await manager.Context.EnsureSchema(cancellationTokenSource.Token);
         await manager.Context.EnsureSchema(cancellationTokenSource.Token);
@@ -56,6 +53,5 @@ public sealed class SqlLockManagerTests : IClassFixture<SqlServerDatabaseFixture
         await manager.Context.EnsureSchema(cancellationTokenSource.Token);
         MigrationHistory migrationHistory = await manager.Context.MigrationHistory.FirstAsync(cancellationTokenSource.Token);
         Assert.Equal(1, migrationHistory.MigrationId);
-        EnvironmentVariables.SetExecutionEnvironment(null);
     }
 }

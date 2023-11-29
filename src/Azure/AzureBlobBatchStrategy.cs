@@ -10,7 +10,8 @@ public class AzureBlobBatchStrategy : BatchStrategyBase
 {
     private readonly BlobContainerClient _containerClient;
 
-    public AzureBlobBatchStrategy(BlobContainerClient containerClient, LogAdapter logger) : base(nameof(AzureBlobBatchStrategy), logger)
+    public AzureBlobBatchStrategy(BlobContainerClient containerClient, LogAdapter logger, string? environment) 
+        : base(nameof(AzureBlobBatchStrategy), logger, environment)
     {
         ArgumentNullException.ThrowIfNull(containerClient);
         _containerClient = containerClient;

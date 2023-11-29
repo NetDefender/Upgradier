@@ -13,17 +13,16 @@ Logger serilogLogger = new LoggerConfiguration()
 using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog(serilogLogger, dispose: true));
 ILogger<Program> logger = loggerFactory.CreateLogger<Program>();
 
-EnvironmentVariables.SetExecutionEnvironment(EnvironmentVariables.UPGRADIER_ENV_DEV);
-
 UpdateBuilder updateBuilder = new UpdateBuilder()
     .WithFileBatchStrategy("Batches")
-    .WithCacheManager(options => new FileBatchCacheManager("Cache", options.Logger))
+    .WithCacheManager(options => new FileBatchCacheManager("Cache", options.Logger, options.Environment))
     .WithParallelism(10)
-    .WithSourceProvider(options => new FileSourceProvider("Sources.json", options.Logger))
+    .WithSourceProvider(options => new FileSourceProvider("Sources.json", options.Logger, options.Environment))
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine()
-    .WithLogger(logger);
+    .WithLogger(logger)
+    .WithEnvironment("Dev");
 
 UpdateManager updateManager = updateBuilder.Build();
 IEnumerable<UpdateResult> updateResults = await updateManager.UpdateAsync();

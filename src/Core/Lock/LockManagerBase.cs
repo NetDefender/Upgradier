@@ -6,10 +6,10 @@ namespace Upgradier.Core;
 
 public abstract class LockManagerBase : ILockManager
 {
-    protected LockManagerBase(SourceDatabase context, LogAdapter logger)
+    protected LockManagerBase(SourceDatabase context, LogAdapter logger, string? environment)
     {
         ArgumentNullException.ThrowIfNull(context);
-        Environment = EnvironmentVariables.GetExecutionEnvironment();
+        Environment = environment;
         Context = context;
         Logger = logger;
     }

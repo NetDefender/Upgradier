@@ -1,6 +1,5 @@
 ﻿namespace Upgradier.Core;
 
-public sealed class DatabaseEngineCreationOptions
+public sealed class DatabaseEngineCreationOptions : BaseCreationOptions
 {
-    public required LogAdapter Logger { get; init; }
 }

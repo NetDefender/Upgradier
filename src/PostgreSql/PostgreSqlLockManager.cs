@@ -8,7 +8,8 @@ public class PostgreSqlLockManager : LockManagerBase
 {
     private IDbContextTransaction? _transaction;
 
-    public PostgreSqlLockManager(PostgreSqlSourceDatabase context, LogAdapter logger) : base(context, logger)
+    public PostgreSqlLockManager(PostgreSqlSourceDatabase context, LogAdapter logger, string? environment) 
+        : base(context, logger, environment)
     {
     }
 

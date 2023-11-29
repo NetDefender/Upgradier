@@ -7,10 +7,12 @@ public class MySqlEngine : IDatabaseEngine
     public const string NAME = "MySql";
 
     private LogAdapter _logger;
+    private readonly string? _environment;
 
-    public MySqlEngine(LogAdapter logger)
+    public MySqlEngine(LogAdapter logger, string? environment)
     {
         _logger = logger;
+        _environment = environment;
     }
 
     public string Name => NAME;
@@ -19,7 +21,7 @@ public class MySqlEngine : IDatabaseEngine
     {
         if (sourceDatabase is MySqlSourceDatabase sqlSourceDatabase)
         {
-            return new MySqlLockManager(sqlSourceDatabase, _logger);
+            return new MySqlLockManager(sqlSourceDatabase, _logger, _environment);
         }
         throw new InvalidCastException(nameof(sourceDatabase));
     }
@@ -28,6 +30,6 @@ public class MySqlEngine : IDatabaseEngine
     {
         DbContextOptionsBuilder<MySqlSourceDatabase> builder = new DbContextOptionsBuilder<MySqlSourceDatabase>()
             .UseMySQL(connectionString);
-        return new MySqlSourceDatabase(builder.Options, _logger);
+        return new MySqlSourceDatabase(builder.Options, _logger, _environment);
     }
 }
