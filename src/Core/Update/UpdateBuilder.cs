@@ -8,6 +8,7 @@ public sealed class UpdateBuilder
     private Func<BatchStrategyCreationOptions, IBatchStrategy>? _batchStrategyFactory;
     private Func<BatchCacheManagerCreationOptions, IBatchCacheManager>? _cacheManagerFactory;
     private Func<UpdateEventsCreationOptions, IUpdateEvents>? _eventsFactory;
+    private Func<EncryptionCreationOptions, IEncryptor>? _encryptorFactory;
     private readonly List<Func<DatabaseEngineCreationOptions, IDatabaseEngine>> _databaseEnginesFactories;
     private int _parallelism = 1;
     private ILogger _logger;
@@ -30,6 +31,37 @@ public sealed class UpdateBuilder
     {
         ArgumentNullException.ThrowIfNull(sourceProviderFactory);
         _sourceProviderFactory = sourceProviderFactory;
+        return this;
+    }
+
+    public UpdateBuilder WithFileSourceProvider(string baseDirectory, string baseFileName)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
+        ArgumentException.ThrowIfNullOrEmpty(baseFileName);
+        _sourceProviderFactory = options => new FileSourceProvider(nameof(FileSourceProvider), baseDirectory, baseFileName, options.Logger, options.Environment);
+        return this;
+    }
+
+    public UpdateBuilder WithEncryptedFileSourceProvider(string baseDirectory, string fileName)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
+        ArgumentException.ThrowIfNullOrEmpty(fileName);
+        _sourceProviderFactory = options => new EncryptedFileSourceProvider(nameof(FileSourceProvider), baseDirectory, fileName, options.Logger, options.Environment, options.Encryptor);
+        return this;
+    }
+
+    public UpdateBuilder WithEncryptor(Func<EncryptionCreationOptions, IEncryptor> encryptorFactory)
+    {
+        ArgumentNullException.ThrowIfNull(encryptorFactory);
+        _encryptorFactory = encryptorFactory;
+        return this;
+    }
+
+    public UpdateBuilder WithSymmetricEncryptor(string key, string iv)
+    {
+        ArgumentNullException.ThrowIfNullOrEmpty(key);
+        ArgumentNullException.ThrowIfNullOrEmpty(iv);
+        _encryptorFactory = options => new SymmetricEncryptor(key, iv, options.Logger, options.Environment);
         return this;
     }
 
@@ -108,7 +140,10 @@ public sealed class UpdateBuilder
         BatchCacheManagerCreationOptions cacheOptions = new() { Logger = logAdapter, Environment = _environment };
         IBatchCacheManager? batchCacheManager = _cacheManagerFactory?.Invoke(cacheOptions);
 
-        SourceProviderCreationOptions sourceCreationOptions = new() { Logger = logAdapter, Environment = _environment };
+        EncryptionCreationOptions encryptorOptions = new() { Logger = logAdapter, Environment = _environment };
+        IEncryptor? encryptor = _encryptorFactory?.Invoke(encryptorOptions);
+
+        SourceProviderCreationOptions sourceCreationOptions = new() { Logger = logAdapter, Environment = _environment, Encryptor = encryptor };
         ISourceProvider sourceProvider = _sourceProviderFactory(sourceCreationOptions);
         ArgumentNullException.ThrowIfNull(sourceProvider);
 

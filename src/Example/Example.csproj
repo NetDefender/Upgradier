@@ -34,7 +34,7 @@
     <None Update="Cache\Empty.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Sources.json">
+    <None Update="Sources.Dev.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
