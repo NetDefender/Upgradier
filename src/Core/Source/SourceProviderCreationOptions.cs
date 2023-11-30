@@ -2,5 +2,5 @@
 
 public sealed class SourceProviderCreationOptions : BaseCreationOptions
 {
-    public IEncryptor Encryptor { get; init; }
+    public IEncryptor? Encryptor { get; init; }
 }
