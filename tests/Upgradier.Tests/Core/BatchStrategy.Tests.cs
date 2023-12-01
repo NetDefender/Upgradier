@@ -6,7 +6,7 @@ public sealed class BatchStrategy_Tests
 {
     private sealed class BatchStrategyMock : BatchStrategyBase
     {
-        public BatchStrategyMock(string name, LogAdapter logger, string? environment) 
+        public BatchStrategyMock(string name, LogAdapter logger, string? environment)
             : base(name, logger, environment)
         {
         }
@@ -27,5 +27,21 @@ public sealed class BatchStrategy_Tests
         {
             BatchStrategyMock strategy = new(string.Empty, new LogAdapter(null), null);
         });
+    }
+
+    [Fact]
+    public void Logger_Cannot_Be_null()
+    {
+        Assert.Throws<ArgumentNullException>("logger", () =>
+        {
+            BatchStrategyMock strategy = new("AAA+", null, null);
+        });
+    }
+
+    [Fact]
+    public void Environment_can_be_null()
+    {
+        BatchStrategyMock strategy = new("AAA+", new LogAdapter(null), null);
+        Assert.Null(strategy.Environment);
     }
 }
