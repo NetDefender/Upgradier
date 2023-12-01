@@ -4,7 +4,7 @@ public static class SqlExtensions
 {
     public static UpdateBuilder AddSqlServerEngine(this UpdateBuilder builder)
     {
-        builder.AddDatabaseEngines(options => new SqlEngine(options.Logger, options.Environment));
+        builder.AddDatabaseEngines(options => new SqlEngine(options.Logger, options.Environment, options.CommandTimeout));
         return builder;
     }
 }

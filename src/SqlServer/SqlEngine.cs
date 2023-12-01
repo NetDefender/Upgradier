@@ -8,13 +8,15 @@ public class SqlEngine : IDatabaseEngine
     
     private readonly LogAdapter _logger;
     private readonly string? _environment;
+    private readonly int? _commandTimeout;
 
     public string Name => NAME;
 
-    public SqlEngine(LogAdapter logger, string? environment)
+    public SqlEngine(LogAdapter logger, string? environment, int? commandTimeout)
     {
         _logger = logger;
         _environment = environment;
+        _commandTimeout = commandTimeout;
     }
 
     public virtual ILockManager CreateLockStrategy(SourceDatabase sourceDatabase)
@@ -29,7 +31,7 @@ public class SqlEngine : IDatabaseEngine
     public virtual SourceDatabase CreateSourceDatabase(string connectionString)
     {
         DbContextOptionsBuilder<SqlSourceDatabase> builder = new DbContextOptionsBuilder<SqlSourceDatabase>()
-            .UseSqlServer(connectionString);
+            .UseSqlServer(connectionString, options => options.CommandTimeout(_commandTimeout));
         return new SqlSourceDatabase(builder.Options, _logger, _environment);
     }
 }

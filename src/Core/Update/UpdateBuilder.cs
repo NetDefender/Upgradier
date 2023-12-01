@@ -13,6 +13,7 @@ public sealed class UpdateBuilder
     private int _parallelism = 1;
     private ILogger _logger;
     private string? _environment;
+    private int? _commandTimeout;
 
     public UpdateBuilder()
     {
@@ -115,6 +116,13 @@ public sealed class UpdateBuilder
         return this;
     }
 
+    public UpdateBuilder WithCommandTimeout(int seconds)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(seconds, 0);
+        _commandTimeout = seconds;
+        return this;
+    }
+
     public UpdateManager Build()
     {
         ArgumentNullException.ThrowIfNull(_sourceProviderFactory);
@@ -123,7 +131,7 @@ public sealed class UpdateBuilder
 
         LogAdapter logAdapter = new (_logger);
 
-        DatabaseEngineCreationOptions databaseOptions = new() {  Logger = logAdapter, Environment = _environment };
+        DatabaseEngineCreationOptions databaseOptions = new() {  Logger = logAdapter, Environment = _environment, CommandTimeout = _commandTimeout };
         Dictionary<string, IDatabaseEngine> databaseEngines = _databaseEnginesFactories.Select(factory => factory(databaseOptions)).ToDictionary(engine => engine.Name);
         foreach (IDatabaseEngine databaseEngine in databaseEngines.Values)
         {

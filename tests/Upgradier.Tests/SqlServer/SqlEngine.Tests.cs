@@ -19,8 +19,8 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     [Fact]
     public async Task SqlFactory_Name_Is_SqlServer()
     {
-        SqlEngine factory = new (new LogAdapter(null), null);
-        Assert.Equal(SqlEngine.NAME, factory.Name);
+        SqlEngine engine = new (new LogAdapter(null), null, null);
+        Assert.Equal(SqlEngine.NAME, engine.Name);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
         LogAdapter logger = new (null);
         Assert.Throws<InvalidCastException>(() =>
         {
-            new SqlEngine(logger, null)
+            new SqlEngine(logger, null, null)
                 .CreateLockStrategy
                 (new SourceDatabase(new DbContextOptionsBuilder()
                     .UseSqlServer(_connectionString)
@@ -42,18 +42,18 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     public async Task CreateLockStrategy_Is_SqlLockStrategy_When_SourceDatabase_Is_SqlSourceDatabase()
     {
         LogAdapter logger = new (null);
-        SqlEngine factory = new(logger, "Dev");
-        ILockManager lockStrategy = factory.CreateLockStrategy(new SqlSourceDatabase(new DbContextOptionsBuilder<SqlSourceDatabase>()
+        SqlEngine engine = new(logger, "Dev", null);
+        ILockManager lockManager = engine.CreateLockStrategy(new SqlSourceDatabase(new DbContextOptionsBuilder<SqlSourceDatabase>()
             .UseSqlServer(_connectionString)
             .Options, logger, "Dev"));
-        Assert.True(lockStrategy is SqlLockManager);
+        Assert.True(lockManager is SqlLockManager);
     }
 
     [Fact]
     public async Task CreateSourceDatabase_Is_SqlSourceDatabase()
     {
-        SqlEngine factory = new(new LogAdapter(null), "Dev");
-        SourceDatabase sourceDatabase = factory.CreateSourceDatabase(_connectionString);
+        SqlEngine engine = new(new LogAdapter(null), "Dev", null);
+        SourceDatabase sourceDatabase = engine.CreateSourceDatabase(_connectionString);
         Assert.True(sourceDatabase is SqlSourceDatabase);
     }
 }

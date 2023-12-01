@@ -8,11 +8,13 @@ public class MySqlEngine : IDatabaseEngine
 
     private LogAdapter _logger;
     private readonly string? _environment;
+    private readonly int? _commandTimeout;
 
-    public MySqlEngine(LogAdapter logger, string? environment)
+    public MySqlEngine(LogAdapter logger, string? environment, int? commandTimeout)
     {
         _logger = logger;
         _environment = environment;
+        _commandTimeout = commandTimeout;
     }
 
     public string Name => NAME;
@@ -29,7 +31,7 @@ public class MySqlEngine : IDatabaseEngine
     public virtual SourceDatabase CreateSourceDatabase(string connectionString)
     {
         DbContextOptionsBuilder<MySqlSourceDatabase> builder = new DbContextOptionsBuilder<MySqlSourceDatabase>()
-            .UseMySQL(connectionString);
+            .UseMySQL(connectionString, options => options.CommandTimeout(_commandTimeout));
         return new MySqlSourceDatabase(builder.Options, _logger, _environment);
     }
 }
