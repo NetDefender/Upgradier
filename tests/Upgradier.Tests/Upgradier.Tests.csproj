@@ -11,6 +11,7 @@
 		<PackageReference Include="AWSSDK.S3" />
 		<PackageReference Include="Azure.Storage.Blobs" />
 		<PackageReference Include="coverlet.msbuild" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="NSubstitute" />
 		<PackageReference Include="Testcontainers.MsSql" />

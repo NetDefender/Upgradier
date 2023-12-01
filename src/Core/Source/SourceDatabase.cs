@@ -7,6 +7,7 @@ public class SourceDatabase : DbContext
 {
     public SourceDatabase(DbContextOptions options, LogAdapter logger, string? environment) : base(options)
     {
+        ArgumentNullException.ThrowIfNull(logger);
         Environment = environment;
         Logger = logger;
     }
