@@ -107,13 +107,11 @@ public sealed class CoreExtensions_Tests
 
     [Theory]
     [InlineData(null)]
-    [InlineData(" ")]
+    [InlineData("")]
     [InlineData("    ")]
     public void IsNullOrEmptyOrWhiteSpace_Remove_When_Null_Empty_WhiteSpace(string text)
     {
-        string expected = text[..^1];
-        string actual = new StringBuilder(text).RemoveLast().ToString();
-        Assert.Equal(expected, actual);
+        Assert.True(text.IsNullOrEmptyOrWhiteSpace());
     }
 
     [Theory]
