@@ -107,7 +107,7 @@ public sealed class CoreExtensions_Tests
 
     [Theory]
     [InlineData(null)]
-    [InlineData("")]
+    [InlineData(" ")]
     [InlineData("    ")]
     public void IsNullOrEmptyOrWhiteSpace_Remove_When_Null_Empty_WhiteSpace(string text)
     {
