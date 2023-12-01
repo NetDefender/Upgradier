@@ -35,4 +35,11 @@ public class WebBatchStrategyTests : IClassFixture<BatchServerFixture>
         Assert.NotNull(actualContents);
         Assert.Equal(expectedBatchContents, actualContents);
     }
+
+    [Fact]
+    public async Task ConfigureRequestMessage_Throws_When_Null_Is_Passed_Explicitly()
+    {
+        WebBatchStrategy strategy = new(new Uri("https://www.google.es"), null, new LogAdapter(null), null);
+        Assert.Throws<ArgumentNullException>(() => strategy.ConfigureRequestMessage(null));
+    }
 }

@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Upgradier.Core;
 
@@ -9,6 +7,7 @@ public abstract class LockManagerBase : ILockManager
     protected LockManagerBase(SourceDatabase context, LogAdapter logger, string? environment)
     {
         ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(logger);
         Environment = environment;
         Context = context;
         Logger = logger;
