@@ -50,7 +50,7 @@ public sealed class FileBatchStrategy_Tests
     }
 
     [Fact]
-    public void Ctor_Throws_If_BaseDirectory_Is_Null_Or_Empty()
+    public void Throws_If_BaseDirectory_Is_Null_Or_Empty()
     {
         Assert.Throws<ArgumentNullException>("baseDirectory", () =>
         {
@@ -63,7 +63,7 @@ public sealed class FileBatchStrategy_Tests
     }
 
     [Fact]
-    public async Task Ctor_Throws_If_File_Index_Json_Not_Exists()
+    public async Task Throws_If_File_Index_Json_Not_Exists()
     {
         await Assert.ThrowsAsync<DirectoryNotFoundException>(async () =>
         {

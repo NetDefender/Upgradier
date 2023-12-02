@@ -21,7 +21,6 @@ public class SymmetricEncryptor : IEncryptor
     public SymmetricEncryptor(string key, string iv, LogAdapter logger, string environment)
         : this(Convert.FromBase64String(key), Convert.FromBase64String(iv), logger, environment)
     {
-        //Examples "+ifAR/fm2DNScDVjCDzC3SV8Y905HeC64iz4BhaESOg=", "QLpX4WMRdRzgfYg/blP1Gw=="
     }
 
     public LogAdapter Logger { get; }

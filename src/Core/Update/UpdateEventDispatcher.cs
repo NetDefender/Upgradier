@@ -10,6 +10,7 @@ internal sealed class UpdateEventDispatcher
 
     public UpdateEventDispatcher(IUpdateEvents? events, LogAdapter logAdapter, string? environment)
     {
+        ArgumentNullException.ThrowIfNull(logAdapter);
         _events = events;
         _logAdapter = logAdapter;
         _environment = environment;

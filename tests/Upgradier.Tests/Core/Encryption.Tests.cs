@@ -50,4 +50,22 @@ public class Encryption_Tests
         byte[] decrypted = encryptor.Decrypt(encrypted);
         Assert.True(message.SequenceEqual(decrypted));
     }
+
+    [Fact]
+    public void Supplying_Base64_Key_And_Iv_Results_In_The_Same_As_ByteArray()
+    {
+        SymmetricEncryptor encryptor64 = new(Convert.ToBase64String(SymmetricKey), Convert.ToBase64String(SymmetricIv), new LogAdapter(null), null);
+        SymmetricEncryptor encryptor = new(SymmetricKey, SymmetricIv, new LogAdapter(null), null);
+
+        byte[] message = Encoding.UTF8.GetBytes("Hello, how are you");
+        byte[] encrypted = encryptor.Encrypt(message);
+        byte[] encrypted64 = encryptor64.Encrypt(message);
+
+        Assert.True(encrypted.SequenceEqual(encrypted64));
+
+        byte[] derypted = encryptor.Decrypt(encrypted);
+        byte[] decrypted64 = encryptor64.Decrypt(encrypted64);
+
+        Assert.True(derypted.SequenceEqual(decrypted64));
+    }
 }
