@@ -30,8 +30,15 @@ public class Encryption
     [Fact]
     public void Symmetric_Environment_Can_Be_Null()
     {
-        Assert.Throws<ArgumentNullException>(() => new SymmetricEncryptor(SymmetricKey, SymmetricIv, new LogAdapter(null), null));
-        Assert.Throws<ArgumentNullException>(() => new SymmetricEncryptor(SymmetricKey, SymmetricIv, new LogAdapter(null), "Dev"));
+        new SymmetricEncryptor(SymmetricKey, SymmetricIv, new LogAdapter(null), null);
+        new SymmetricEncryptor(SymmetricKey, SymmetricIv, new LogAdapter(null), "Dev");
+    }
+
+    [Fact]
+    public void Symmetric_Environment_Can_Be_Not_Null()
+    {
+        SymmetricEncryptor encryptor = new (SymmetricKey, SymmetricIv, new LogAdapter(null), "Dev");
+        Assert.Equal("Dev", encryptor.Environment);
     }
 
     [Fact]

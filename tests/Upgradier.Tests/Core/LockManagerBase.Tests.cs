@@ -8,7 +8,7 @@ namespace Upgradier.Tests.Core;
 public sealed class LockManagerBaseTests
 {
     [Fact]
-    public void Ctor_Throws_When_SourceDatabase_Is_Null()
+    public void Throws_When_SourceDatabase_Is_Null()
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
@@ -24,7 +24,7 @@ public sealed class LockManagerBaseTests
     }
 
     [Fact]
-    public void Ctor_Not_Throws_When_Environment_Is_Null()
+    public void Not_Throws_When_Environment_Is_Null()
     {
         DbContextOptions<SourceDatabase> options = new DbContextOptionsBuilder<SourceDatabase>().UseInMemoryDatabase("BloggingControllerTest")
             .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
@@ -35,7 +35,7 @@ public sealed class LockManagerBaseTests
     }
 
     [Fact]
-    public void Ctor_Not_Throws_When_Logger_Is_Null()
+    public void Throws_When_Logger_Is_Null()
     {
         DbContextOptions<SourceDatabase> options = new DbContextOptionsBuilder<SourceDatabase>().UseInMemoryDatabase("BloggingControllerTest")
            .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
