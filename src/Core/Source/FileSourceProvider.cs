@@ -10,6 +10,8 @@ public class FileSourceProvider : SourceProviderBase
     public FileSourceProvider(string name, string baseDirectory, string baseFileName, LogAdapter logger, string? environment)
         : base(name, logger, environment)
     {
+        ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
+        ArgumentException.ThrowIfNullOrEmpty(baseFileName);
         _baseDirectory = baseDirectory;
         _baseFileName = baseFileName;
     }

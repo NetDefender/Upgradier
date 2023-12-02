@@ -1,0 +1,12 @@
+[
+  {
+    "Name": "Test-001",
+    "Provider": "SqlServer",
+    "ConnectionString": "Server=.;Initial Catalog=Test-001;Integrated Security=SSPI;TrustServerCertificate=True"
+  },
+  {
+    "Name": "Test-002",
+    "Provider": "SqlServer",
+    "ConnectionString": "Server=.;Initial Catalog=Test-002;Integrated Security=SSPI;TrustServerCertificate=True"
+  }
+]
