@@ -7,6 +7,7 @@ public class EncryptedFileSourceProvider : FileSourceProvider
     public EncryptedFileSourceProvider(string name, string baseDirectory, string fileName, LogAdapter logger, string? environment, IEncryptor encryptor)
         : base(name, baseDirectory, fileName, logger, environment)
     {
+        ArgumentNullException.ThrowIfNull(encryptor);
         _encryptor = encryptor;
     }
 

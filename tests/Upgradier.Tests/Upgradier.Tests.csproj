@@ -34,6 +34,9 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
+	  <None Update="Core\Files\Encrypted.Sources.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Core\Files\Sources.Dev.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
