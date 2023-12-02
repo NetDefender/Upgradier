@@ -9,6 +9,9 @@ public class SymmetricEncryptor : IEncryptor
 
     public SymmetricEncryptor(byte[] key, byte[] iv, LogAdapter logger, string? environment)
     {
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(iv);
+        ArgumentNullException.ThrowIfNull(logger);
         _key = key;
         _iv = iv;
         Logger = logger;
