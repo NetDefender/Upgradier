@@ -63,15 +63,4 @@ public class UpdateResultTaskBuffer_Tests
         UpdateResult[] results = await buffer.WhenAll();
         Assert.Empty(results);
     }
-
-    [Fact]
-    public async Task Add_Add_Tasks_To_The_Buffer()
-    {
-        UpdateResultTaskBuffer buffer = new(2, new LogAdapter(null), null);
-        buffer.Add(Task.FromResult(new UpdateResult("1", string.Empty, string.Empty, 0, 0, null, null)));
-        buffer.Add(Task.FromResult(new UpdateResult("2", string.Empty, string.Empty, 0, 0, null, null)));
-        UpdateResult[] results = await buffer.WhenAll();
-        Assert.Equal("1", results[0].Source);
-        Assert.Equal("2", results[1].Source);
-    }
 }

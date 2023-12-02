@@ -57,7 +57,7 @@ public sealed class UpdateManager : IUpdateManager
             {
                 UpdateResult[] bufferResults = await updateTaskBuffer.WhenAll().ConfigureAwait(false);
                 updateTaskBuffer.Clear();
-                updateTaskBuffer.Add(updateTask);
+                updateTaskBuffer.TryAdd(updateTask);
                 updateResults.AddRange(bufferResults);
             }
         }

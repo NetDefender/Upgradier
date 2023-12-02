@@ -36,12 +36,6 @@ public sealed class UpdateResultTaskBuffer
         return false;
     }
 
-    public void Add(Task<UpdateResult> task)
-    {
-        _parallelTaskBuffer.Add(task);
-        _logger.LogTaskBufferAddSuccessfully(_parallelTaskBuffer.Count);
-    }
-
     public async Task<UpdateResult[]> WhenAll()
     {
         return await Task.WhenAll(_parallelTaskBuffer).ConfigureAwait(false);
