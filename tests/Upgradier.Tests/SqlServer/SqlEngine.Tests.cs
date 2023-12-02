@@ -19,7 +19,7 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     [Fact]
     public async Task SqlFactory_Name_Is_SqlServer()
     {
-        SqlEngine engine = new (new LogAdapter(null), null, null);
+        SqlEngine engine = new (new LogAdapter(null), null, null, null);
         Assert.Equal(SqlEngine.NAME, engine.Name);
     }
 
@@ -29,7 +29,7 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
         LogAdapter logger = new (null);
         Assert.Throws<InvalidCastException>(() =>
         {
-            new SqlEngine(logger, null, null)
+            new SqlEngine(logger, null, null, null)
                 .CreateLockStrategy
                 (new SourceDatabase(new DbContextOptionsBuilder()
                     .UseSqlServer(_connectionString)
@@ -42,7 +42,7 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     public async Task CreateLockStrategy_Is_SqlLockStrategy_When_SourceDatabase_Is_SqlSourceDatabase()
     {
         LogAdapter logger = new (null);
-        SqlEngine engine = new(logger, "Dev", null);
+        SqlEngine engine = new(logger, "Dev", null, null);
         ILockManager lockManager = engine.CreateLockStrategy(new SqlSourceDatabase(new DbContextOptionsBuilder<SqlSourceDatabase>()
             .UseSqlServer(_connectionString)
             .Options, logger, "Dev"));
@@ -52,7 +52,7 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     [Fact]
     public async Task CreateSourceDatabase_Is_SqlSourceDatabase()
     {
-        SqlEngine engine = new(new LogAdapter(null), "Dev", null);
+        SqlEngine engine = new(new LogAdapter(null), "Dev", null, null);
         SourceDatabase sourceDatabase = engine.CreateSourceDatabase(_connectionString);
         Assert.True(sourceDatabase is SqlSourceDatabase);
     }

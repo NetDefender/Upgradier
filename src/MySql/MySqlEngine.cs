@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 
 namespace Upgradier.MySql;
 
@@ -9,12 +10,18 @@ public class MySqlEngine : IDatabaseEngine
     private LogAdapter _logger;
     private readonly string? _environment;
     private readonly int? _commandTimeout;
+    private readonly int? _connectionTimeout;
 
-    public MySqlEngine(LogAdapter logger, string? environment, int? commandTimeout)
+    public MySqlEngine(LogAdapter logger, string? environment, int? commandTimeout, int? connectionTimeout)
     {
         _logger = logger;
         _environment = environment;
         _commandTimeout = commandTimeout;
+        if(connectionTimeout is not null )
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(connectionTimeout.Value, 0);
+        }
+        _connectionTimeout = connectionTimeout;
     }
 
     public string Name => NAME;
@@ -30,8 +37,13 @@ public class MySqlEngine : IDatabaseEngine
 
     public virtual SourceDatabase CreateSourceDatabase(string connectionString)
     {
-        DbContextOptionsBuilder<MySqlSourceDatabase> builder = new DbContextOptionsBuilder<MySqlSourceDatabase>()
-            .UseMySQL(connectionString, options => options.CommandTimeout(_commandTimeout));
-        return new MySqlSourceDatabase(builder.Options, _logger, _environment);
+        MySqlConnectionStringBuilder connectionBuilder = new (connectionString);
+        if(_connectionTimeout is not null)
+        {
+            connectionBuilder.ConnectionTimeout = (uint)_connectionTimeout.Value;
+        }
+        DbContextOptionsBuilder<MySqlSourceDatabase> optionsBuilder = new DbContextOptionsBuilder<MySqlSourceDatabase>()
+            .UseMySQL(connectionBuilder.ConnectionString, options => options.CommandTimeout(_commandTimeout));
+        return new MySqlSourceDatabase(optionsBuilder.Options, _logger, _environment);
     }
 }
