@@ -13,6 +13,7 @@ public sealed class UpdateResultTaskBuffer
 
     public UpdateResultTaskBuffer(int parallelism, LogAdapter logger, string? environment)
     {
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentOutOfRangeException.ThrowIfLessThan(parallelism, MinValue);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(parallelism, MaxValue);
         _parallelTaskBuffer = new List<Task<UpdateResult>>(parallelism);
