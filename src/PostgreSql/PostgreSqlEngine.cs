@@ -16,6 +16,10 @@ public class PostgreSqlEngine : IDatabaseEngine
     {
         _logger = logger;
         _environment = environment;
+        if (commandTimeout is not null)
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(commandTimeout.Value, 0);
+        }
         _commandTimeout = commandTimeout;
         if (connectionTimeout is not null)
         {
