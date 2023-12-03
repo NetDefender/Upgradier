@@ -1,4 +1,8 @@
-﻿using Upgradier.Core;
+﻿using Microsoft.Extensions.Logging;
+using Upgradier.Core;
+using Upgradier.MySql;
+using Upgradier.SqlServer;
+using Upgradier.PostgreSql;
 
 namespace Upgradier.Tests.Core;
 
@@ -159,5 +163,25 @@ public class UpdateBuilder_Tests
     {
         UpdateBuilder builder = new();
         Assert.Throws<ArgumentOutOfRangeException>(() => builder.WithConnectionTimeout(-1));
+    }
+
+    [Fact]
+    public void Build_Generates_UpdateManager()
+    {
+        ILogger logger = LoggerFactory.Create(options => options.SetMinimumLevel(LogLevel.Debug)).CreateLogger("Basic");
+        UpdateBuilder builder = new UpdateBuilder()
+            .WithFileSourceProvider("Core/Files", "Sources.json")
+            .WithFileBatchStrategy("Core/Batches")
+            .WithCacheManager(options => new FileBatchCacheManager("Core/Cache", options.Logger, options.Environment))
+            .WithParallelism(10)
+            .AddMySqlServerEngine()
+            .AddSqlServerEngine()
+            .AddPostgreSqlServerEngine()
+            .WithConnectionTimeout(1)
+            .WithCommandTimeout(1)
+            .WithEnvironment("Dev")
+            .WithLogger(logger);
+
+        UpdateManager updater = builder.Build();
     }
 }

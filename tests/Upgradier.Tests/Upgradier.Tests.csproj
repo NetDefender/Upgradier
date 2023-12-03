@@ -26,6 +26,8 @@
 		<ProjectReference Include="..\..\src\Aws\Upgradier.BatchStrategy.Aws.csproj" />
 		<ProjectReference Include="..\..\src\Azure\Upgradier.BatchStrategy.Azure.csproj" />
 		<ProjectReference Include="..\..\src\Core\Upgradier.Core.csproj" />
+		<ProjectReference Include="..\..\src\MySql\Upgradier.MySql.csproj" />
+		<ProjectReference Include="..\..\src\PostgreSql\Upgradier.PostgreSql.csproj" />
 		<ProjectReference Include="..\..\src\SqlServer\Ugradier.SqlServer.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -34,6 +36,9 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
+	  <None Update="Core\Cache\Empty.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Core\Files\Encrypted.Sources.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
