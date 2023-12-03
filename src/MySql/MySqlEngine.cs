@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace Upgradier.MySql;
 
@@ -47,7 +47,7 @@ public class MySqlEngine : IDatabaseEngine
             connectionBuilder.ConnectionTimeout = (uint)_connectionTimeout.Value;
         }
         DbContextOptionsBuilder<MySqlSourceDatabase> optionsBuilder = new DbContextOptionsBuilder<MySqlSourceDatabase>()
-            .UseMySQL(connectionBuilder.ConnectionString, options => options.CommandTimeout(_commandTimeout));
+            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionBuilder.ConnectionString), options => options.CommandTimeout(_commandTimeout));
         return new MySqlSourceDatabase(optionsBuilder.Options, _logger, _environment);
     }
 }

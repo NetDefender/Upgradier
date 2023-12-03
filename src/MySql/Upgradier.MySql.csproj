@@ -16,8 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="MySql.Data" />
-	  <PackageReference Include="MySql.EntityFrameworkCore" />
+	  <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
 	</ItemGroup>
 
 	<ItemGroup>

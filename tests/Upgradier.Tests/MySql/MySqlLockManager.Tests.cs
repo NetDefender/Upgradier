@@ -22,7 +22,7 @@ public sealed class MySqlLockManagerTests : IClassFixture<MySqlDatabaseFixture>
     {
         LogAdapter logger = new (null);
         MySqlSourceDatabase db = new (new DbContextOptionsBuilder<MySqlSourceDatabase>()
-            .UseMySQL(_connectionString).Options, logger, environment);
+            .UseMySql(_connectionString, ServerVersion.AutoDetect(_connectionString)).Options, logger, environment);
         return new MySqlLockManager(db, logger, environment);
     }
 

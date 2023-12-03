@@ -57,7 +57,7 @@ public sealed class MySqlEngine_Tests : IClassFixture<MySqlDatabaseFixture>
             new MySqlEngine(logger, null, null, null)
                 .CreateLockStrategy
                 (new SourceDatabase(new DbContextOptionsBuilder()
-                    .UseMySQL(_connectionString)
+                    .UseMySql(ServerVersion.AutoDetect(_connectionString))
                     .Options, logger, null)
                 );
         });

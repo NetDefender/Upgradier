@@ -14,6 +14,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="NSubstitute" />
+		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
 		<PackageReference Include="Testcontainers.MariaDb" />
 		<PackageReference Include="Testcontainers.MsSql" />
 		<PackageReference Include="xunit" />
@@ -29,7 +30,7 @@
 		<ProjectReference Include="..\..\src\Core\Upgradier.Core.csproj" />
 		<ProjectReference Include="..\..\src\MySql\Upgradier.MySql.csproj" />
 		<ProjectReference Include="..\..\src\PostgreSql\Upgradier.PostgreSql.csproj" />
-		<ProjectReference Include="..\..\src\SqlServer\Ugradier.SqlServer.csproj" />
+		<ProjectReference Include="..\..\src\SqlServer\Upgradier.SqlServer.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="Core\Batches\**\*.*">

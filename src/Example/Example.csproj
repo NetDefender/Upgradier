@@ -12,7 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MySql\Upgradier.MySql.csproj" />
     <ProjectReference Include="..\PostgreSql\Upgradier.PostgreSql.csproj" />
-    <ProjectReference Include="..\SqlServer\Ugradier.SqlServer.csproj" />
+    <ProjectReference Include="..\SqlServer\Upgradier.SqlServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,8 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
-    <PackageReference Include="NSubstitute" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Extensions.Logging" />
     <PackageReference Include="Serilog.Formatting.Compact" />
