@@ -16,8 +16,13 @@ public class SqlEngine : IDatabaseEngine
 
     public SqlEngine(LogAdapter logger, string? environment, int? commandTimeout, int? connectionTimeout)
     {
+        ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
         _environment = environment;
+        if (commandTimeout is not null)
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(commandTimeout.Value, 0);
+        }
         _commandTimeout = commandTimeout;
         if (connectionTimeout is not null)
         {
@@ -46,4 +51,3 @@ public class SqlEngine : IDatabaseEngine
             .UseSqlServer(connectionString, options => options.CommandTimeout(_commandTimeout));
         return new SqlSourceDatabase(builder.Options, _logger, _environment);
     }
-}

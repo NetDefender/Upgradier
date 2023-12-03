@@ -3,6 +3,7 @@ using Upgradier.Core;
 using Upgradier.MySql;
 using Upgradier.SqlServer;
 using Upgradier.PostgreSql;
+using NSubstitute;
 
 namespace Upgradier.Tests.Core;
 
@@ -169,11 +170,14 @@ public class UpdateBuilder_Tests
     public void Build_Generates_UpdateManager()
     {
         ILogger logger = LoggerFactory.Create(options => options.SetMinimumLevel(LogLevel.Debug)).CreateLogger("Basic");
+        IUpdateEvents events = Substitute.For<IUpdateEvents>();
+
         UpdateBuilder builder = new UpdateBuilder()
             .WithFileSourceProvider("Core/Files", "Sources.json")
             .WithFileBatchStrategy("Core/Batches")
             .WithCacheManager(options => new FileBatchCacheManager("Core/Cache", options.Logger, options.Environment))
             .WithParallelism(10)
+            .WithEvents(options => events)
             .AddMySqlServerEngine()
             .AddSqlServerEngine()
             .AddPostgreSqlServerEngine()
