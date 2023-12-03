@@ -17,39 +17,39 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     }
 
     [Fact]
-    public async Task Throws_When_Logger_Is_Null()
+    public void Throws_When_Logger_Is_Null()
     {
         Assert.Throws<ArgumentNullException>(() => new SqlEngine(null, null, null, null));
     }
 
     [Fact]
-    public async Task Throws_When_CommandTimeout_Is_Less_Than_0()
+    public void Throws_When_CommandTimeout_Is_Less_Than_0()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new SqlEngine(new LogAdapter(null), null, -1, null));
     }
 
     [Fact]
-    public async Task Throws_When_ConnectionTimeout_Is_Less_Than_0()
+    public void Throws_When_ConnectionTimeout_Is_Less_Than_0()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new SqlEngine(new LogAdapter(null), null, null, -1));
     }
 
     [Fact]
-    public async Task No_Throws_When_Timeouts_Are_Greater_Than_0()
+    public void No_Throws_When_Timeouts_Are_Greater_Than_0()
     {
         SqlEngine engine = new (new LogAdapter(null), null, 1, 1);
         Assert.NotNull(engine);
     }
 
     [Fact]
-    public async Task Name_Is_SqlServer()
+    public void Name_Is_SqlServer()
     {
         SqlEngine engine = new (new LogAdapter(null), null, null, null);
         Assert.Equal(SqlEngine.NAME, engine.Name);
     }
 
     [Fact]
-    public async Task CreateLockStrategy_Throws_When_SourceDatabase_Is_Not_SqlSourceDatabase()
+    public void CreateLockStrategy_Throws_When_SourceDatabase_Is_Not_SqlSourceDatabase()
     {
         LogAdapter logger = new (null);
         Assert.Throws<InvalidCastException>(() =>
@@ -64,7 +64,7 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     }
 
     [Fact]
-    public async Task CreateLockStrategy_Is_SqlLockStrategy_When_SourceDatabase_Is_SqlSourceDatabase()
+    public void CreateLockStrategy_Is_SqlLockStrategy_When_SourceDatabase_Is_SqlSourceDatabase()
     {
         LogAdapter logger = new (null);
         SqlEngine engine = new(logger, "Dev", null, null);
@@ -75,7 +75,7 @@ public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
     }
 
     [Fact]
-    public async Task CreateSourceDatabase_Is_SqlSourceDatabase()
+    public void CreateSourceDatabase_Is_SqlSourceDatabase()
     {
         SqlEngine engine = new(new LogAdapter(null), "Dev", null, null);
         SourceDatabase sourceDatabase = engine.CreateSourceDatabase(_connectionString);
