@@ -6,7 +6,7 @@ namespace Upgradier.SqlServer;
 public class SqlEngine : IDatabaseEngine
 {
     public const string NAME = "SqlServer";
-    
+
     private readonly LogAdapter _logger;
     private readonly string? _environment;
     private readonly int? _commandTimeout;
@@ -51,3 +51,4 @@ public class SqlEngine : IDatabaseEngine
             .UseSqlServer(connectionString, options => options.CommandTimeout(_commandTimeout));
         return new SqlSourceDatabase(builder.Options, _logger, _environment);
     }
+}
