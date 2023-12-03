@@ -61,8 +61,8 @@ public sealed class UpdateBuilder
 
     public UpdateBuilder WithSymmetricEncryptor(string key, string iv)
     {
-        ArgumentNullException.ThrowIfNullOrEmpty(key);
-        ArgumentNullException.ThrowIfNullOrEmpty(iv);
+        ArgumentException.ThrowIfNullOrEmpty(key);
+        ArgumentException.ThrowIfNullOrEmpty(iv);
         _encryptorFactory = options => new SymmetricEncryptor(key, iv, options.Logger, options.Environment);
         return this;
     }
@@ -112,7 +112,10 @@ public sealed class UpdateBuilder
 
     public UpdateBuilder WithEnvironment(string environment)
     {
-        ArgumentNullException.ThrowIfNull(environment);
+        if(environment?.Length == 0)
+        {
+            throw new ArgumentException(null, nameof(environment));
+        }
         _environment = environment;
         return this;
     }

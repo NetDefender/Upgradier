@@ -17,15 +17,16 @@ using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.Add
 ILogger<Program> logger = loggerFactory.CreateLogger<Program>();
 
 UpdateBuilder updateBuilder = new UpdateBuilder()
+    .WithFileSourceProvider(Directory.GetCurrentDirectory(), "Sources.json")
     .WithFileBatchStrategy("Batches")
     .WithCacheManager(options => new FileBatchCacheManager("Cache", options.Logger, options.Environment))
     .WithParallelism(10)
-    .WithFileSourceProvider(Directory.GetCurrentDirectory(), "Sources.json")
+    .WithConnectionTimeout(1)
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine()
-    .WithLogger(logger)
-    .WithEnvironment("Dev");
+    .WithEnvironment("Dev")
+    .WithLogger(logger);
 
 UpdateManager updateManager = updateBuilder.Build();
 IEnumerable<UpdateResult> updateResults = await updateManager.UpdateAsync();
