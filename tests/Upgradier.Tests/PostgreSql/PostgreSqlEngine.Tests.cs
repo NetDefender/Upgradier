@@ -3,9 +3,9 @@ using Upgradier.Core;
 using Upgradier.PostgreSql;
 using Xunit.Abstractions;
 
-namespace Upgradier.Tests.SqlServer;
+namespace Upgradier.Tests.PostgreSql;
 
-public sealed class PostgreSqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
+public sealed class PostgreSqlEngine_Tests : IClassFixture<PostgreSqlServerDatabaseFixture>
 {
     private readonly string _connectionString;
     private readonly ITestOutputHelper _output;

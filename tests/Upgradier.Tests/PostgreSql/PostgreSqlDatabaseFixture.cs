@@ -1,6 +1,6 @@
 ﻿using Testcontainers.PostgreSql;
 
-namespace Upgradier.Tests.SqlServer;
+namespace Upgradier.Tests.PostgreSql;
 
 public sealed class PostgreSqlServerDatabaseFixture : IAsyncLifetime
 {
