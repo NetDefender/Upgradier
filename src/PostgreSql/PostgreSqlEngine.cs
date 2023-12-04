@@ -14,6 +14,7 @@ public class PostgreSqlEngine : IDatabaseEngine
 
     public PostgreSqlEngine(LogAdapter logger, string? environment, int? commandTimeout, int? connectionTimeout)
     {
+        ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
         _environment = environment;
         if (commandTimeout is not null)
