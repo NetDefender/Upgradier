@@ -2,10 +2,10 @@
 
 namespace Upgradier.Tests.PostgreSql;
 
-public sealed class PostgreSqlServerDatabaseFixture : IAsyncLifetime
+public sealed class PostgreSqlDatabaseFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container;
-    public PostgreSqlServerDatabaseFixture()
+    public PostgreSqlDatabaseFixture()
     {
         _container = new PostgreSqlBuilder()
           .Build();

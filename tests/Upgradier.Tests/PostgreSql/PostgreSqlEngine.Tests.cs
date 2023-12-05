@@ -5,12 +5,12 @@ using Xunit.Abstractions;
 
 namespace Upgradier.Tests.PostgreSql;
 
-public sealed class PostgreSqlEngine_Tests : IClassFixture<PostgreSqlServerDatabaseFixture>
+public sealed class PostgreSqlEngine_Tests : IClassFixture<PostgreSqlDatabaseFixture>
 {
     private readonly string _connectionString;
     private readonly ITestOutputHelper _output;
 
-    public PostgreSqlEngine_Tests(ITestOutputHelper output, PostgreSqlServerDatabaseFixture fixture)
+    public PostgreSqlEngine_Tests(ITestOutputHelper output, PostgreSqlDatabaseFixture fixture)
     {
         _connectionString = fixture.ConnectionString!;
         _output = output;

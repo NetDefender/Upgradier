@@ -7,12 +7,12 @@ using Xunit.Abstractions;
 namespace Upgradier.Tests.PostgreSql;
 
 [TestCaseOrderer("Upgradier.Tests.Core.ManualTestOrderer", "Upgradier.Tests")]
-public sealed class PostgreSqlLockManagerTests : IClassFixture<PostgreSqlServerDatabaseFixture>
+public sealed class PostgreSqlLockManagerTests : IClassFixture<PostgreSqlDatabaseFixture>
 {
     private readonly string _connectionString;
     private readonly ITestOutputHelper _output;
 
-    public PostgreSqlLockManagerTests(ITestOutputHelper output, PostgreSqlServerDatabaseFixture fixture)
+    public PostgreSqlLockManagerTests(ITestOutputHelper output, PostgreSqlDatabaseFixture fixture)
     {
         _connectionString = fixture.ConnectionString!;
         _output = output;

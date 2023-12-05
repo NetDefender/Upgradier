@@ -52,5 +52,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Core\Batches\MySql\Dev\" />
+	  <Folder Include="Core\Batches\PostgreSql\Dev\" />
+	</ItemGroup>
 	
 </Project>
