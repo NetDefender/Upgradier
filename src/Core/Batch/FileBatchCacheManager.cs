@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace Upgradier.Core;
 
@@ -31,7 +30,7 @@ public sealed class FileBatchCacheManager : IBatchCacheManager
         }
         catch (Exception ex)
         {
-            // TODO: log
+            _logger.LogTryStoreError(versionId, provider, ex);
             return false;
         }
     }
@@ -51,9 +50,9 @@ public sealed class FileBatchCacheManager : IBatchCacheManager
             }
             return BatchCacheResult.Miss;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // TODO: log
+            _logger.LogTryLoadError(versionId, provider, ex);
             return BatchCacheResult.Locked;
         }
     }

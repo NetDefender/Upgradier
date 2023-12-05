@@ -1,5 +1,8 @@
-﻿namespace Upgradier.Core;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace Upgradier.Core;
+
+[ExcludeFromCodeCoverage]
 public class BatchCacheResult
 {
     public static readonly BatchCacheResult Miss = new (false, false, null);

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 
@@ -149,5 +150,17 @@ public class LogAdapter
     public void LogGetBatchUri(Uri uri)
     {
         _logger?.LogDebug("Reading batch file from uri [{Uri}]", uri);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void LogTryStoreError(long versionId, string provider, Exception ex)
+    {
+        _logger?.LogError(ex, "Error storing cache for batch with version [{VersionId}] and provider [{Provider}]. ", versionId, provider);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void LogTryLoadError(long versionId, string provider, Exception ex)
+    {
+        _logger?.LogError(ex, "Error loading cache for batch with version [{VersionId}] and provider [{Provider}]. ", versionId, provider);
     }
 }
