@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Upgradier.MySql;
+namespace Upgradier.DatabaseEngines.MySql;
 
 public class MySqlLockManager : LockManagerBase
 {

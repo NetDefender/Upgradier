@@ -2,7 +2,7 @@ using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Upgradier.SqlServer;
+namespace Upgradier.DatabaseEngines.SqlServer;
 
 public class SqlLockManager : LockManagerBase
 {

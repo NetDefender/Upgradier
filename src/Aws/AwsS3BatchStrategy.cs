@@ -3,7 +3,7 @@ using System.Text.Json;
 using Amazon.S3.Transfer;
 using Upgradier.Core;
 
-namespace Upgradier.BatchStrategy.Aws;
+namespace Upgradier.BatchStrategies.Aws;
 
 public class AwsS3BatchStrategy : BatchStrategyBase
 {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using Upgradier.Core;
-using Upgradier.MySql;
-using Upgradier.SqlServer;
-using Upgradier.PostgreSql;
 using NSubstitute;
+using Upgradier.Core;
+using Upgradier.DatabaseEngines.MySql;
+using Upgradier.DatabaseEngines.PostgreSql;
+using Upgradier.DatabaseEngines.SqlServer;
 
 namespace Upgradier.Tests.Core;
 

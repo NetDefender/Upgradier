@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Upgradier.PostgreSql;
+namespace Upgradier.DatabaseEngines.PostgreSql;
 
 public class PostgreSqlSourceDatabase : SourceDatabase
 {

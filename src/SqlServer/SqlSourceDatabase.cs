@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Upgradier.SqlServer;
+namespace Upgradier.DatabaseEngines.SqlServer;
 
 public sealed class SqlSourceDatabase : SourceDatabase
 {

@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Upgradier.PostgreSql;
+﻿namespace Upgradier.DatabaseEngines.PostgreSql;
 
 public static class PostgreSqlExtensions
 {

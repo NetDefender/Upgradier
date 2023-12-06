@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 
-namespace Upgradier.MySql;
+namespace Upgradier.DatabaseEngines.MySql;
 
 public class MySqlEngine : IDatabaseEngine
 {

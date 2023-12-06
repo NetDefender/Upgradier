@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Upgradier.PostgreSql;
+namespace Upgradier.DatabaseEngines.PostgreSql;
 
 public class PostgreSqlLockManager : LockManagerBase
 {

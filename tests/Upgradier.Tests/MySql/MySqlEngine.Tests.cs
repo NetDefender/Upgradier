@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Upgradier.Core;
-using Upgradier.MySql;
+using Upgradier.DatabaseEngines.MySql;
 using Xunit.Abstractions;
 
 namespace Upgradier.Tests.MySql;

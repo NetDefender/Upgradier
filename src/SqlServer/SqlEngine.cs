@@ -1,7 +1,7 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
-namespace Upgradier.SqlServer;
+namespace Upgradier.DatabaseEngines.SqlServer;
 
 public class SqlEngine : IDatabaseEngine
 {

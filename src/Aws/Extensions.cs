@@ -2,7 +2,7 @@
 using Amazon.S3.Transfer;
 using Upgradier.Core;
 
-namespace Upgradier.BatchStrategy.Aws;
+namespace Upgradier.BatchStrategies.Aws;
 
 public static class Extensions
 {

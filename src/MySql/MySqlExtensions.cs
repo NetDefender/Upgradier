@@ -1,4 +1,4 @@
-﻿namespace Upgradier.MySql;
+﻿namespace Upgradier.DatabaseEngines.MySql;
 
 public static class MySqlExtensions
 {

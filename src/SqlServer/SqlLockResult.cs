@@ -1,4 +1,4 @@
-﻿namespace Upgradier.SqlServer;
+﻿namespace Upgradier.DatabaseEngines.SqlServer;
 
 public enum SqlLockResult
 {

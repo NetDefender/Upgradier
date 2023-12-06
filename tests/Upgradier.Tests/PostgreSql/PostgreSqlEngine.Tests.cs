@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Upgradier.Core;
-using Upgradier.PostgreSql;
+using Upgradier.DatabaseEngines.PostgreSql;
 using Xunit.Abstractions;
 
 namespace Upgradier.Tests.PostgreSql;

@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MySql\Upgradier.MySql.csproj" />
-    <ProjectReference Include="..\PostgreSql\Upgradier.PostgreSql.csproj" />
-    <ProjectReference Include="..\SqlServer\Upgradier.SqlServer.csproj" />
+    <ProjectReference Include="..\MySql\Upgradier.DatabaseEngines.MySql.csproj" />
+    <ProjectReference Include="..\PostgreSql\Upgradier.DatabaseEngines.PostgreSql.csproj" />
+    <ProjectReference Include="..\SqlServer\Upgradier.DatabaseEngines.SqlServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

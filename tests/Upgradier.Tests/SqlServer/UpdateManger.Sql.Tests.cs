@@ -3,7 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Upgradier.Core;
-using Upgradier.SqlServer;
+using Upgradier.DatabaseEngines.SqlServer;
 using Xunit.Abstractions;
 
 namespace Upgradier.Tests.SqlServer;

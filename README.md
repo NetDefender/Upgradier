@@ -20,12 +20,12 @@ Optionally use a cache implementing IBatchCacheManager to not hit the server whe
 
 - Install [Upgradier.Core](https://www.nuget.org/packages/Upgradier.Core)
 - Install the required database engines:
-    - [Upgradier.SqlServer](https://www.nuget.org/packages/Upgradier.SqlServer)
-	- [Upgradier.PostgreSql](https://www.nuget.org/packages/Upgradier.PostgreSql)
-	- [Upgradier.MySql](https://www.nuget.org/packages/Upgradier.MySql)
+    - [Upgradier.DatabaseEngines.SqlServer](https://www.nuget.org/packages/Upgradier.DatabaseEngines.SqlServer)
+	- [Upgradier.DatabaseEngines.PostgreSql](https://www.nuget.org/packages/Upgradier.DatabaseEngines.PostgreSql)
+	- [Upgradier.DatabaseEngines.MySql](https://www.nuget.org/packages/Upgradier.DatabaseEngines.MySql)
 - Install aditional batch strategies:
-    - [Upgradier.BatchStrategy.Aws](https://www.nuget.org/packages/Upgradier.BatchStrategy.Aws)
-    - [Upgradier.BatchStrategy.Azure](https://www.nuget.org/packages/Upgradier.BatchStrategy.Azure)
+    - [Upgradier.BatchStrategies.Aws](https://www.nuget.org/packages/Upgradier.BatchStrategies.Aws)
+    - [Upgradier.BatchStrategies.Azure](https://www.nuget.org/packages/Upgradier.BatchStrategies.Azure)
 
 Create UpdateBuilder with options:
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace Upgradier.PostgreSql;
+namespace Upgradier.DatabaseEngines.PostgreSql;
 
 public class PostgreSqlEngine : IDatabaseEngine
 {

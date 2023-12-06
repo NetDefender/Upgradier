@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Upgradier.MySql;
+namespace Upgradier.DatabaseEngines.MySql;
 
 public class MySqlSourceDatabase : SourceDatabase
 {

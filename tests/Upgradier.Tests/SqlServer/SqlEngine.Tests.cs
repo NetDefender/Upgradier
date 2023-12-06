@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Upgradier.Core;
-using Upgradier.SqlServer;
+using Upgradier.DatabaseEngines.SqlServer;
 using Xunit.Abstractions;
 
 namespace Upgradier.Tests.SqlServer;

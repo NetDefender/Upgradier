@@ -1,4 +1,4 @@
 ﻿global using Upgradier.Core;
-global using Upgradier.SqlServer;
-global using Upgradier.MySql;
-global using Upgradier.PostgreSql;
+global using Upgradier.DatabaseEngines.SqlServer;
+global using Upgradier.DatabaseEngines.MySql;
+global using Upgradier.DatabaseEngines.PostgreSql;

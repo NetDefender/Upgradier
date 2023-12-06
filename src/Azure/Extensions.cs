@@ -2,7 +2,7 @@
 using Azure.Storage.Blobs;
 using Upgradier.Core;
 
-namespace Upgradier.BatchStrategy.Azure;
+namespace Upgradier.BatchStrategies.Azure;
 
 public static class Extensions
 {
