@@ -1,24 +1,24 @@
 ﻿using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Upgradier.Core;
-using Upgradier.DatabaseEngines.MySql;
+using Upgradier.DatabaseEngines.PostgreSql;
 using Xunit.Abstractions;
 
-namespace Upgradier.Tests.MySql;
+namespace Upgradier.Tests.DatabaseEngines.PostgreSql;
 
-public class UpdateManager_MySql_Tests : IClassFixture<MultipleMySqlDatabaseFixture>
+public class UpdateManager_PostgreSql_Tests : IClassFixture<MultiplePostgreSqlDatabaseFixture>
 {
     private string _connectionStringOne;
     private string _connectionStringTwo;
     private readonly ITestOutputHelper _output;
     private IEnumerable<Source> _sources;
 
-    public UpdateManager_MySql_Tests(ITestOutputHelper output, MultipleMySqlDatabaseFixture fixture)
+    public UpdateManager_PostgreSql_Tests(ITestOutputHelper output, MultiplePostgreSqlDatabaseFixture fixture)
     {
         _connectionStringOne = fixture.ConnectionStringOne;
         _connectionStringTwo = fixture.ConnectionStringTwo;
-        _sources = [new Source("One-Database", MySqlEngine.NAME, _connectionStringOne)
-            , new Source("Two-Database", MySqlEngine.NAME, _connectionStringTwo)];
+        _sources = [new Source("One-Database", PostgreSqlEngine.NAME, _connectionStringOne)
+            , new Source("Two-Database", PostgreSqlEngine.NAME, _connectionStringTwo)];
         _output = output;
     }
 
@@ -42,7 +42,7 @@ public class UpdateManager_MySql_Tests : IClassFixture<MultipleMySqlDatabaseFixt
             .WithSourceProvider((Func<SourceProviderCreationOptions, SourceProviderBase>)sourceFactory)
             .WithFileBatchStrategy("Core/Batches")
             .WithCacheManager(options => new FileBatchCacheManager("Core/Cache", options.Logger, options.Environment))
-            .AddMySqlServerEngine()
+            .AddPostgreSqlServerEngine()
             .WithConnectionTimeout(30)
             .WithCommandTimeout(30)
             .WithLogger(logger);
@@ -71,7 +71,7 @@ public class UpdateManager_MySql_Tests : IClassFixture<MultipleMySqlDatabaseFixt
     {
         ILogger logger = LoggerFactory.Create(options => options.SetMinimumLevel(LogLevel.Debug)).CreateLogger("Basic");
         string notExistentSourceName = Guid.NewGuid().ToString();
-        Source notExistentSource = new(notExistentSourceName, MySqlEngine.NAME, $"Server=localhost;Port=54322;User Id=username;Password=secret;Database={notExistentSourceName};");
+        Source notExistentSource = new(notExistentSourceName, PostgreSqlEngine.NAME, $"Server=localhost;Port=54322;User Id=username;Password=secret;Database={notExistentSourceName};");
         IEnumerable<Source> notExistentSources = [notExistentSource];
 
         SourceProviderBase sourceFactory(SourceProviderCreationOptions options)
@@ -85,7 +85,7 @@ public class UpdateManager_MySql_Tests : IClassFixture<MultipleMySqlDatabaseFixt
             .WithSourceProvider((Func<SourceProviderCreationOptions, SourceProviderBase>)sourceFactory)
             .WithFileBatchStrategy("Core/Batches")
             .WithCacheManager(options => new FileBatchCacheManager("Core/Cache", options.Logger, options.Environment))
-            .AddMySqlServerEngine()
+            .AddPostgreSqlServerEngine()
             .WithConnectionTimeout(1) // 1 second
             .WithLogger(logger);
 
@@ -121,7 +121,7 @@ public class UpdateManager_MySql_Tests : IClassFixture<MultipleMySqlDatabaseFixt
             .WithSourceProvider((Func<SourceProviderCreationOptions, SourceProviderBase>)sourceFactory)
             .WithFileBatchStrategy("Core/Batches")
             .WithCacheManager(options => new FileBatchCacheManager("Core/Cache", options.Logger, options.Environment))
-            .AddMySqlServerEngine()
+            .AddPostgreSqlServerEngine()
             .WithConnectionTimeout(30)
             .WithCommandTimeout(30)
             .WithLogger(logger);

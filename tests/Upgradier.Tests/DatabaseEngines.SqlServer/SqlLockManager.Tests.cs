@@ -4,7 +4,7 @@ using Upgradier.DatabaseEngines.SqlServer;
 using Upgradier.Tests.Core;
 using Xunit.Abstractions;
 
-namespace Upgradier.Tests.SqlServer;
+namespace Upgradier.Tests.DatabaseEngines.SqlServer;
 
 [TestCaseOrderer("Upgradier.Tests.Core.ManualTestOrderer", "Upgradier.Tests")]
 public sealed class SqlLockManagerTests : IClassFixture<SqlServerDatabaseFixture>

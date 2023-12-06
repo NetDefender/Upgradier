@@ -1,6 +1,6 @@
 ﻿using Testcontainers.MsSql;
 
-namespace Upgradier.Tests.SqlServer;
+namespace Upgradier.Tests.DatabaseEngines.SqlServer;
 
 public sealed class MultipleSqlServerDatabaseFixture : IAsyncLifetime
 {

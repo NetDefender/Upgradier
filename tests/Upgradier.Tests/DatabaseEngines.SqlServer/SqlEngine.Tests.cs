@@ -3,7 +3,7 @@ using Upgradier.Core;
 using Upgradier.DatabaseEngines.SqlServer;
 using Xunit.Abstractions;
 
-namespace Upgradier.Tests.SqlServer;
+namespace Upgradier.Tests.DatabaseEngines.SqlServer;
 
 public sealed class SqlEngine_Tests : IClassFixture<SqlServerDatabaseFixture>
 {

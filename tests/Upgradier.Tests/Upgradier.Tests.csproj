@@ -28,12 +28,12 @@
 		<PackageReference Include="coverlet.collector" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Aws\Upgradier.BatchStrategies.Aws.csproj" />
-		<ProjectReference Include="..\..\src\Azure\Upgradier.BatchStrategies.Azure.csproj" />
+		<ProjectReference Include="..\..\src\BatchStrategies.Aws\Upgradier.BatchStrategies.Aws.csproj" />
+		<ProjectReference Include="..\..\src\BatchStrategies.Azure\Upgradier.BatchStrategies.Azure.csproj" />
 		<ProjectReference Include="..\..\src\Core\Upgradier.Core.csproj" />
-		<ProjectReference Include="..\..\src\MySql\Upgradier.DatabaseEngines.MySql.csproj" />
-		<ProjectReference Include="..\..\src\PostgreSql\Upgradier.DatabaseEngines.PostgreSql.csproj" />
-		<ProjectReference Include="..\..\src\SqlServer\Upgradier.DatabaseEngines.SqlServer.csproj" />
+		<ProjectReference Include="..\..\src\DatabaseEngines.MySql\Upgradier.DatabaseEngines.MySql.csproj" />
+		<ProjectReference Include="..\..\src\DatabaseEngines.PostgreSql\Upgradier.DatabaseEngines.PostgreSql.csproj" />
+		<ProjectReference Include="..\..\src\DatabaseEngines.SqlServer\Upgradier.DatabaseEngines.SqlServer.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="Core\Batches\**\*.*">

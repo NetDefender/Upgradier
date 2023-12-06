@@ -1,28 +1,27 @@
-﻿using System.Reflection;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Upgradier.Core;
-using Upgradier.DatabaseEngines.SqlServer;
+using Upgradier.DatabaseEngines.MySql;
 using Xunit.Abstractions;
 
-namespace Upgradier.Tests.SqlServer;
+namespace Upgradier.Tests.DatabaseEngines.MySql;
 
-public class UpdateManger_Sql_Tests : IClassFixture<MultipleSqlServerDatabaseFixture>
+public class UpdateManager_MySql_Tests : IClassFixture<MultipleMySqlDatabaseFixture>
 {
     private string _connectionStringOne;
     private string _connectionStringTwo;
     private readonly ITestOutputHelper _output;
     private IEnumerable<Source> _sources;
 
-    public UpdateManger_Sql_Tests(ITestOutputHelper output, MultipleSqlServerDatabaseFixture fixture)
+    public UpdateManager_MySql_Tests(ITestOutputHelper output, MultipleMySqlDatabaseFixture fixture)
     {
         _connectionStringOne = fixture.ConnectionStringOne;
         _connectionStringTwo = fixture.ConnectionStringTwo;
-        _sources = [new Source("One-Database", SqlEngine.NAME, _connectionStringOne)
-            , new Source("Two-Database", SqlEngine.NAME, _connectionStringTwo)];
+        _sources = [new Source("One-Database", MySqlEngine.NAME, _connectionStringOne)
+            , new Source("Two-Database", MySqlEngine.NAME, _connectionStringTwo)];
         _output = output;
     }
+
 
     [Fact]
     public async Task Update_One_Clean_Database_Migrates_And_Updates_Database()
@@ -43,7 +42,7 @@ public class UpdateManger_Sql_Tests : IClassFixture<MultipleSqlServerDatabaseFix
             .WithSourceProvider((Func<SourceProviderCreationOptions, SourceProviderBase>)sourceFactory)
             .WithFileBatchStrategy("Core/Batches")
             .WithCacheManager(options => new FileBatchCacheManager("Core/Cache", options.Logger, options.Environment))
-            .AddSqlServerEngine()
+            .AddMySqlServerEngine()
             .WithConnectionTimeout(30)
             .WithCommandTimeout(30)
             .WithLogger(logger);
@@ -56,7 +55,7 @@ public class UpdateManger_Sql_Tests : IClassFixture<MultipleSqlServerDatabaseFix
         Assert.Equal(2, results.Count());
         UpdateResult oneResult = results.First();
         UpdateResult twoResult = results.Last();
-        
+
         Assert.Null(oneResult.Error);
         Assert.Null(twoResult.Error);
         Assert.Equal(oneSource.Name, oneResult.Source);
@@ -72,7 +71,7 @@ public class UpdateManger_Sql_Tests : IClassFixture<MultipleSqlServerDatabaseFix
     {
         ILogger logger = LoggerFactory.Create(options => options.SetMinimumLevel(LogLevel.Debug)).CreateLogger("Basic");
         string notExistentSourceName = Guid.NewGuid().ToString();
-        Source notExistentSource = new (notExistentSourceName, SqlEngine.NAME, $"Server=.;Initial Catalog={notExistentSourceName};User Id=sa;Password=123");
+        Source notExistentSource = new(notExistentSourceName, MySqlEngine.NAME, $"Server=localhost;Port=54322;User Id=username;Password=secret;Database={notExistentSourceName};");
         IEnumerable<Source> notExistentSources = [notExistentSource];
 
         SourceProviderBase sourceFactory(SourceProviderCreationOptions options)
@@ -86,7 +85,7 @@ public class UpdateManger_Sql_Tests : IClassFixture<MultipleSqlServerDatabaseFix
             .WithSourceProvider((Func<SourceProviderCreationOptions, SourceProviderBase>)sourceFactory)
             .WithFileBatchStrategy("Core/Batches")
             .WithCacheManager(options => new FileBatchCacheManager("Core/Cache", options.Logger, options.Environment))
-            .AddSqlServerEngine()
+            .AddMySqlServerEngine()
             .WithConnectionTimeout(1) // 1 second
             .WithLogger(logger);
 
@@ -98,7 +97,7 @@ public class UpdateManger_Sql_Tests : IClassFixture<MultipleSqlServerDatabaseFix
         Assert.Single(results);
         UpdateResult result = results.First();
         Assert.NotNull(result.Error);
-        Assert.IsType<SqlException>(result.Error);
+        //Assert.IsType<SqlException>(result.Error);
         Assert.Equal(notExistentSource.Name, result.Source);
         Assert.Equal(-1, result.Version);
         Assert.Equal(notExistentSource.ConnectionString, result.ConnectionString);
@@ -122,7 +121,7 @@ public class UpdateManger_Sql_Tests : IClassFixture<MultipleSqlServerDatabaseFix
             .WithSourceProvider((Func<SourceProviderCreationOptions, SourceProviderBase>)sourceFactory)
             .WithFileBatchStrategy("Core/Batches")
             .WithCacheManager(options => new FileBatchCacheManager("Core/Cache", options.Logger, options.Environment))
-            .AddSqlServerEngine()
+            .AddMySqlServerEngine()
             .WithConnectionTimeout(30)
             .WithCommandTimeout(30)
             .WithLogger(logger);
@@ -135,14 +134,5 @@ public class UpdateManger_Sql_Tests : IClassFixture<MultipleSqlServerDatabaseFix
         Assert.Equal(oneSource.Name, result.Source);
         Assert.Equal(2, result.Version);
         Assert.Equal(oneSource.ConnectionString, result.ConnectionString);
-    }
-
-    [Fact]
-    public void CreateInstance_With_Private_Cosntructor_Throws()
-    {
-        ConstructorInfo privateConstructor = typeof(UpdateManager).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, Type.EmptyTypes);
-        Assert.NotNull(privateConstructor);
-        TargetInvocationException targetException = Assert.Throws<TargetInvocationException>(() => privateConstructor.Invoke(null));
-        Assert.IsType<InvalidOperationException>(targetException.GetBaseException());
     }
 }

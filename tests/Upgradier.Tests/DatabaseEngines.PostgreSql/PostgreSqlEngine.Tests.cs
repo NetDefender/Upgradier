@@ -3,7 +3,7 @@ using Upgradier.Core;
 using Upgradier.DatabaseEngines.PostgreSql;
 using Xunit.Abstractions;
 
-namespace Upgradier.Tests.PostgreSql;
+namespace Upgradier.Tests.DatabaseEngines.PostgreSql;
 
 public sealed class PostgreSqlEngine_Tests : IClassFixture<PostgreSqlDatabaseFixture>
 {

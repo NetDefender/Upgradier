@@ -1,13 +1,13 @@
-﻿using Testcontainers.PostgreSql;
+﻿using Testcontainers.MsSql;
 
-namespace Upgradier.Tests.PostgreSql;
+namespace Upgradier.Tests.DatabaseEngines.SqlServer;
 
-public sealed class PostgreSqlDatabaseFixture : IAsyncLifetime
+public sealed class SqlServerDatabaseFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _container;
-    public PostgreSqlDatabaseFixture()
+    private readonly MsSqlContainer _container;
+    public SqlServerDatabaseFixture()
     {
-        _container = new PostgreSqlBuilder()
+        _container = new MsSqlBuilder()
           .Build();
     }
 

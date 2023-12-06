@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.33920.267
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.Core", "src\Core\Upgradier.Core.csproj", "{74D0B356-C89A-4449-988E-0F147277C9F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.DatabaseEngines.SqlServer", "src\SqlServer\Upgradier.DatabaseEngines.SqlServer.csproj", "{D7FC778A-FE35-47D4-AAEB-74E2247E01E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.DatabaseEngines.SqlServer", "src\DatabaseEngines.SqlServer\Upgradier.DatabaseEngines.SqlServer.csproj", "{D7FC778A-FE35-47D4-AAEB-74E2247E01E6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EFC2F6F1-C459-4544-B711-919B0361BA2D}"
 	ProjectSection(SolutionItems) = preProject
@@ -22,15 +22,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.Tests", "tests\Upgradier.Tests\Upgradier.Tests.csproj", "{37753308-3580-4C2E-98FE-0BD6F07EE84A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.BatchStrategies.Aws", "src\Aws\Upgradier.BatchStrategies.Aws.csproj", "{E65E2A7C-85E5-44EB-8EE0-EC23C87D06EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.BatchStrategies.Aws", "src\BatchStrategies.Aws\Upgradier.BatchStrategies.Aws.csproj", "{E65E2A7C-85E5-44EB-8EE0-EC23C87D06EA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.BatchStrategies.Azure", "src\Azure\Upgradier.BatchStrategies.Azure.csproj", "{533B479C-8327-4821-9C58-46A7DA8E1CFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.BatchStrategies.Azure", "src\BatchStrategies.Azure\Upgradier.BatchStrategies.Azure.csproj", "{533B479C-8327-4821-9C58-46A7DA8E1CFF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example", "src\Example\Example.csproj", "{C3B80FCF-E091-4B65-8197-9011A476A821}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.DatabaseEngines.MySql", "src\MySql\Upgradier.DatabaseEngines.MySql.csproj", "{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.DatabaseEngines.MySql", "src\DatabaseEngines.MySql\Upgradier.DatabaseEngines.MySql.csproj", "{EC0CE2AA-FC2D-461C-B4F2-35C6A3E707CE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.DatabaseEngines.PostgreSql", "src\PostgreSql\Upgradier.DatabaseEngines.PostgreSql.csproj", "{46A281BE-95AE-445F-90A2-37BDDAF5FD77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upgradier.DatabaseEngines.PostgreSql", "src\DatabaseEngines.PostgreSql\Upgradier.DatabaseEngines.PostgreSql.csproj", "{46A281BE-95AE-445F-90A2-37BDDAF5FD77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,13 +1,13 @@
-﻿using Testcontainers.MariaDb;
+﻿using Testcontainers.PostgreSql;
 
-namespace Upgradier.Tests.MySql;
+namespace Upgradier.Tests.DatabaseEngines.PostgreSql;
 
-public sealed class MySqlDatabaseFixture : IAsyncLifetime
+public sealed class PostgreSqlDatabaseFixture : IAsyncLifetime
 {
-    private readonly MariaDbContainer _container;
-    public MySqlDatabaseFixture()
+    private readonly PostgreSqlContainer _container;
+    public PostgreSqlDatabaseFixture()
     {
-        _container = new MariaDbBuilder()
+        _container = new PostgreSqlBuilder()
           .Build();
     }
 

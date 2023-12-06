@@ -4,7 +4,7 @@ using Upgradier.DatabaseEngines.MySql;
 using Upgradier.Tests.Core;
 using Xunit.Abstractions;
 
-namespace Upgradier.Tests.MySql;
+namespace Upgradier.Tests.DatabaseEngines.MySql;
 
 [TestCaseOrderer("Upgradier.Tests.Core.ManualTestOrderer", "Upgradier.Tests")]
 public sealed class MySqlLockManagerTests : IClassFixture<MySqlDatabaseFixture>

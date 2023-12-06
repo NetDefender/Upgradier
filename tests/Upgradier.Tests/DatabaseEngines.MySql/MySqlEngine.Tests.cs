@@ -3,7 +3,7 @@ using Upgradier.Core;
 using Upgradier.DatabaseEngines.MySql;
 using Xunit.Abstractions;
 
-namespace Upgradier.Tests.MySql;
+namespace Upgradier.Tests.DatabaseEngines.MySql;
 
 public sealed class MySqlEngine_Tests : IClassFixture<MySqlDatabaseFixture>
 {

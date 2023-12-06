@@ -1,6 +1,6 @@
 ﻿using Testcontainers.MariaDb;
 
-namespace Upgradier.Tests.MySql;
+namespace Upgradier.Tests.DatabaseEngines.MySql;
 
 public sealed class MultipleMySqlDatabaseFixture : IAsyncLifetime
 {

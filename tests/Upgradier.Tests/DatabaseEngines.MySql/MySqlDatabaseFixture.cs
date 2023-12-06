@@ -1,13 +1,13 @@
-﻿using Testcontainers.MsSql;
+﻿using Testcontainers.MariaDb;
 
-namespace Upgradier.Tests.SqlServer;
+namespace Upgradier.Tests.DatabaseEngines.MySql;
 
-public sealed class SqlServerDatabaseFixture : IAsyncLifetime
+public sealed class MySqlDatabaseFixture : IAsyncLifetime
 {
-    private readonly MsSqlContainer _container;
-    public SqlServerDatabaseFixture()
+    private readonly MariaDbContainer _container;
+    public MySqlDatabaseFixture()
     {
-        _container = new MsSqlBuilder()
+        _container = new MariaDbBuilder()
           .Build();
     }
 

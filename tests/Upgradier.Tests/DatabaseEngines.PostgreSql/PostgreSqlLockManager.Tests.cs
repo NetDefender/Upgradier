@@ -4,7 +4,7 @@ using Upgradier.DatabaseEngines.PostgreSql;
 using Upgradier.Tests.Core;
 using Xunit.Abstractions;
 
-namespace Upgradier.Tests.PostgreSql;
+namespace Upgradier.Tests.DatabaseEngines.PostgreSql;
 
 [TestCaseOrderer("Upgradier.Tests.Core.ManualTestOrderer", "Upgradier.Tests")]
 public sealed class PostgreSqlLockManagerTests : IClassFixture<PostgreSqlDatabaseFixture>
