@@ -32,10 +32,13 @@ Create UpdateBuilder with options:
 ```csharp
 //Microsoft.Extensions.Logging.ILogger logger ...
 
+BlobContainerClient blobContainerClient = ... // Optional use Azure
+
 UpdateBuilder updateBuilder = new UpdateBuilder()
     .WithSourceProvider(options => new FileSourceProvider("c:\\my_files\\sources.json", options.Logger, options.Environment))
     .WithFileBatchStrategy("c:\\my_files\\batches")
     .WithCacheManager(options => new FileBatchCacheManager("c:\\my_files\\cache", options.Logger, options.Environment))
+    .WithAzureBlobBatchStrategy(blobContainerClient)
     .AddSqlServerEngine()
     .AddMySqlServerEngine()
     .AddPostgreSqlServerEngine()
