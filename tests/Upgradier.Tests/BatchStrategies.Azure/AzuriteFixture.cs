@@ -1,13 +1,14 @@
-﻿using Testcontainers.MsSql;
+﻿using DotNet.Testcontainers.Builders;
+using Testcontainers.Azurite;
 
-namespace Upgradier.Tests.DatabaseEngines.SqlServer;
+namespace Upgradier.Tests.BatchStrategies.Azure;
 
-public sealed class SqlServerDatabaseFixture : IAsyncLifetime
+public class AzuriteFixture : IAsyncLifetime
 {
-    private readonly MsSqlContainer _container;
-    public SqlServerDatabaseFixture()
+    private readonly AzuriteContainer _container;
+    public AzuriteFixture()
     {
-        _container = new MsSqlBuilder()
+        _container = new AzuriteBuilder()
           .Build();
     }
 

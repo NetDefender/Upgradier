@@ -15,6 +15,7 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="NSubstitute" />
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
+		<PackageReference Include="Testcontainers" />
 		<PackageReference Include="Testcontainers.Azurite" />
 		<PackageReference Include="Testcontainers.LocalStack" />
 		<PackageReference Include="Testcontainers.MariaDb" />
