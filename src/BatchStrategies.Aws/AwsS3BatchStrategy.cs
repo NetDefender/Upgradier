@@ -31,7 +31,7 @@ public class AwsS3BatchStrategy : BatchStrategyBase
         await _configureRequest(request).ConfigureAwait(false);
         await _transferUtility.DownloadAsync(request, cancellationToken).ConfigureAwait(false);
         downloadFile.ThrowIfNotExists();
-        using FileStream downloadStream = downloadFile.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
+        await using FileStream downloadStream = downloadFile.Open(new FileStreamOptions { Mode= FileMode.Open, Access = FileAccess.Read, Options = FileOptions.DeleteOnClose });
         List<Batch>? batches = await JsonSerializer.DeserializeAsync<List<Batch>>(downloadStream, JsonSerializerOptions.Default, cancellationToken).ConfigureAwait(false);
         ArgumentNullException.ThrowIfNull(batches);
         return batches.AsReadOnly().AsEnumerable();
@@ -53,7 +53,7 @@ public class AwsS3BatchStrategy : BatchStrategyBase
         await _configureRequest(request).ConfigureAwait(false);
         await _transferUtility.DownloadAsync(request, cancellationToken).ConfigureAwait(false);
         downloadFile.ThrowIfNotExists();
-        using StreamReader downloadStream = downloadFile.OpenText();
+        using StreamReader downloadStream = new (downloadFile.FullName, new FileStreamOptions { Options = FileOptions.DeleteOnClose });
         return downloadStream.ReadToEnd();
     }
 

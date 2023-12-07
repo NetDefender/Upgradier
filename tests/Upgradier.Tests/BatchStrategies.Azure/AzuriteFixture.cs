@@ -6,6 +6,7 @@ namespace Upgradier.Tests.BatchStrategies.Azure;
 public class AzuriteFixture : IAsyncLifetime
 {
     private readonly AzuriteContainer _container;
+
     public AzuriteFixture()
     {
         _container = new AzuriteBuilder()
