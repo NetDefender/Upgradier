@@ -1,0 +1,47 @@
+doc:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.md'
+  
+ci:
+  - changed-files:
+    - any-glob-to-any-file: '**/workflows/*.yml'
+  
+code:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.cs'
+
+sql:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.sql'
+    
+example:
+  - changed-files:
+    - any-glob-to-any-file: '**/src/Example/**/*.*'
+  
+aws:
+  - changed-files:
+    - any-glob-to-any-file: '**/src/*Aws/**/*.*'
+  
+azure:
+  - changed-files:
+    - any-glob-to-any-file: '**/src/*Azure/**/*.*'
+  
+core:
+  - changed-files:
+    - any-glob-to-any-file: '**/src/Core/**/*.*'
+  
+mysql:
+  - changed-files:
+    - any-glob-to-any-file: '**/src/*MySql/**/*.*'
+  
+postgre:
+  - changed-files:
+    - any-glob-to-any-file: '**/src/*PostgreSql/**/*.*'
+  
+sqlserver:
+  - changed-files:
+    - any-glob-to-any-file: '**/src/*SqlServer/**/*.*'
+  
+test:
+  - changed-files:
+    - any-glob-to-any-file: '**/tests/**/*.*'
