@@ -5,6 +5,7 @@ namespace Upgradier.Tests.DatabaseEngines.SqlServer;
 public sealed class SqlServerDatabaseFixture : IAsyncLifetime
 {
     private readonly MsSqlContainer _container;
+
     public SqlServerDatabaseFixture()
     {
         _container = new MsSqlBuilder()
