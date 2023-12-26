@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Net.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Upgradier.Core;
 
@@ -44,6 +45,14 @@ public sealed class UpdateBuilder
         return this;
     }
 
+    public UpdateBuilder WithWebSourceProvider(Uri baseUri, string baseFileName, Func<HttpRequestMessage, Task>? configureRequest = null)
+    {
+        ArgumentNullException.ThrowIfNull(baseUri);
+        ArgumentException.ThrowIfNullOrEmpty(baseFileName);
+        _sourceProviderFactory = options => new WebSourceProvider(nameof(WebSourceProvider), baseUri, baseFileName, configureRequest, options.Logger, options.Environment);
+        return this;
+    }
+
     public UpdateBuilder WithEncryptedFileSourceProvider(string baseDirectory, string fileName)
     {
         ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
@@ -72,6 +81,11 @@ public sealed class UpdateBuilder
         ArgumentNullException.ThrowIfNull(batchStrategyFactory);
         _batchStrategyFactory = batchStrategyFactory;
         return this;
+    }
+
+    public UpdateBuilder WithFileBatchStrategy(string baseDirectory)
+    {
+        return WithBatchStrategy(options => new FileBatchStrategy(baseDirectory, options.Logger, options.Environment));
     }
 
     public UpdateBuilder WithWebBatchStrategy(Func<BatchStrategyCreationOptions, WebBatchStrategy> batchStrategyFactory)
