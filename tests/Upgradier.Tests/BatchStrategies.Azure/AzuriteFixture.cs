@@ -1,5 +1,4 @@
-﻿using DotNet.Testcontainers.Builders;
-using Testcontainers.Azurite;
+﻿using Testcontainers.Azurite;
 
 namespace Upgradier.Tests.BatchStrategies.Azure;
 

@@ -35,6 +35,8 @@
 		<ProjectReference Include="..\..\src\DatabaseEngines.MySql\Upgradier.DatabaseEngines.MySql.csproj" />
 		<ProjectReference Include="..\..\src\DatabaseEngines.PostgreSql\Upgradier.DatabaseEngines.PostgreSql.csproj" />
 		<ProjectReference Include="..\..\src\DatabaseEngines.SqlServer\Upgradier.DatabaseEngines.SqlServer.csproj" />
+		<ProjectReference Include="..\..\src\SourceProviders.Aws\Upgradier.SourceProviders.Aws.csproj" />
+		<ProjectReference Include="..\..\src\SourceProviders.Azure\Upgradier.SourceProviders.Azure.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="Core\Batches\**\*.*">
